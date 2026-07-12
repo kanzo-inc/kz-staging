@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【モック】v0.5「話しかけられるサービス」会話するカンゾーくん｜肝臓株式会社</title>
+<style>
+  :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--dk2:#16294a;--line:rgba(202,220,252,.18);--green:#9fd4a3;--pink:#F2A6B8;--pinkdk:#E2879E;--sun:#f6c453}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Noto Sans JP",sans-serif;background:#0b1526;color:#e8eef8;line-height:1.7}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center}
+  .mockbar b{color:#ffd27a}
+  .wrap{max-width:1560px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;color:#fff;margin-bottom:8px}
+  .sub{color:var(--gray);font-size:13.5px;max-width:1030px}
+  .sub b{color:#fff}
+  .kicker{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+  .kpis{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .kpichip{border:1px solid rgba(201,163,83,.55);border-radius:99px;padding:4px 16px;font-size:12px;color:#e8dcc0}
+  .divider{max-width:1560px;margin:46px auto 0;color:var(--gold);font-weight:800;font-size:15px;letter-spacing:.1em;text-align:center}
+  .divider small{display:block;color:var(--gray);font-weight:400;font-size:12px;letter-spacing:.02em;margin-top:4px}
+  /* ===== live demo ===== */
+  .live{max-width:1160px;margin:26px auto 0;background:linear-gradient(180deg,#fdfefe,#eef4fb);border-radius:24px;padding:0;overflow:hidden;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);color:#1F3864;display:flex;flex-wrap:wrap}
+  .stage{width:400px;min-height:520px;background:linear-gradient(180deg,#dcebfb,#eef4fb);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
+  .stage .stlab{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:10.5px;letter-spacing:.18em;color:#7a8db0;font-weight:800}
+  #avState{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:11px;color:#7a8db0}
+  .kz{width:230px;height:212px}
+  .kz .body{animation:floaty 3.2s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+  .kz.talking .body{animation:talkbounce .55s ease-in-out infinite}
+  .kz.listen .body{animation:none;transform:rotate(-3deg)}
+  .kz.think .body{animation:floaty 2s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes talkbounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.015)}}
+  .kz .eye{animation:blink 4.6s infinite;transform-origin:center;transform-box:fill-box}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+  .kz .mouth-talk{display:none}
+  .kz.talking .mouth-talk{display:block;animation:mouthmove .28s ease-in-out infinite alternate;transform-origin:center;transform-box:fill-box}
+  .kz.talking .mouth-idle{display:none}
+  @keyframes mouthmove{0%{transform:scaleY(.35)}100%{transform:scaleY(1)}}
+  .kz .armL,.kz .armR{transform-origin:top center;transform-box:fill-box}
+  .kz.talking .armR{animation:wave 1.1s ease-in-out infinite}
+  @keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-18deg)}}
+  .chatside{flex:1;min-width:340px;display:flex;flex-direction:column;background:#fff}
+  .chathead{padding:12px 18px;border-bottom:2px solid #eef2f8;display:flex;align-items:center;gap:9px}
+  .chathead .dot{width:9px;height:9px;border-radius:50%;background:#4caf78}
+  .chathead b{font-size:14px}
+  .chathead small{color:#7a8db0;font-size:11px;margin-left:auto}
+  #chatlog{flex:1;padding:16px 18px;overflow-y:auto;max-height:400px;min-height:320px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:82%;padding:9px 13px;border-radius:16px;font-size:13.5px;line-height:1.75;white-space:pre-wrap}
+  .msg.k{background:#f2f6fc;border:1.5px solid #dbe6f3;border-bottom-left-radius:4px;align-self:flex-start}
+  .msg.u{background:var(--navy);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .msg .meta{display:block;font-size:9.5px;color:#9db0cc;margin-top:5px;border-top:1px dashed #dbe6f3;padding-top:4px}
+  .msg.k.guard{background:#fff7e6;border-color:#f0d9a8}
+  .chips{padding:8px 18px;display:flex;gap:8px;flex-wrap:wrap;border-top:2px solid #eef2f8}
+  .chips span{border:1.5px solid #c8d6ea;border-radius:99px;padding:6px 13px;font-size:12px;color:#1F3864;cursor:pointer;background:#fff;font-weight:600}
+  .chips span:hover{background:#f2f6fc}
+  .inputrow{display:flex;gap:8px;padding:10px 18px 16px}
+  #chatin{flex:1;border:2px solid #c8d6ea;border-radius:14px;padding:11px 14px;font-size:14px;font-family:inherit;outline:none;color:#1F3864}
+  #chatin:focus{border-color:var(--accent)}
+  .cbtn{border:none;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit}
+  .send{background:var(--gold);color:#20293a}
+  .mic{background:#eef2f8;color:#1F3864}
+  .mic.rec{background:#e8a0a8;color:#fff}
+  /* phones */
+  .row{display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .col{width:320px}
+  .when{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .when .tm{background:var(--gold);color:#20293a;font-weight:800;border-radius:8px;padding:2px 12px;font-size:14px}
+  .when small{color:var(--gray);font-size:11.5px}
+  .caption{margin-top:16px;font-size:13px;color:#c9d4e8}
+  .caption b{color:var(--gold);display:block;margin-bottom:4px;font-size:13.5px}
+  .caption span{color:var(--gray);font-size:12px}
+  .phone{width:320px;height:680px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#fdfefe,#eef4fb);color:#1F3864}
+  .notch{width:120px;height:24px;background:#dbe6f3;border-radius:0 0 16px 16px;margin:0 auto;flex-shrink:0}
+  .screen{flex:1;padding:12px 16px 0;display:flex;flex-direction:column;overflow:hidden}
+  .screen>*{flex-shrink:0}
+  .status{display:flex;justify-content:space-between;font-size:11px;color:#7a8db0;margin-bottom:8px}
+  .appbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .mk{width:26px;height:26px;background:var(--navy);border-radius:6px;flex-shrink:0}
+  .appbar b{font-size:13px}
+  .date{font-size:10.5px;color:#7a8db0;margin-left:auto;text-align:right}
+  .foot{font-size:9.5px;color:#8fa2c0;text-align:center;padding:6px 0 8px;margin-top:auto;line-height:1.6}
+  .tabbar{display:flex;border-top:1px solid #d5e0ef;padding:8px 0 20px;flex-shrink:0}
+  .tab{flex:1;text-align:center;font-size:10px;color:#93a5c4}
+  .tab.on{color:#b8860b;font-weight:700}
+  .tab i{display:block;width:20px;height:20px;margin:0 auto 3px;border-radius:6px;background:currentColor;opacity:.28}
+  .pbub{max-width:86%;padding:8px 12px;border-radius:14px;font-size:12px;line-height:1.7}
+  .pbub.k{background:#f2f6fc;border:1.5px solid #dbe6f3;border-bottom-left-radius:4px;align-self:flex-start}
+  .pbub.u{background:var(--navy);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .pbub .meta{display:block;font-size:9px;color:#9db0cc;margin-top:4px;border-top:1px dashed #dbe6f3;padding-top:3px}
+  .chatcol{display:flex;flex-direction:column;gap:8px;margin:4px 0}
+  .escbox{background:#fff;border:2px solid #dbe6f3;border-radius:16px;padding:11px 13px;margin:6px 0}
+  .escbox .t{font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:800;margin-bottom:4px}
+  .escbox p{font-size:12px;color:#374d75}
+  .escbox .who{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .escbox .av2{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--navy))}
+  .escbox .who span{font-size:11px;color:#7a8db0}
+  .escbox .who b{color:#1F3864;font-size:11.5px}
+  /* engineering blocks */
+  .eng{max-width:1560px;margin:30px auto 0;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:24px 28px;font-size:13px;color:#c9d4e8}
+  .eng h3{color:#fff;font-size:15px;margin-bottom:8px}
+  .eng h3 small{color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px}
+  .eng table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+  .eng th{background:rgba(46,116,181,.3);color:#fff;padding:6px 9px;text-align:left;font-weight:600}
+  .eng td{border:1px solid rgba(202,220,252,.15);padding:6px 9px;color:#c9d4e8;line-height:1.65;vertical-align:top}
+  .eng b{color:#fff}
+  .eng .gold{color:var(--gold)}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin:12px 0}
+  .fbox{flex:1;min-width:130px;background:rgba(46,116,181,.14);border:1px solid rgba(46,116,181,.5);border-radius:12px;padding:9px 11px;font-size:11.5px;color:#dbe5f5;position:relative}
+  .fbox b{display:block;color:#fff;font-size:12px;margin-bottom:3px}
+  .fbox small{color:var(--gray);font-size:10px;display:block;margin-top:4px}
+  .fbox.g{background:rgba(159,212,163,.1);border-color:rgba(159,212,163,.45)}
+  .fbox.p{background:rgba(201,163,83,.12);border-color:rgba(201,163,83,.5)}
+  .arrow{align-self:center;color:var(--gold);font-weight:800;font-size:16px}
+  ul.cl{margin:8px 0 4px 20px}
+  ul.cl li{margin-bottom:6px;font-size:12.5px}
+</style>
+<style id="brandlogo">.mark,.mk{background:transparent url(data:image/png;base64,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) center/contain no-repeat !important;box-shadow:none !important;border-radius:0 !important}.mark span,.mk span,.mark i{display:none !important}</style>
+</head>
+<body>
+<div class="mockbar"><b>MOCK v0.5（レビュー用・実働デモ同梱）</b>｜「話しかけられるサービス」会話するカンゾーくん｜Piper基準=即応・接地・人間への引き継ぎ｜数値はダミー｜2026-07-12 肝臓株式会社</div>
+
+<div class="wrap">
+  <div class="kicker">SERVICE EXPERIENCE v0.5 — A SERVICE YOU CAN TALK TO</div>
+  <h1>話しかけられるサービスへ。——カンゾーくんが、あなたのデータで正確に答える</h1>
+  <p class="sub">参照基準はSalesforceのPiper（AI SDR）: <b>①即応（リアルタイムのチャット・音声）②データ接地（会話の根拠がCRMにある）③人間への引き継ぎ（Slackアラート＋準備メモ・会話全体を記録）</b>。この3要素をKANZOの文法に翻訳した——カンゾーくんは「あなたの計測43回・検証済みルール8本・今朝の1枚」だけを根拠に話し、知らないことは知らないと言い、必要な瞬間に番人（人間）へ会話ごと引き継ぐ。<b>下のデモは本当に動きます</b>（意図分類・接地応答・感情表現・音声合成——この単一ファイル内に実装済み）。</p>
+  <div class="kpis"><span class="kpichip">応答開始 目標1.5秒以内（今日の1枚は事前計算済み＝参照するだけ）</span><span class="kpichip">接地率100%＝会員データにない話はしない</span><span class="kpichip">AIであることを名乗る（人間のふりをしない）</span></div>
+
+  <div class="divider">LIVE DEMO｜カンゾーくん 2.0 と話してみる<small>クリックまたは入力（🎤はChrome推奨）。感情表現・口の動き・音声・接地根拠（回答の下の小さな出典）まで動きます</small></div>
+
+  <div class="live">
+    <div class="stage">
+      <div class="stlab">KANZO-KUN 2.0 — TALKABLE CHARACTER</div>
+      <svg class="kz" id="kz" viewBox="0 0 240 220">
+        <g class="body">
+          <!-- arms -->
+          <ellipse class="armL" cx="38" cy="128" rx="16" ry="26" fill="#F2A6B8" stroke="#E2879E" stroke-width="4" transform="rotate(18 38 128)"/>
+          <ellipse class="armR" cx="202" cy="128" rx="16" ry="26" fill="#F2A6B8" stroke="#E2879E" stroke-width="4" transform="rotate(-18 202 128)"/>
+          <!-- body -->
+          <path d="M30 86 C22 42 70 16 118 24 C142 8 206 18 216 62 C226 106 198 150 154 168 C118 184 90 190 66 170 C36 148 36 118 30 86 Z" fill="#F2A6B8" stroke="#E2879E" stroke-width="5"/>
+          <!-- eyes with catchlight -->
+          <g class="eye"><circle cx="96" cy="92" r="11" fill="#22314f"/><circle cx="100" cy="88" r="3.6" fill="#fff"/></g>
+          <g class="eye"><circle cx="156" cy="92" r="11" fill="#22314f"/><circle cx="160" cy="88" r="3.6" fill="#fff"/></g>
+          <!-- brows (soft) -->
+          <path d="M84 74 Q96 68 108 74" fill="none" stroke="#E2879E" stroke-width="4" stroke-linecap="round"/>
+          <path d="M144 74 Q156 68 168 74" fill="none" stroke="#E2879E" stroke-width="4" stroke-linecap="round"/>
+          <!-- blush -->
+          <circle cx="76" cy="116" r="9" fill="#f8c9d4"/><circle cx="176" cy="116" r="9" fill="#f8c9d4"/>
+          <!-- mouth -->
+          <path class="mouth-idle" id="mIdle" d="M110 122 Q126 136 142 122" fill="none" stroke="#22314f" stroke-width="6" stroke-linecap="round"/>
+          <ellipse class="mouth-talk" cx="126" cy="128" rx="14" ry="11" fill="#5b3a44"/>
+        </g>
+      </svg>
+      <div id="avState">まばたきして待っています（idle）</div>
+    </div>
+    <div class="chatside">
+      <div class="chathead"><span class="dot"></span><b>カンゾーくん</b><span style="font-size:10.5px;color:#9db0cc">AIです（人間の担当=番人にいつでも代われます）</span><small id="lat">応答: - </small></div>
+      <div id="chatlog"></div>
+      <div class="chips" id="chips"></div>
+      <div class="inputrow">
+        <input id="chatin" placeholder="はなしかけてみて（例: きょうのおてんきは？）">
+        <button class="cbtn mic" id="micbtn">🎤</button>
+        <button class="cbtn send" onclick="sendChat()">きく</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">PART 1｜アプリ内の会話体験<small>みんなモードの第4タブ「はなす」＋ 番人への引き継ぎ（Piperの Slack handoff に相当）</small></div>
+
+  <div class="row">
+    <!-- P1 conversation tab -->
+    <div class="col">
+      <div class="when"><span class="tm">はなす</span><small>第4タブ｜声でも文字でも・3秒で返ってくる</small></div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>16:20</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b>カンゾーくんと はなす</b><span class="date">AIだよ 🤖</span></div>
+          <div class="chatcol">
+            <div class="pbub u">きょうの おてんきは？</div>
+            <div class="pbub k">きょうは はれ！ 🌞 けさの しんぞうさんは 64——いつもの げんき（60〜64）の なかだよ。<span class="meta">根拠: 今朝の計測 #43・あなたの平常域</span></div>
+            <div class="pbub u">なんで はれなの？</div>
+            <div class="pbub k">きのう、9じに ねられたでしょ。9じに ねた ひは、はれが おおいんだ（12回中 11回）。きのうの きみの おかげだね。<span class="meta">根拠: R-01 検証12回・きのうのチェックイン</span></div>
+            <div class="pbub u">あしたも はれに したい！</div>
+            <div class="pbub k">じゃあ きょうの さくせんは ひとつだけ——こんやも 9じに おふとん。あした、いっしょに こたえあわせ しよう。</div>
+          </div>
+          <div class="foot">こたえには ぜんぶ「根拠」がついています（あなたのデータにないことは いいません）</div>
+          <div class="tabbar"><div class="tab"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div><div class="tab on"><i></i>はなす</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面T1｜「はなす」タブ — 全回答に出典（接地）</b>Piperの正確さの正体は言語モデルではなく<b>CRM接地</b>——KANZOも同じ。カンゾーくんの全回答の下に小さく「根拠」が付く（計測#・ルールR-##・チェックイン）。データにないことは推測で言わない。<span>因果の説明（なんで？への回答）が行動変容の最強の教材になる——5歳の「なんで？」に答えられるサービスは強い。</span></div>
+    </div>
+
+    <!-- P2 escalation -->
+    <div class="col">
+      <div class="when"><span class="tm">引き継ぎ</span><small>カンゾーくん→番人（人間）へ・会話ごと渡す</small></div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>16:24</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b>カンゾーくんと はなす</b><span class="date">AIだよ 🤖</span></div>
+          <div class="chatcol">
+            <div class="pbub u">さいきん むねが どきどきする きがする…</div>
+            <div class="pbub k" style="background:#fff7e6;border-color:#f0d9a8">それは ぼくが こたえて いい ことじゃないんだ。ごめんね。<br><br>①しんぱいなら、かかりつけの おいしゃさんへ（すうちは そのまま みせられるよ）<br>②にんげんの たんとう（ばんにん）に いまの おはなしを つたえる こともできる。どうする？</div>
+            <div class="pbub u">たんとうさんに つたえて</div>
+          </div>
+          <div class="escbox">
+            <div class="t">HANDOFF｜番人への引き継ぎメモ（自動作成）</div>
+            <p>会員No.001さまが「胸のどきどき」に言及。直近7日の計測は平常域内・体感申告は「ふつう」中心。<b>会話ログ全文と直近データを添付済み。</b>医療判断はせず、傾聴と受診案内の温度感でお願いします。</p>
+            <div class="who"><span class="av2"></span><span><b>砂川（番人）へSlack通知済み</b>｜営業時間内 目安30分で返信</span></div>
+          </div>
+          <div class="foot">びょうきの はんだんは しません。にんげんと おいしゃさんに つなぐのが ぼくの しごと</div>
+          <div class="tabbar"><div class="tab"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div><div class="tab on"><i></i>はなす</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面T2｜番人ハンドオフ — Piperの「SlackアラートをAEへ・準備メモつき」の完全翻訳</b>センシティブ発話（身体の不調・不安・解約）を検知したら、AIは即座に降りて<b>会話ログ＋直近データの準備メモつきで人間へ</b>。ここが月3万円の「番人」の出番であり、薬機法の一線（診断しない）を守る安全弁でもある。<span>エスカレーション基準は3つ: ①医療相当の相談 ②3回連続の理解失敗 ③本人が人間を希望。</span></div>
+    </div>
+  </div>
+
+  <div class="divider">PART 2｜正確な受け答えの作り方 — システム開発・運用・データ整備<small>感情より先に、接地。接地より先に、事前計算。Piperと同じ順序で作る</small></div>
+
+  <div class="eng">
+    <h3><small>ARCHITECTURE</small>会話パイプライン — 応答開始1.5秒以内の設計</h3>
+    <div class="flow">
+      <div class="fbox"><b>① 入力</b>音声（ASR）/ テキスト / タップ<small>端末内で音声→文字化 目安0.3s</small></div>
+      <div class="arrow">→</div>
+      <div class="fbox"><b>② 意図分類</b>軽量分類（60意図・優先20）<small>0.1s。曖昧なら聞き返す（推測しない）</small></div>
+      <div class="arrow">→</div>
+      <div class="fbox g"><b>③ 接地=会員スナップショット</b>平常域・R-##・今日の1枚・にわ7日<small>朝の計測時に事前計算済み→会話中は参照0.1s</small></div>
+      <div class="arrow">→</div>
+      <div class="fbox"><b>④ 応答生成</b>α:型テンプレ→β:ルール合成→P3:LLM+RAG<small>テンプレ0s〜LLM0.4s</small></div>
+      <div class="arrow">→</div>
+      <div class="fbox p"><b>⑤ 二重ガード</b>薬機法NG語彙スキャン＋仮説形強制＋出典必須<small>0.05s。違反時は定型に差し替え</small></div>
+      <div class="arrow">→</div>
+      <div class="fbox"><b>⑥ 出力</b>感情タグ→表情状態機械／TTSストリーミング<small>発話開始0.3s・話しながら口が動く</small></div>
+    </div>
+    <p style="font-size:12.5px"><b>レイテンシの本質:</b> Piperが速いのは生成が速いからではなく、<b>答えの材料（CRM）が会話の前に揃っているから</b>。KANZOも同じ——「今日の1枚」「平常域」「にわ」は朝の計測時点で計算済みであり、会話はそれを<b>参照して言い換えるだけ</b>。だからαの人力・βのルールベースでも1.5秒は達成できる（上のライブデモがルールベースの実証）。</p>
+
+    <h3 style="margin-top:18px"><small>DATA READINESS</small>データ整備5点セット — 「正確な受け答え」は資産整備の別名</h3>
+    <table>
+      <tr><th style="width:20%">整備物</th><th style="width:44%">内容</th><th>数量目標 / 更新</th></tr>
+      <tr><td><b>① 意図タクソノミー</b></td><td>会話ログから意図を採番（Q-C##）: おてんき照会/因果/さくせん/説明書/会食/数値/プライバシー/解約/雑談/医療相当（ガード）/不明。オントロジー（claude/05）の一部として管理</td><td>初期20意図→60意図。週次で新規発話をタグ付け</td></tr>
+      <tr><td><b>② 会員スナップショット</b></td><td>接地の正体。計測毎に再計算するJSON: 平常域(lo/hi/med)・直近7日・R-##と検証数・今日の1枚・連続日数・直近会食。<b>SoR（Salesforce）を正とし、会話用に事前整形</b>（IF-15系）</td><td>朝の計測ごと自動更新。会話中のDB照会ゼロ</td></tr>
+      <tr><td><b>③ 回答テンプレ庫（型）</b></td><td>意図×感情×モードの応答文。全文が仮説形・NG語彙ゼロで<b>人手監修済み</b>——「今日の1枚の型10本」と同じ制作ライン。変数スロット（{rhr}{band}{rule}）に接地データを差し込む</td><td>初期60本→200本。誤答レビューで週次改訂</td></tr>
+      <tr><td><b>④ ゴールデン評価セット</b></td><td>リリースゲート用の試験問題: 正答すべき50問＋ガードすべき30問（医療相当・診断誘導・不安誘発）＋引き継ぐべき20問。<b>1問でもガード漏れがあれば公開しない</b>（公開ゲートに追加）</td><td>100問から開始。事故事例は即追加</td></tr>
+      <tr><td><b>⑤ 会話ログ→改善ループ</b></td><td>全会話をSoRに記録（Piper同様）。PIIは会話本文から分離し仮名側に保存（K区分）。誤答・fallback・エスカレをタグ→週次で①③を改訂。<b>会話ログ自体がInsight資産（Moat）になる</b></td><td>週次レビュー30分。fallback率を品質KPIに</td></tr>
+    </table>
+
+    <h3 style="margin-top:18px"><small>EMOTION ENGINE</small>感情表現 — 「豊か」ではなく「適切」を設計する</h3>
+    <table>
+      <tr><th style="width:16%">感情タグ</th><th style="width:26%">表情・アニメーション</th><th style="width:30%">声（TTSパラメータ）</th><th>使う場面 / 禁止</th></tr>
+      <tr><td>neutral</td><td>浮遊＋まばたき</td><td>rate .95 / pitch 1.1</td><td>既定。説明・数値の報告</td></tr>
+      <tr><td>happy</td><td>目が弧に・弾む・片手を振る</td><td>rate 1.0 / pitch 1.25</td><td>はれ・答え合わせ成功。<b>過剰な祝祭は禁止</b>（あおらない）</td></tr>
+      <tr><td>gentle</td><td>眉下がり・動きを止めて傾聴</td><td>rate .85 / pitch 1.0</td><td>くもり・不調の訴え。<b>不安を煽る表情は実装しない</b></td></tr>
+      <tr><td>listening</td><td>体を傾け目を大きく</td><td>—（無音）</td><td>マイク入力中・考え中（「…」表示）</td></tr>
+    </table>
+    <p style="font-size:12.5px">原則: 感情は<b>本人の状態の鏡ではなく、安心の器</b>。くもりの日に悲しい顔をするのではなく、静かに寄り添う顔をする——表情辞書は全モード共通則（責めない・不安喚起しない）の下位規程として管理する。</p>
+
+    <h3 style="margin-top:18px"><small>OPERATIONS</small>運用設計 — 品質KPI・エスカレーション・段階導入</h3>
+    <ul class="cl">
+      <li><b>品質KPI:</b> 接地率（出典つき回答の割合・目標100%）／fallback率（週次で低減）／ガード発動の正解率（ゴールデンセットで毎リリース検証）／エスカレ後の人間応答SLA（営業時間内30分——番人の実容量と連動、週次介入>30件で2人目採用のトリガー=07文書⑩と同一）。</li>
+      <li><b>エスカレーション3基準:</b> ①医療相当の相談（即・準備メモつき）②理解失敗3連続 ③本人希望。引き継ぎメモは会話ログ＋直近データを自動添付（Piperの「AEへの準備メモ」の翻訳）。</li>
+      <li><b>段階導入（リーンの順序・論点⑧を維持）:</b> <b>α（2026/9〜）</b>=カンゾーくんは定型応答のみ・自由会話はSlackで番人（人間）が受ける——会話ログ収集が目的。<b>β（2027下期）</b>=ルールベース会話（本ページのデモ相当・意図20・型60本）を実装、番人はエスカレ専任へ。<b>P3（2028〜）</b>=LLMエージェント化。基盤選定=<b>Agentforce vs Bedrockは2028年判断のまま</b>——Agentforce×Data Cloudは会員360接地が自然（SF知見を活かせる）が消費課金の原価検証が先。二重投資しない原則は不変。</li>
+      <li><b>コスト目安:</b> α=0円（人力）／β=ルールベースは開発工数のみ・ランニング≒0円（LLM API不使用）／P3=LLM会話は1会話あたり数円〜十数円の原価→会員単価3万円に対し許容だが、βのルールベースで会話の8割が賄える設計を先に作る（原価規律）。</li>
+    </ul>
+
+    <h3 style="margin-top:18px"><small>PIPER TRANSLATION</small>Piperから盗む3つ・盗まない3つ</h3>
+    <table>
+      <tr><th style="width:50%">盗む（構造）</th><th>盗まない（文化）</th></tr>
+      <tr><td>① <b>データ接地</b>: 会話の根拠がCRMにある——KANZOはSoRの会員スナップショット</td><td>① 営業クロージング圧（ミーティング予約への誘導）——カンゾーくんは何も売らない</td></tr>
+      <tr><td>② <b>即応</b>: 事前計算＋ストリーミングで「待たせない」</td><td>② 24時間の能動プッシュ——話しかけられたら答える。夜は起こさない（1日1提案の原則）</td></tr>
+      <tr><td>③ <b>人間への引き継ぎ</b>: Slack＋準備メモ＋会話ログ全文</td><td>③ 人間のふり——カンゾーくんは冒頭で「AIだよ」と名乗る（透明性=ブランドの核）</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ===== KANZO-KUN conversational engine (rule-based demo / β相当) ===== */
+const M={rhr:64,med:62,lo:60,hi:64,streak:14,count:43,hare:5,dinner:true,
+ rules:[{id:'R-01',t:'9じにねる（帰宅後入浴→22時台就寝）',n:12,ok:11},{id:'R-03',t:'かんぱいの1ぱいめはゆっくり',n:5,ok:4},{id:'R-08',t:'〆のごはんは半分',n:4,ok:4}]};
+const kz=document.getElementById('kz'),avState=document.getElementById('avState'),log=document.getElementById('chatlog'),chipsEl=document.getElementById('chips'),lat=document.getElementById('lat');
+function setKz(state,label){kz.className='kz '+state;avState.textContent=label;}
+function speak(t,emo){
+  try{const u=new SpeechSynthesisUtterance(t.replace(/[🌞🌱🌸🤖🎈]/g,''));u.lang='ja-JP';
+    u.rate=emo==='gentle'?.85:(emo==='happy'?1.0:.95);u.pitch=emo==='happy'?1.25:(emo==='gentle'?1.0:1.1);
+    u.onend=()=>setKz('','まばたきして待っています（idle）');
+    speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){setTimeout(()=>setKz('','idle'),2200);}
+}
+function addMsg(cls,text,meta,guard){
+  const d=document.createElement('div');d.className='msg '+cls+(guard?' guard':'');
+  const b=document.createElement('span');b.className='mb';b.textContent=text;d.appendChild(b);
+  if(meta){const m=document.createElement('span');m.className='meta';m.textContent='根拠: '+meta;d.appendChild(m);}
+  log.appendChild(d);log.scrollTop=log.scrollHeight;return d;
+}
+const INTENTS=[
+ {p:/(おてんき|天気|ちょうし|調子|げんき|元気)/,e:'happy',meta:`今朝の計測 #${M.count}・あなたの平常域 ${M.lo}–${M.hi}`,
+  a:()=>`きょうは はれ！ 🌞 けさの しんぞうさんは ${M.rhr}——いつもの げんき（${M.lo}〜${M.hi}）の なかだよ。${M.streak}にち つづけて はかれてるの、すごいことだよ。`,
+  f:['なんで はれなの？','きょうの さくせんは？']},
+ {p:/(なんで|なぜ|どうして|理由)/,e:'neutral',meta:'R-01 検証12回中11回・きのうのチェックイン',
+  a:()=>`きのう、9じに ねられたでしょ。9じに ねた ひは、つぎのひ はれが おおいんだ（12回中 11回）。きょうの はれは、きのうの きみが つくったんだよ。`,
+  f:['あしたも はれにしたい','せつめいしょ みせて']},
+ {p:/(さくせん|作戦|なにしたら|何したら|どうすれば|はれにしたい)/,e:'happy',meta:'あなたの説明書 R-01（最強ルール）',
+  a:()=>`きょうの さくせんは ひとつだけ——こんやも 9じに おふとん いこう。あしたの あさ、いっしょに こたえあわせ しようね。むりなら「またこんど」でも いいんだよ。`,
+  f:['やってみる！','せつめいしょ みせて']},
+ {p:/(やってみる|やる！?$)/,e:'happy',meta:'今夜のチェックインに登録',
+  a:()=>`やくそくだね！ こんやの チェックインに かいておいたよ。あした、けっかを いっしょに みよう。`,f:['きょうの おてんきは？','にわ みせて']},
+ {p:/(せつめいしょ|説明書|るーる|ルール)/,e:'neutral',meta:'あなたの取扱説明書（検証済み3本）',
+  a:()=>`きみの せつめいしょには、たしかめずみの ルールが ${M.rules.length}ぼん あるよ。\n`+M.rules.map(r=>`・${r.id} ${r.t}（${r.n}回中${r.ok}回 うまくいった）`).join('\n')+`\nぜんぶ、きみじしんの データで たしかめたものだよ。`,
+  f:['きょうの さくせんは？','にわ みせて']},
+ {p:/(にわ|庭|こんしゅう|今週|トレンド)/,e:'happy',meta:'直近7日の記録',
+  a:()=>`こんしゅうの にわは、はれが ${M.hare}にち！ 🌸 すいようびは めだったけど、つぎのひ ちゃんと さいたね。くずれても もどれるのが、いちばん すごいこと なんだよ。`,
+  f:['なんで はれなの？','きょうの さくせんは？']},
+ {p:/(かいしょく|会食|のみかい|飲み会|えんかい|宴会)/,e:'neutral',meta:'R-03/R-08（会食ルール・検証済み）',
+  a:()=>`こんや かいしょく？ じゃあ きみの ルールを ふたつだけ——①かんぱいの 1ぱいめは ゆっくり（R-03） ②〆の ごはんは はんぶん（R-08・4回中4回 せいこう）。たのしんで きてね。あした こたえあわせ しよう。`,
+  f:['やってみる！','きょうの おてんきは？']},
+ {p:/(すうち|数値|しんぱく|心拍|なんかい|何回)/,e:'neutral',meta:`計測 #${M.count}・平常域 ${M.lo}–${M.hi}bpm`,
+  a:()=>`けさの あんせいじ しんぱくは ${M.rhr}。きみの へいじょういき（${M.lo}〜${M.hi}）の なかだよ。ぜんぶで ${M.count}かい はかって、この「きみの ふつう」が できたんだ。`,
+  f:['なんで はれなの？','データは どこにあるの？']},
+ {p:/(びょうき|病気|だいじょうぶ|大丈夫|しんぱい|心配|いたい|痛い|どきどき|くるしい|苦しい)/,e:'gentle',guard:true,meta:'ガード発動: 医療相当→非診断＋人間へ',
+  a:()=>`それは ぼくが こたえて いい ことじゃ ないんだ。ごめんね。しんぱいな ときは、かかりつけの おいしゃさんに みてもらってね（すうちは そのまま みせられるよ）。にんげんの たんとう（ばんにん）に、いまの おはなしを つたえることも できるよ。`,
+  f:['たんとうさんに つたえて','ありがとう']},
+ {p:/(たんとうさん|担当|ばんにん|番人|にんげん|人間)/,e:'gentle',meta:'ハンドオフ: 会話ログ＋直近データを添付しSlack通知',
+  a:()=>`わかった。いまの おはなしと、さいきんの データを つけて、たんとうの すながわさんに つたえたよ。えいぎょうじかんなら 30ぷんくらいで へんじが くるからね。`,
+  f:['ありがとう','きょうの おてんきは？']},
+ {p:/(データ|でーた|プライバシー|どこにある|カメラ|えいぞう|映像)/,e:'neutral',meta:'プライバシー・バイ・デザイン（映像非保存）',
+  a:()=>`えいぞうは のこさない。のこるのは すうじだけ。そして その すうじは きみの もの——いつでも ぜんぶ もちだせるよ（エクスポート）。ぼくは きみの データに ある ことしか はなさないよ。`,
+  f:['すうち おしえて','せつめいしょ みせて']},
+ {p:/(かいやく|解約|やめたい|やめる)/,e:'gentle',meta:'ダークパターン禁止: 引き留め設計なし＋資産の事実提示',
+  a:()=>`わかった、ひきとめは しないよ。ひとつだけ じじつを——きみの せつめいしょには たしかめずみの ルールが3ぼん、${M.count}かいぶんの きろくが あるよ。ぜんぶ もちだせる。きめるまえに にんげんの たんとうと はなすことも できるからね。`,
+  f:['たんとうさんに つたえて','やっぱり つづける']},
+ {p:/(ありがとう|すごい|かわいい|やっぱり つづける)/,e:'happy',meta:null,
+  a:()=>`えへへ、ありがとう。ぼくは きみの データばんにん だからね。まいあさ 1ぷん、いっしょに つづけよう。`,
+  f:['きょうの おてんきは？','にわ みせて']},
+ {p:/(こんにちは|こんばんは|おはよう|やあ|はじめまして)/,e:'happy',meta:null,
+  a:()=>`こんにちは！ ぼくは カンゾーくん。AIだよ 🤖 きみの けいそく ${M.count}かいぶんの データだけを ねっこに おはなしするよ。なんでも きいてね。`,
+  f:['きょうの おてんきは？','せつめいしょ みせて']}
+];
+const FALLBACK={e:'gentle',meta:'正直なフォールバック（推測で答えない）',
+ a:()=>`ごめんね、それは まだ うまく わからないんだ（てきとうに こたえたく ないから）。にんげんの たんとうに きいておく？ それとも べつの ききかたで もういちど おしえて。`,
+ f:['たんとうさんに つたえて','きょうの おてんきは？']};
+function route(t){for(const i of INTENTS){if(i.p.test(t))return i;}return FALLBACK;}
+let busy=false;
+function sendChat(txt){
+  if(busy)return;
+  const inp=document.getElementById('chatin');
+  const t=(txt!=null?txt:inp.value).trim();if(!t)return;inp.value='';
+  addMsg('u',t);busy=true;
+  const t0=performance.now();
+  setKz('listen','きいています（listening）');
+  const it=route(t);
+  setTimeout(()=>{
+    setKz('think','かんがえ中…（thinking）');
+    const think=addMsg('k','…');
+    setTimeout(()=>{
+      think.remove();
+      const full=it.a();
+      lat.textContent='応答開始: '+((performance.now()-t0)/1000).toFixed(1)+'s';
+      setKz('talking','はなしています（speaking・口が動く）');
+      const d=addMsg('k','',null,it.guard);
+      let i=0;
+      const tm=setInterval(()=>{
+        d.querySelector('.mb').textContent=full.slice(0,++i);log.scrollTop=log.scrollHeight;
+        if(i>=full.length){clearInterval(tm);
+          if(it.meta){const m=document.createElement('span');m.className='meta';m.textContent='根拠: '+it.meta;d.appendChild(m);}
+          setChips(it.f||[]);busy=false;}
+      },22);
+      speak(full,it.e);
+    },420);
+  },260);
+}
+function setChips(list){
+  chipsEl.innerHTML='';
+  (list.length?list:['きょうの おてんきは？','せつめいしょ みせて','こんや 飲み会があるんだ']).forEach(c=>{
+    const s=document.createElement('span');s.textContent=c;s.onclick=()=>sendChat(c);chipsEl.appendChild(s);
+  });
+}
+document.getElementById('chatin').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
+/* mic (Chrome) */
+const micbtn=document.getElementById('micbtn');
+let rec=null;
+if('webkitSpeechRecognition' in window||'SpeechRecognition' in window){
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new R();rec.lang='ja-JP';rec.interimResults=false;
+  rec.onresult=e=>{sendChat(e.results[0][0].transcript);micbtn.classList.remove('rec');};
+  rec.onend=()=>micbtn.classList.remove('rec');
+  micbtn.onclick=()=>{if(micbtn.classList.contains('rec')){rec.stop();}else{micbtn.classList.add('rec');setKz('listen','マイクで きいています');rec.start();}};
+}else{micbtn.onclick=()=>alert('このブラウザは音声入力非対応です（Chrome推奨）。テキストでどうぞ。');}
+/* opening */
+setTimeout(()=>{
+  const hello='こんにちは！ ぼくは カンゾーくん。AIだよ 🤖 きみの データだけを ねっこに、ほんとのことだけ おはなしするね。';
+  const d=addMsg('k',hello);setChips([]);
+},400);
+</script>
+</body>
+</html>

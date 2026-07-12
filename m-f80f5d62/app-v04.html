@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【モック】サービス体験 v0.4「ひとつのエンジン、それぞれの体験」5歳から80歳まで｜肝臓株式会社</title>
+<style>
+  :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--dk2:#16294a;--line:rgba(202,220,252,.18);--green:#9fd4a3;--pink:#F2A6B8;--pinkdk:#E2879E;--sun:#f6c453}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Noto Sans JP",sans-serif;background:#0b1526;color:#e8eef8;line-height:1.7}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center}
+  .mockbar b{color:#ffd27a}
+  .wrap{max-width:1560px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;color:#fff;margin-bottom:8px}
+  .sub{color:var(--gray);font-size:13.5px;max-width:1020px}
+  .sub b{color:#fff}
+  .kicker{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+  .kpis{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .kpichip{border:1px solid rgba(201,163,83,.55);border-radius:99px;padding:4px 16px;font-size:12px;color:#e8dcc0}
+  .row{display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .col{width:320px}
+  .when{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .when .tm{background:var(--gold);color:#20293a;font-weight:800;border-radius:8px;padding:2px 12px;font-size:14px}
+  .when small{color:var(--gray);font-size:11.5px}
+  .caption{margin-top:16px;font-size:13px;color:#c9d4e8}
+  .caption b{color:var(--gold);display:block;margin-bottom:4px;font-size:13.5px}
+  .caption span{color:var(--gray);font-size:12px}
+  .divider{max-width:1560px;margin:46px auto 0;color:var(--gold);font-weight:800;font-size:15px;letter-spacing:.1em;text-align:center}
+  .divider small{display:block;color:var(--gray);font-weight:400;font-size:12px;letter-spacing:.02em;margin-top:4px}
+  /* phone frame */
+  .phone{width:320px;height:680px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,var(--dk),var(--dk2))}
+  .phone.light{background:linear-gradient(180deg,#fdfefe,#eef4fb);border-color:#c8d6ea;color:#1F3864}
+  .notch{width:120px;height:24px;background:#0b1526;border-radius:0 0 16px 16px;margin:0 auto;flex-shrink:0}
+  .phone.light .notch{background:#dbe6f3}
+  .screen{flex:1;padding:12px 18px 0;display:flex;flex-direction:column;overflow:hidden}
+  .screen>*{flex-shrink:0}
+  .status{display:flex;justify-content:space-between;font-size:11px;color:var(--gray);margin-bottom:8px}
+  .phone.light .status{color:#7a8db0}
+  .appbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .mk{width:26px;height:26px;background:var(--navy);border-radius:6px;flex-shrink:0}
+  .appbar b{font-size:13px}
+  .date{font-size:10.5px;color:var(--gray);margin-left:auto;text-align:right}
+  .phone.light .date{color:#7a8db0}
+  .foot{font-size:9.5px;color:#6d7b93;text-align:center;padding:6px 0 8px;margin-top:auto;line-height:1.6}
+  .phone.light .foot{color:#8fa2c0}
+  .tabbar{display:flex;border-top:1px solid var(--line);padding:8px 0 20px;flex-shrink:0}
+  .phone.light .tabbar{border-color:#d5e0ef}
+  .tab{flex:1;text-align:center;font-size:10px;color:var(--gray)}
+  .tab.on{color:var(--gold);font-weight:700}
+  .phone.light .tab{color:#93a5c4}
+  .phone.light .tab.on{color:#b8860b}
+  .tab i{display:block;width:20px;height:20px;margin:0 auto 3px;border-radius:6px;background:currentColor;opacity:.28}
+  .tab.on i{opacity:.9}
+  /* ===== avatar (カンゾーくん) ===== */
+  .avwrap{display:flex;justify-content:center;margin:4px 0}
+  .kanzo{width:110px;height:100px;animation:floaty 3.2s ease-in-out infinite}
+  .kanzo.small{width:72px;height:66px}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .kanzo .eye{animation:blink 4.6s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+  .kanzo .eye,.kanzo .mouth{transform-origin:center;transform-box:fill-box}
+  .bubble{background:#fff;color:#1F3864;border-radius:16px;padding:11px 14px;font-size:15px;font-weight:700;line-height:1.7;position:relative;box-shadow:0 3px 12px rgba(31,56,100,.12);text-align:center}
+  .bubble:after{content:"";position:absolute;top:-8px;left:50%;transform:translateX(-50%);border:8px solid transparent;border-bottom-color:#fff;border-top:0}
+  .bubble small{display:block;font-size:11px;color:#7a8db0;font-weight:400;margin-top:2px}
+  /* big controls for みんなモード */
+  .bigbtns{display:flex;gap:10px;margin:10px 0}
+  .bigbtns div{flex:1;text-align:center;border-radius:18px;padding:16px 6px;font-size:15px;font-weight:800;cursor:pointer;border:2.5px solid transparent}
+  .bb-yes{background:var(--sun);color:#5a4200}
+  .bb-no{background:#eef2f8;color:#7a8db0}
+  .faces{display:flex;gap:10px;margin:10px 0}
+  .faces div{flex:1;text-align:center;background:#fff;border:2.5px solid #dbe6f3;border-radius:18px;padding:12px 4px 9px;cursor:pointer}
+  .faces div.sel{border-color:var(--sun);background:#fffaf0}
+  .faces i{display:block;font-size:34px;font-style:normal;line-height:1.2}
+  .faces span{font-size:12px;font-weight:700;color:#1F3864}
+  .voicebtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:2px solid #c8d6ea;border-radius:99px;padding:10px;font-size:13.5px;font-weight:700;color:#1F3864;cursor:pointer;margin:8px 0}
+  .voicebtn i{font-style:normal;font-size:16px}
+  .weather{text-align:center;margin:2px 0 6px}
+  .weather .wico{font-size:64px;line-height:1.1}
+  .weather .wlab{font-size:20px;font-weight:900;color:#1F3864}
+  .weather .wsub{font-size:12px;color:#7a8db0}
+  .camlite{height:170px;border-radius:18px;background:radial-gradient(circle at 50% 44%,#dcebfb 0%,#c6dcf3 60%,#b3cdea 100%);border:2px solid #c8d6ea;position:relative;overflow:hidden;margin:6px 0}
+  .facelite{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:92px;height:120px;border:3px dashed rgba(201,163,83,.9);border-radius:50px 50px 58px 58px}
+  .scanlite{position:absolute;left:14%;right:14%;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 2.6s ease-in-out infinite}
+  @keyframes scan{0%,100%{top:24%}50%{top:70%}}
+  .countbig{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:15px;font-weight:900;color:#1F3864}
+  /* garden */
+  .garden{background:linear-gradient(180deg,#eaf6ff 0%,#dff0d8 78%,#cfe8c4 100%);border:2px solid #c8d6ea;border-radius:18px;padding:10px 8px 6px;margin:6px 0}
+  .glab{font-size:12px;font-weight:800;color:#1F3864;text-align:center;margin-bottom:2px}
+  .plots{display:flex;justify-content:space-around;align-items:flex-end;height:96px}
+  .plots span{font-size:11px;color:#5a7a52;text-align:center;line-height:1.4}
+  .plots i{display:block;font-style:normal;text-align:center}
+  .senior-num{text-align:center;font-size:56px;font-weight:900;color:#1F3864;line-height:1.1;font-variant-numeric:tabular-nums}
+  .senior-num small{display:block;font-size:15px;color:#54689a;font-weight:700;margin-top:2px}
+  .bigline{font-size:18px;font-weight:800;color:#1F3864;text-align:center;line-height:1.8;margin:8px 0}
+  .callbtn{display:block;text-align:center;background:var(--navy);color:#fff;border-radius:16px;padding:15px;font-size:16px;font-weight:800;margin:8px 0}
+  .famcard{background:#fff;border:2px solid #dbe6f3;border-radius:16px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .famcard .txt{flex:1}
+  .famcard .nm{font-size:13px;font-weight:800;color:#1F3864}
+  .famcard .st{font-size:11px;color:#7a8db0}
+  .famcard .wx{font-size:26px}
+  .notice{background:#fff7e6;border:2px solid #f0d9a8;border-radius:14px;padding:10px 12px;font-size:12.5px;color:#6b5518;line-height:1.7;margin:8px 0}
+  .notice b{color:#4a3a08}
+  /* device cards (beyond screen) */
+  .dev{width:320px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .dev .art{height:150px;display:flex;align-items:center;justify-content:center;font-size:58px;background:linear-gradient(160deg,rgba(46,116,181,.25),rgba(31,56,100,.45))}
+  .dev .bd{padding:14px 16px 16px}
+  .dev h4{font-size:15px;color:#fff;margin-bottom:5px}
+  .dev h4 small{display:block;font-size:10px;color:var(--gold);letter-spacing:.14em;font-weight:800;margin-bottom:3px}
+  .dev p{font-size:12px;color:#c9d4e8}
+  .dev .ph{font-size:11px;color:var(--gray);margin-top:7px;border-top:1px solid var(--line);padding-top:7px}
+  /* live demo strip */
+  .demo{max-width:1000px;margin:26px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(201,163,83,.5);border-radius:20px;padding:20px 24px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+  .demo .dright{flex:1;min-width:280px}
+  .demo h3{font-size:15px;color:#fff;margin-bottom:6px}
+  .demo p{font-size:12px;color:#c9d4e8}
+  .stbtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .stbtns button{background:transparent;border:1px solid var(--line);color:var(--ice);border-radius:99px;padding:7px 14px;font-size:12px;cursor:pointer;font-family:inherit}
+  .stbtns button.gold{background:var(--gold);color:#20293a;font-weight:800;border-color:transparent}
+  .legend2{max-width:1560px;margin:44px auto 0;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:24px 28px;font-size:13px;color:#c9d4e8}
+  .legend2 b{color:var(--gold)}
+  .legend2 ul{margin:10px 0 0 20px}
+  .legend2 li{margin-bottom:6px}
+  .legend2 table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+  .legend2 th{background:rgba(46,116,181,.3);color:#fff;padding:6px 9px;text-align:left;font-weight:600}
+  .legend2 td{border:1px solid rgba(202,220,252,.15);padding:6px 9px;color:#c9d4e8;line-height:1.6}
+</style>
+<style id="brandlogo">.mark,.mk{background:transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAADnRuK4AAAxiklEQVR42u2dd5gkV3nuf985VR0m72xebdDuKiOEUBYSyMRrQMYGM4BJF/Al2oCNMTcYkAX29b3GBgQmmBxElC1MFEgY3QUJFEABpFVaaXPemZ3YqarOd/+o6u7qNLMrbZT6PE89011d1VVT5+33y98RHvW4wnAZhnVXhtU9ay5+y6IQLoDoYpSzQdeIskiFPoEM3XGkhipURJnAsA3lXjC/dNb9YuvNn7u3dtTIiOWaMxSudI/2QvKozhkZMVxzTQSw8tK3ziMKLzcqL1H0aWLMIhGDqgKKqov/ne448kMMIoKIASCKwpIgdyBcGwSVb+/49Ze21oF0jQP08AIovlAEsOaSN62MVN4mqq8V6y9FFXUhqpGi4kAFQZJLSHc2jw4TgSoqGs+HMcZ6IBYXVSYF+bpxfPiRW//1oeb5PfQAuuwyj3XrwoVnjPT1DA69W5B3iPXnaRSgLoqIsWI6fWcVRl0kHXbExLDp9LGqKjgxxjM2g4uCaUE/NjMx/g97118zXZ3nQwkggSsErnQrLvzT51rjXSXWO91FFdS5UAQL0vI9ImCSvZGrboLTrkQ7bBJLwBrFGvBM/F4VnHbQk1QjEeMZL4u6yn0udH++5bbP/YwrrjBceaUeiEiTORXlRMFaddGbPiDGvA/ARUEoIrbd+VXQVEIohYIqZD0YyDsG8kpfTslYbQO57nisWnM5FCaLwnjBMFUSIge+hZwfg8q5tohQVY2M9T1QNHLv3XzrZ/++ef4fBYDik5eee3mPn1n6VWuzL3Fh0aFQ08pSw5qYZWbKggDL5kU8ZWXIU1cGnLwkZEG/I+93gXO4R+RgumTYOma4a4vP7Y9keHCXRzGA3qzi2/iYNjByiGC8nImiytf7Jva/fv36aypzgUhmA89JF7xqIDA9PzBe9ukuLAYgfjvGUWC6JOR85aK1AZefXeLslQHGwJZRywM7PTbuteyasEwWhXIodKXYIRZfxEwz3OdYORxx2tKQ05aGDPYoG/dafnBXjp+uzzA6bejPKUbaijYFDY2X911Y/s/C5Pgf7V1/zfRsIJJOOs/yi9ZnLUM/MV7m6VFYCqQNeKyBQiX+imedXua1lxRZvTDknu0+N9yT5faNPjvHLaWgDjZjwHTn+7Aoz1V9x2n8rOf1OJ60POT3n1zm0lMqTBaFr/0qz/fuzFEOhb6stmUjRQPr5XwXBesi7X3+tls+XEqgoXMBSLjsMsu6deHKC994rfWzL47CYgt4JLGmJovCqUtD3vncGc5dHbDu/gzfuCXPPdt8KhHkfPBtLH+rcro7Dj8VSfKsQwelIDZcVi+IeNmFRV701BKP7PH48I97uWOzz0Be285NDKK878LSDzff8tk/YORlpp2vyLb4eX70o2jVBW/4gM3m3+zagKdKfYWK8NLzS/zvl05RCoUr/qOfL9/Uw94pSz6j5DMx21RvThPTsrsd5i31rI3EBkzWh/0Fw7r7M/zq4QznrAr4b79XwDnhN5t8jMTSRBtwKFZdEFg/f9rA0msXTFx/9Q+57AqPzetcewAlTqRVF7zhmeJlvqBRJQTx0ixlBMIo1ub/+gUzvOn3CnztV3mu/G4/W0Yt/blYSdOuqX7MiTbPQj4DuyYs1/0uRxDC255dYNWCiJsezBBEguc1z1sMIuPnLupfdtamyZs/cicjI5b167UZQMLICEunT81bj+tEzDAuarC2quARgQ/+8RTPPqPM+/69n6/9Kk/Wh7wfM1MXN8e2qZ/xYjD9akOG+3Z4vO7SIuetDlj3QIZixcQE0GQnqVMnYv5L//Kzvz15/dVjsVK9TqGqz46MGK680mW86D3Gy63VKAjT4BGJTT+ncOVLprhgdcDbrx7kx7/LMq9XMXQwDbvjmBtVR+5wr3LzQxne8qVBVs6P+KdXTJL3lSCq+/Jqs68Rxni9Bj4DKCPrJcVAVxjWf1JXPO0NywTzddXIS4DVILoKZeGvXzDDs88o886vD/LrjT7DfdoFznEMpJ4MbB+33PKwzysvLnHWioAb7s2CNIFIxKgLQ+vn1g4sPevhieuvvrsqysxll2EANZF5p/GyfTjn0uCxJra2/vj8En98Xom//U4/tz/iM69XCaPuRBzPI3QwmFce3uPxV98Y4JxVIe983gyFxBncZN0ZdaGK8PeLn/vqXq75tgPEbt68zq05902Dat0XUc2n2ccIFAPh5MUh/3tkiq/9Ks/XfpVnXm+XeR5vTLRpn2XHhOXtzymwc8Lw260++UxaqRbBucj4uXmmyO6J7X94K5dd4VmA/pVnj1g/92qNAtcQphAInfC3L56iFAhXfrefrE9XU348gigL92zzGOpxvOaSIuvuz7K/0KRUS9Wyc6cvzF366bE7/zE0CbZG4gwwafAyT5eEZ51e5twTA666oZdSIHimi5/HK4h6s8qnb+xlbNrw58+ZIWpRUcRoFDlrsycGwzPPB9QsPfdNC4BL1IWS5PNAYlXlfOW1lxRZd3+G2x/x6ct1Rdfj2cT3LUyVhI/d0MvTT61wySkVpstScwjXXEsiijGvBjB+xl0kxpuvGmlN9zFxVP2itQGrF4Z845Z8HI7oUs/jekQO+nPKTQ9muPXhDK+/tIBvFecalGmrUSAozzzp0tcvNDieJmKI01BrGEOAy88ucc82n3u2+eQz2ikxqTseh+Orv8xz2tKQC9cEFCqSNutFNXJiveFK4D3DIHq2pqhFBMphnM9z9srYL1BpcS51x+NboVbu2uJzz3afPzyn1Cp5VFREEPT3DMgaVEHUVE33cig8ZWWIEbh9o0/Op8s+T6BhBIIQrvttlnNWBayYH1EOpZ4MKCpJ1c05RlQXqTb4DlGFp64M2DJm2Tlu8a12g6NPMBbK+cptj/hECuedGFAO0lJIhBgzJxoV+hJ0SFWRynpw8pKQB3Z5lAJq+Tzd8QSyyLw4cr9ht8d5qwOQhki9qCoKwyad7yMJgAbyjgX9jo17bPdpPpHFWATrt3usXRzSm1EibbbmyTZyi8SlN4N5Je8ruyZsnPPcFV9PyCECj+z1mNfjmNfriKKWAq7G6gpJ5F9vziESB1FNV3wd5Uk8OuavKliBPVMGz8JgjxK51iCraXdiJpFc5VC6CfBHeUSRO2qlUEagmBRN5P32fkDTibpiKdcdR5N5jAiDAz04p5hZHHGHk6WqoOl0iS7BHKPgGd0/yfKlC3jPW19CsVShWKx0BEoYHb3ErC6AjlHl9ekXPIn3vPUlPP2CM3jvO17GihMWJC1zmvQUa1g4fxB3lDy9XQAdY0MVjDGc/5STOXn1UkqlChefexonrVqKc3V9SASCMGTR/EH+7LUvoFwJMEfB4ukCKLE+09vRZp8wjPinf/0O//dT1zJTLPPf/vrj/GTdnVhray4Vz1pmCiUuOf90XvXiy1ixbAGlcmVWXakLoMcAECOCFcFL/hqpm6QOiDTe3AGec7jvd8HwAD+/9V4+8NFvsXvfBEODvTUR5nmWmWKZZYuHecurn0826/PuN/8RM4VSTfk+UsN7PAKmARyqBE6puIjQKQ5FEDwj+EbwjcGTur/LKYSqVCJHoEroFEUxIvgi+NbgpyYpLtzTQ2qxVr8rDCN+89sN5HMZoshhTHzdyakC2azPxz/4Jk46cQkTUwVe/qKn89DGnXzoU9cyONBLNuMTOdeiN3UBNAtoDPHkF8OIUpI62etbFvVkWdGX58T+PCv78izrybEwl2HQ9+j1LFlrsKlmWCXnmAlC9lcC9hQrbJspsXm6yJapAtsLJfaVAgph3MQrY4WssfimCqhDmzfl+x6qigAzhTLlSsC5Z53EP/yP13DBU05mcroYM1KhxHvf+TKWL53PP37qWnbsHqO/N4/v28MaSfAeL6CZDkIqztHv+5w6r5+nLhjg3PmDnDnUx8reHMMZL061lJSgkOafvdZrgasabapfnFMYDUK2The5b3yau8cm+d3YFBumCoyVgziKbQ05a7AiuIQBH5tSrYgIUeR4xoVP4i2v+X2efclZhFHE5HQRm0S6RYSp6SKvf9mzGXnhJXzr+zfxhW/9lC3b9+J59rAx0XEJIJuIj0IYUYwihrIZLlk6n2cvm8/TFw1x6kAPuUwmTvL1PDTjE+QyaC4LuQxkM0jGQzwPrKn5V+LugQ6NHIQRGkZoEEKpDNNFzPgkC8qGhT1Zzlk8j1epEgURW2aK3DU6yc17xrlt7zgbpooUwpCsNfQkYIp49CkxVRBt2b6X711/G9mMzyXnn461pvaZc0ou61MoVfj+T2/nZzffzcTkDMbIYRVj3vEGHKfKRCVEBJ403M+LVizi+Scs4PShPujJQU8O199DMNAH/b2YnhyS9fGsrSe0tLBNkg5uTb2lSBhBsYROFdAoQgUUIVDQKNEtNG4usLq/h9WDvbx49VIK5YB79k9x464x/nPnGPeOTzMThvR4hryNY0TRo5hQEdi2cx9f/rftfOO7P+ftr38h//PPX0q5EuKcI5fNsHd0gre//zPc8PO78X1LTz6LPcymvXfcAAdlvBKQtZbnLV/Aa9Ys45nL5pMb6oPBPsJ5g+i8fkxvHvG9+B9zChqzCWFUE03V6ZNqxysRiEJ0ogTj0+j+SXRiGmaKcWpetWOTMYg1SFq0qVJRxQVxP+yMNVyweB4XLBnmXWcE3D02xY+27+XH20d5cKqAAv2exRMhOkjlO5PxyOUyqCr/5xPXUgkiPvBXf8JMsczUTJHX/sVH+fXdG1i8YJDIaVJk/AS2wkTAIEwGIZ4x/OGqxbz5lOVceMJCmD+IWzBEZf4gpicfW0XOQRSDpZYilzZpq01zEr1BKwE6WYD9E+j+KZhOAIPGiQrGQC5Ltd2yVNuPCKhKDYoCWBvnvbjIUS4HOOewAucN93PegkH+8rSVrNszzjWbd7Nu935GKwF9niVrzAEDSbUaXBWWLBriE1/+ERedcyovfNa5vPvvvsRtdz3IkoXzqAThEZujYxZAngjFyFGMIp61dJh3nbGKp61aAouHCRYPw0Af1lo8F0G5Ukdcuq95VVQJYGycvFIJ0MkZdHQCxqegVEadJmg1cTem6mzVRJ3UvWZa/8oahjTpfQNITw6T8bDGoJGjFIRoqUzeGi5fMszlS+axfrLANzfv4Tvb9rK1UKLXWvL2YIAUo9iI8OVrfsaTTlnBv//wZoaH+o8oeI5JAFUdeKPlgNX9Pfz3J5/Iy09eDssWEixZgPT3YJWYKYIw0Wuq/v1qaZtLRJSpt4+dmED3TaAJaFDiz3wvPrtNh+4aQNJAqaGnejlBwwiZ14+sXIL05uvWnoJ1Dg1CtFimPD4FoxOcYQwf6M/z1pOW8a0te7h60y42TBcPCkhR5MjnMty/YRsf+ez3KFUC8rnMEY+JHVMAsiJUnKMQRrx67TLef/ZaFq5cQrhsITrYh1WFUiVhmoRtIm1Nk6sqw+UKOjYZs81MMYk+GsikWCaNXJUYFQkwRLXWrVtJfZYGUuRi1jljTZxIHIb1bpfVVAjfg4yPN9QHK5cQTBWItu1m8a5R/uKUE3jtiYv55qbdfH7jLh6eKdKfiLZwDmXbWsPkdIHv3RBbZkcjoOodSyJrKggZyPp8+PzTGDltJbp8EeVFw3hGMOUUcDQFGqnrIthYIdaZIrpvAvZPQhDEYPLaNNSvva/rNg3Z4ykDTZQ2SwgkbJfxwfNiRqzeT/q+FHBRjeVMXw/mjDVEJyyivP4R+ivTvO20Fbx8xUK+tGkXn9+4i52lCkO+h0mU7blF2oHolIfepD8mAOQZYawc8JThAT510emcduJSKssXY/ryeGGYzKDURVTzwhsmYZzpIrpvP0xMx2LLs3W2oa4bNSz/oiTskgZSCqTaiJpG3SdpPjhdgPFJmD8U62PN5wsIkpxXVfYV099D5vwnEd71ADN7xhjMePzVaSt52fKFfHzDdr6+ZS9l5xjwLe4xhkskEXuHOtjqHQvMs68U8IIVC/n0haczcMJCyicswvNsLK6MQdLASbOIEbA2VoT3jcdKcZwk0wAcabvSS11vkrTSI4nDL0UgNIiv+sv0fbgN2+J0inn9MRNp6uIJmKQKgur9hBFYi3f6apiaIawElEPHCbkM//iUtYycsIB/eGAbN+6doM8zByTWOlmzzimDAz0USxXCQ9gZzBx18JQDXrlmKV+99Ez6T1hEZdlCPNV4sQ1VpLpSi0u26vtq4GrXKPrwNhibjFnI9xLQxZRd8/XU/prU+9Q+qb8XE6+xJbVjJKV3xZuk3xsDUYS7byO6aWes//heY0GdNonJ6sxGEfTkkN4exCmeFSqqzFQCzp/Xz79deBofPWs1A55lLAixB5kRICJ41jIxVeCtr3k+J61awkyhhO/Z4xtAVfC8as1SPnnh6ej8IcLFw9ggqvcSjiLURbHnt7o5F4uCqQK6aQe6ZyyeEN9LqCY1uWlHYQNIpAOQpPGY6mJt0gwgGkFU9WKLoFt24e5+EN28Ewql+Ht8L9lsbBlWfVGeB7lMrORPzcTiMIGXJ0IhiihHjv964mKue9oZvGTpMPuDkFC1Fs6Zi3mCMGTbrlGe+/Szednll/DGVz4P61nGxqePXxHmiTBWCXjRioV87MLTCAd60UXzMFUfRsNkpRRmY+L3+8Zjc7zKOKknJk2T3OAb6iTKNHEB1KywtPyK0z/aLitBWrdJZj7jQxCim3fhtu1BenPQ1xP/zWQQa+NLRhEUy7GVuHNvkr0uDdI1cXcyXQlZlsvwuaeexLMX7OXKB7axLwgY8ryOIi0mN2XpomHe8frLGXnhJUxNF7n4nNP42lXv4nPfvIHb7nyQ6DF6q484gKzEnuVzhgf45MVnoCK4oX5smMSXqr/8NJAg/nVWKrBvPNaN0lZVi1ih7h+qfdakP6WU6LT11UnFaFCJmtzDIqnPqk7JjIc4h07OwP6ppAGc1L5IIwdRGLshbMJK2q7RtuAJlJ1SUsefrFzIBfP6eM+9m/nPfZMM+zFrubZ37LDW0Nebx/MsQfID7clnyWf9Q5J+eURFmAAV5xjK+Hz64tPp8zxCBaOKhlFdv0m/rlYczBTRHfvq4KGTTkKLKJK0DlMTa6Yerkh9Lg1iLc1mNOo9NAK05X1VW/Zs3N070c1qqBViEZbxGomnDcarbXetCJOVkBPzWb557sm8Z+1SpiNHpY1IU1WstWzbsY93f/CLvPdDVzM00Msd9zzMy9/2Ib7zk1uJDkG7uSPKQEaEmSDkw+eewklD/RQqAX4m6R2TrJqJS01c1bczXUD3T8W7qoqpNLlzJB376gCs2mfNLNJkZdHaWLImzpSUJZWOzHZ437I8SQot6db+whyv4xfVEI8A/+uU5TxloIe/Wr+ZsSBiwLMNIk1V8X2PZUuG+e71t3HZRWdy7XW/YqZYYsG8foJDYI15R1J0jVdC/mjFIkbWLKVYCfCqIHFR3W8iIJpSTKeL6OR0nSma50Jo/fU3K9NCqxJMkxNRm3SbgwRKw/HaCG7VDnKwARyN1290OLX+EFWViSDghYvnsbYny1t+t4nfThUY9r0WEEWRY6Cvh49/8YdMz5To780fEvAcMREmxFmDQxmPvznzRJzTuo6jmoisZHMu7oDtFArlOK1CmusmmsRG8xw0l1e0mOCJqW7aWFlziaYDvf5sD2POp9WBKVOni8TGyEQQcnJPjmvPPYnfXzjIvsTUbxVncbFiEB7aYKs5UuwzUQl5zeolrB3qoxxG9coB1biPSCoVA+egUkGnZg5s1fBZHnTzxNbn3dQZr8PkywGD4eDv7zEd12TRTkcReWP40pNX84YTFjAahC0VJLF/9dC36zFHgn0qzrEol+ENa5cRhVEthVRqAAoT5TlWnDUM0ekk+HkoC2m0wxs90HM6fXZ0uwhYEQKnlJ3jw6et4N0nLmY8COvS+iBjZscUgIwIU2HEC5YNs7K/h0rkME2PXSuVOP84ivOQKZRjQEk6opnemuZMWye2YW7TpzmN838Sz7Y6raWnonPgqgWAHe7nYEA42/frgX+VSVJuJ8KQ965dyvvWLmUiiB4tsR07SrQCGWN48fKFHTpVSbI2YzmOYVXXpjbSXnEVGidtLiU3PVKtIBtuRbVpub/URtNrtNVfo51nWWf5rD1CtSN45kKSJA9kPIj4y1WL8YArHt7JULJegR5vABKgFEWs7ctz3rx+wjCq1V/RLJ3COEKNEbQ53qONDmPaGFEi7SSTNv36avmorV9AI4gaWClNCtpmvql/xYECq4VV2/64tIOYbL5o4zM3wP4g5O0rFxE45e827mIoqS87rgBkRChFjvOH++nN+hSDMK4SEG0PonYP+0AYpqObWBpB1HA9bfEo1/SEhkVeO7BRCyO1A8RjZ7BObDOX+mUTEL1r1SJmIsc/b9nDfN97VBUhR12EnTuvj3ZEcFBASYkeaRNj0BqFt4021GJqok0dk9KVGg150K0A0uZEM51D32pHHO2OT99niw4225el7ruDBNgfhPyvExezrxLylV1jzPe9R5USclQA5FTJW8Mp/T3gXKtYqjqBOwIllQek2v4JaXtc1r9EWqVV8/c150OnVw1uEWnaeWMOluoo89od24FtOsy9tqGkqq07HUX8w9ol7CgH/Gx8miHPHjImOmxWWDVduc/zWJL1Y8snPQGz0rumAputa4Zrx4lMGh04rS8OqlWLK/mr1deprbqvemztPK1bbR1Ao+3WNKdVojUylDZ6wNuJM23Vf3RWvai97l2dBwWuOnkZp+QzFCJ3yJauOKxmfKTKgG8Z9G1r2kCzCNA2D5jZJo568noLIFIT2wyMlAlf39odo6g2gokmYDaa/zq7vpTs66RsdxRf2hYnbfanxWs6/TVeFLkUKQt8y4dPWkbGSFyLcEwzkCQA8iw9SfGczELvDcprWl+YRWS0MoNrYJ2YPVz9OOfaA87VP9MEOKpNLNaWeZj9s2bdp4F95hJ9zeKrAyM1pKBoi2uieqQVmAgdFw/kef2SeUymowHHJgPF3Sn6PEumWuDf/Es7oF/ubCIrnqwGkLk0k7gmMCWA0tTmXA1k2iLumkDX7nptmXEOXUkb6bct+zSwcR0I9WO1RXbpLNasEvd9ngodf7JwkEUZj0D1MbPQYdWBVJWcMXWdtUbjzaZy9RkcgMjqyEauSe9pI8JcZ3FUE2fN57pZrtFRH2ojupr1pFn/Z+rirhP7aBvDoo34Su8X4sS0FVmfs3pzcVrIY0TQYbXCNAn2NZgJOhviJGVJtU8ilU47JWXSisSVHA0pqrQpp5jFuaLpX7y291gfoJU2JyulLK9G3Wdu9mnLSE3iK71fUXwRlvgeEXFK7mPxUR8BP5A2FOg1RiG0Y2yz0z9WK3dv7oqZAlK6nD32AqSL2eeAvDb5Vjo1nkpZfTR16zhQ5mz2dqffK9q4ryP7NO7TZpNMGzWG2L0CE7WYpB6bDFQNLwRV3aGNw0uROtu4lB++rU+HhlQZrZ6dchLWkNPAPk2Fg01eks4mzmzgoUkszeJ4PChWoslSq099e/bRBrB1ZJ+ULplB2F0JuWu6SM7IY27H5x1O7jHE6Zeh01pQQdo4yRrYxqVA0iZvq+EHls67amKgVtHVnOijc0fB27FQM3BoD6C5wdO0j1aR2eIdTzONzqH7NLGPQ4lUme9bPrRtH9sr4SFxKHqHET8YgakwouQcfmKJqUgSCtPZdZsOkY0GoNQeep11GqpYq7Iu3eYFaR8F1w6u3bQuNIsoq7sjOjPSrOBpAmVadClpcdkkblVbmaZ+Fk4V55SsEYZ9wyd3jPHZXfsZSLqAHLOhjNhsFCbDiJkwYjgTV2AImkgXaQKRdIxlVR+oSBPdtLBOKu6lSSmPpsMhByDzm3/tbRlJ2yrWOgsjdWIlbZj4ZvC0Ybt24kzTyWKaGJWx1dVjhKw1bC5WeN/2Ub6+Z5zeQ7gE5eEHUBAyVglYmPGpqMMmM1kljVmtrBa9py6R4n0pXaehoUHyINM5HgeUfqqt4QTagaeRjbQTaGgC11zg0Wbw0KQXpZgwJe6qh1Xbu+QEcr6lGDp+N13iB6OTXLtvkp2VkEFrZgupHVtWmBWYDh3bixVO7+9JRFidfVTa60Sx5Gnt+1PVbTTdsCANIpo6eKQj7weTftox0DqHeU87XajZ+8xBgKcRKOl70OR4l4AzK4a8J4ROebhY5j/3T/OT0Snumi4xHUX0WXNIg6hHBEBCnKv78EyJ59SoWdCqiKll62iLItyYutMaVW/ILEzhplWBpqmupr1C3taXQCt4dA42agRFq9+oPUgOADwpXShKQOMBfdYiKFtLFX6xf5rrRqe4bbLAviDEN0KPMQz7Hk71kIPniPiBRGD9VKHhQVWtLqXOIDWzvNlJlq6aqAGpVXRpkwhr6/uROZyZ2sEn1FEPaq9YaydnY7NSfhDgqSrDVb0mI4bRSsi6sQl+tG+SX4xPs6McJ9L32hg01a750fHaJ1pRMka4d6pIMUjSWZMHKQ2JYG0srlT+syaUJM0MlD65QYSRACr1rSIccCvUWayxtkBqBk4DI6WcqTS9b/KPtQOSKoTqyIgw4FkqzvG7qSLf3zvB9aOTPFQoE6nSa02c+3wEQHPEAOQUssbwSKHMpkKZk/tylJxianxT9Ucn3qAGNmpWpFPmelP/who4mn0/tBNjB2gBtJj37cGjc7FRs5+mw7nNoFJVosT87rceo5WA7+8e59927+e2iQJTSS1Yv2cQ5LCJqKMuwjwR9gchv56Y5vT+PE4jBNOo/9QaWabZKKUbtWGddEsV0WZ/T5PvR+WguRPtpFRra6ijHRvN4kPq9Fl11Z/IObJi6PcNW4sVrtk5xrd37+ehmRJGpCainFYXdjl6dWlHpDZegP+3b5JXn7CgwSxNi7Gq0q2p5t0tQNIUm6SaWWqDCEsA1cn3Ix20aO3sE9IDEmGpkEI7cQWNfqJmZ2HCIBYY8j22Fct8eeMo39g5yrZyQI8xcWXFERZRRx1ATpUea7h1fJpthTILsz6hagosdQdinYHaAak1itWgWKdEmDZE3hstL+nwi9VOL2YTYW3YpgFM2p61mhnJAZFTBj3DTBjxiU27+dete9lSqtBvDQuSaopjBTRHFEDVwsId5YAbRyd57fIFTIQOm4qBacPrtOiSVKAwDbR091NaHIiNYksbAKRzBU3mCnOkY046t8XWUZRVPcYap5wO+ZZ1o5N8cMMOfj1RoM+rAyc8BoFzREWYJn1trt29n1csHa45D9uJLmjfBYVZ9zWe0VJ82MnXc4AW2Wzs1BE0nRgnJcoip+Rt7Pz72we38+mte1BgQebYB84RBZDT2Ddx2/gMt41Pc9G8PmaimIWagURKeNUYJxX3aDwmdVzaudgxNnKQ1NnGuagdxFtjes7swCEBx6BneaRQ5p3rt/CL/dMM+zZedPc4AM4RBRDEVaplF/GVHaNcMtSXWme0UQeaDUgtLKSNMbLGNrratt7swIFDa3oEs4myzqzUrDwHTpnnW24em+Yt6zezsxywMBMX/B1H2DmyAIpU6fcs1+2d4NcTM5w90FOrT+oMpOaJrPp/Gi20RrFW39dS9SIHBpxOZr22sdAa92sHVtLUc4B5vseP9uznreu3EDhlqKk13fE0jmiTTStCwTk+sXUvNrHQ0knl2hQGiKt0GpPVtWlrrtOqVldop2Pd7LVkbTdHS+WHVn0wNUXe1fZrquSodj9AJYzIVSr8x469/OnvNtYqd8PjEztHloGqLDToefxo7wTX75vgefMHmYiipCWbzqEsNy7wRosulBJdHdjmUc1T2+T0pGDAOaZmini5DBnfpyE5vkkURpUALZS4fWyCv9+8izByZIylUmu5Z+J2e48xyf1xDaDq4zQi/J9Nu7losBebNIyUFu9zE0C0qR+CtOpCLSqJzObaPABodegw5RSy1vC70UmGSmUWBFmKvo/J+Bhr6kFhp3FD8SBgulDil6MTfGnvOLuckhMhSgohFSCSZGkGG2/HCZiOOICcQp813D1V5Kote7hizVJGgxBPTIsO1Jlt2inWbR62NjueZQ4u0lkd09XJtiLMVELeeO9GFgm8bel8zurJ0ed78VplyY8iiBzj5QoPThf56fgUN06X2J2kYbQDs6qiUQBRiIjBWA8x9pgG0lFZ6iDUWHH89LZRLhns5Znz+hkPIzwj7Z2GTV7pVhaSWsf4tpBoF72fw/fTbnfcbdbRn/H5yIZtPDhdYJtnefPDOzgzl+HJPVmWZzxyIpSdY3clZEOpwoOVkL3OgQj+nFCoLkHuiMJyAqRMAiTtAij9mETgrzfs4LtPXs2CjEfJJR3Xk8zF9qKrneXVXrQ1XE1no5YDE2dhYknesX+KT27awaDv4UlsWd1ZrvCbUhkLeAn8XXJpK1IrsNSDfEqqShSWMdbDWP+JbYU1iDKgxxi2lir82fqNOBcHEqOkscGslleTNdRoMensXcbm3Ggpz1EXp45a4pZ971n/CMXIJUt3x/9Pjwh91pAzBs8IvhGyRsiJ4MFjzkN2UYCLAg5vy8zjCECxKIMBgRtHx/mL+zeRN3HJj0vlE2tzDx7XamK3gMDVXQI6m3k+60aDm8A5R7+1vP/+zdy6f4qBpvxiR33lgvTmDpngEVwUxi1nuiKsPgIXMT/j8c1do/RZw4dOWcV0FMWL2DRYVp2dhu0V3vrCuI/CCd3gEAxVmZ/x+cSmHXxu626GM/7Rc/ypA7FdANWAIIbIhcz3PT63fS9O4R9PWUHZKYFziU5EIxCaCk1bPm/nx3mUoYxQlQUZj69v38P7H9zCgBevX3o0n1eXgdI+IeuhGhG5iPm+xxd27GV/EPLRU1fRaw1TUYTfVgFtzVhUafzssXgRq1WdCzIeX9u+l7+4byM5a46iQa0YLxMv0XAMWWPHBJytl0WMR6SOBb7Hd/fu56W/fYgNhRLzPUvolMi51kZSbRVo5mwCNdcWOodRZZ5n+dimnbxj/UYyxnB0DOn4isbLYIzPsWbKHzN8aL0M1ssSAsO+5e6pAn9094N8becog9aQEyF0LimkY1bLrJP1NtfmNBab1brxd963ifc+tJUeazC0WxXw8ANHjMX6uWMSPMeEDtQglIyHZyzOhQxIRCGKePsDm/np2AT/fdVSTuvNMx1FlJ3DiGBacoBakqw7+qDSh7hEXOVMXL150/gU792wjTuT9bce65rtBwsaEMR4sSdazKOTwU9EANXo2vhgPLLWkVPH90YnuWl8mtctnc9rl8xneTZLUR2lRGQZ2i+H2glItQavyfu8MfR4ho3FCp/atoev7tqXtELxjoC1lQZNHAczYo85Xec4AVDTQxWDimV+3qfiIv55xxjf3jfJSxcM8eIFg5ySz2IFSqpUnOLSk9EmnVVTcjtjhJyJGw1sKJT49p79fHP3KDvKAUOeRYwcBvA0Ijodha8tfFfjx+MjIu8d+7eoRAqeGBZmc4w75apd43x13yQX9/fw3KE+zu/LcULWI58sausSdqkCyiC1RWshbjS5sxzw66kZfjI6ybrxKfYFIX3W1FhH9bEApIkLRRDqqyPGgEl3z0qfe3wlB3nHy41WfTK+UFsX9MfjM1w3PsMCz3JyPsPp+QxrcxmWZjyGrCGbdIgtqzIZRuysBDxcLLF+psQDhSK7KyGK0msMw77F6cHmI1eZrr4OqzSt1yoNxf3tsgGO42yy4wlA6ccdJaUwg17MOEVVbp8u8cupYvxPCfgi2GTZqEiVQJXAadI5FnLGZzifSRgr3m90NhZpAk5t32yLpR7AsjvH+fCO1xuPgZS4AIDe6gK61EuEq9Pli5ARQayklGitm+XSCRAHO+mPP4A8bgHUYlVB51yeOT5/ooPgceFI7I4ugLqjC6Du6I5DAKCqqmCk+4Ce6EOaMDEngIxAMYhPy2f0MbfC747jdzgg68UAqETStmjBNNsf1igTBSGMYGG/i1e26zLRExNADgbysVd+uiSpMvRGADV0I7EW9s8YxguGNQtDtMtAT0zRJXFIaMlgRLEiTBYFa1qrWoyqVtLOMyswUxE27PF40gkhvqUrxp7AY82iiL1ThsmiwZrmIIwGRmAsjt8kqcNJMPjXG31OWhyyZDAiCLti7Ik2Igc5H05ZErJht0c5hNQSGxp3ymXaABuT3BOFpO7bjwFkBS5YE1AKpGuRPY5EU9ut6ZggEpYNRawcjrhjs99EIIqIQUX2GJA74ja7UvP2Zz1l66jljs0+zz+r3BVjjxefjUAQQSWUhq0cxAWSVZIwAqUAzlsd4BR+u9Uj66UscpVksVV9xCjy/1S1ugJKgwPgu3fkOPOEgLNXBRTKXRY63kcxEOb3OpYPR5wwr76tnB/Rk1GKFakpzxkLzz2zzF1bfHbst2S9Rl9QvFqk3uVl/PDnQaBjYuywatwyySn0ZJRbH/G5f6fHa55W5I5NfncGjmPmKQbCyy8s8ooLiy2WtQgUK8JHftLLbzZlcApnLg8484SAv/m3gXpdXX29LaPqwJhfmg03fXEvwo1ifUWJahc1EITCl27q4cK1FS49pcJUSbDd4Mdxp/NUIljU73jFhUWyXqwMe7a+CbB40PG6S4t4VgkjeOXFRR7Z63HLwz69WcXVS1JUxIq6cDSomFuSHFB3ddwKta5LOQd9OeWmBzP84oEM73juDP05JYi6FtnxNlSFXBJVCKLqvsYFhYqVOPIQhMJ5qwOecWqFr9ycpxQ0kYbixHgK3LzzN5/ZZwDxh3uvi6LyJrHWxMXX9WEt/MtPexnuc7zlWTPMdHWh4xRE9ZY67YY1UAkh4ynvfN4Mv9nkc+N9WfpySuQaLTBERJFvAxguu8Ju+PHHyygfEeMJqUQ9p5D3lU37LB/5SS8vv6DE888qMz4jeF1R9vgSdcTxrjf+XoGV8yOuur63tj+NHjHWuLC0zwvMD2IArbsyApXyQPnzLihtEevZNAtFSTzk+3fmuOb2HO970TRPWRUyUeyC6LhjoVn0pHIY+31Gzi/yLz/t5YGdHj3NwXTVSKwvqHzhkd98ZuKyy67w4ljYyMvM7huunlH4m2YWql64J6t89Ppe7tjs88+vmGDtoi6IjjdLzEhD5XeDNRZGMNSjfO/OHP9+e46BfLPoQjHGuLAy5ay7CpB163Dx9F9zTcTIiN1y6+evjoLSjcbLxi0zUvLTJt7K9/17P1vHLP/ymklOXRoyXuiC6FinHWuU8YJQKAv9OcW3kPWVnK818MzrVTbs9vjYDb3k/Dal3KqRsVmj6D9v/eUXdjAyYuBKV+9UtH5EYB39K865WeBPEeOBqxU1KeAZKIXCjfdluGBNwH+9tMhDezwe2OmRy9A23N8dR39YA9Mlw9Yxy4phRzkUxmYMe6YsvVllqEd5aLfHh3/cy74pS8ZvSiBTdWJ9q2Hl4SA0r5l+0+URn/ykAqRaXa1TRkbs5PVXjw4sP3u79bIvUReG6XZYCvgWyoHhhnuznLgw4s+eXSBycMfmDEEkZLv+xmNS9/E92DbmccO9Wb7zmzw33JPlxAUR568O+eHdWf72P/rZN2XJ+S1JhIqIEzEGF750268/9xCLFhnWr3dNAALWr1cuu8KbvPkjdw4uPWuhzeQvUhcEzSDybFyT9dN7s5RD4S3PKnDuiQEbdntsHbNxO1vvWGsH+cR1JFbTMIIojnudc2LA3/3xFBetDfjY9b18dl0PvoWM1y7mqaHx874GpQ9uvu0LX2RkxHLNNVHaemu16EZGDNd826266I3fN17uhVFYDATxm28MYLIonLMq4F2/P8PaRSHfuzPHt27Ns3GfxQjkfMUzjevBdcfhB03Vgg4ioRTEsa0zlwe88uIizzi1wm82+Vx1fWxtDeS1YenXOlloYL28HwXl72y59bMv4bLLPNati9Kz2IEk4sDq8ovelbMyc52x/mVRWGoBUU2+loWsp/zBU0u8+uIiA/nYg/2T32W5Z7vH/hmD07olINJlp8MxHHEEocoiOR+WDkWcvzrguWeWOfOEgI17Pb5yc56f3ZcF4phn5NqJPQ2sl/NdWPlFxPh/2XbLGWW4sqVtyCzzeIWBK93CM0b6egbnfcfYzHNcWAxAvObzqubhVCmO9j7nSRUuP7vE6oUREwXh/l0e9+/w2DJmGZs2lAPBdef7kDsCs54ykFeWDEasWRRxypKQlcMRTuGuLT4/uCvHLQ/7lAKhLxf3l2yfpqOB8fK+C8s/913hDzbc9rXJKh7aXZe5QHTGGSOZ6cF5X7Q280oXllyyRqlpx0ZBBIVyrEyfsiTkgjUVnrIy/kf6cq4bjD3cCrPGkfW9U4YNezzu3Oxz9xaPHfstCvRmFWtoyzqoOgSMlzdRVL7W6firt91yTbETeA4AQDUQKaCrLnzj34g1fxc3vQ5CEbG09K2II/mRg1IgBFEMrP6cMtTjGMgrWU+7AdnDAJxKKEyX4wT4yaKhnKQi5zwlk3RBcJ2WAlGNjPU9AHXug5tv+cz70yQyG/MdGENecYVw5ZVu1QVveqZYPiE2c7oLy6i6tkCqirZk6QtCF4MqctKt9DiMyrOR2HFoTT2H2WmnwkBVVSIxxjM2g7rwvigK37n11s/fkCaOuUTngY9YCw8XnjHSlx+c9z8E3mms3+eiCupcKGBqHZbaXairPB8Rn88ca8poNVQlxlixPhoF44pcVZgY+6e966+Zrs7zgepeBzdSfoA1F77uZGcyf6nwKmMzA2iEi0JQ50A0TpNtD6juOFJ40mQ1CFFEjYgVMV68plkU7FSRr1REP7nz5s9saZ7fwwOgBl9RfKFl571uhZ/JjKC8BPQcY7x8VSeLezh3ba6jJdOqKx+KSDwfzu0R5JdO9Fqs94MtN31qfwo4B702zGNkhisMI+sljdiVl775DAn1GeCehvIkYLkKgwKZLhMdUeqpiDKtwh7BPKyid1vsr3DB7Rtv/fzuulpyhcc63GyK8mzj/wOoeSAs9C/l+AAAAABJRU5ErkJggg==) center/contain no-repeat !important;box-shadow:none !important;border-radius:0 !important}.mark span,.mk span,.mark i{display:none !important}</style>
+</head>
+<body>
+<div class="mockbar"><b>MOCK v0.4（レビュー用）</b>｜「ひとつのエンジン、それぞれの体験」5歳から80歳まで｜経営者モード（v0.3）は不変・みんなモードと画面の外の体験を追加｜数値・日付はダミー｜2026-07-12 肝臓株式会社</div>
+
+<div class="wrap">
+  <div class="kicker">SERVICE EXPERIENCE v0.4 — ONE ENGINE, ADAPTIVE EXPERIENCES</div>
+  <h1>ひとつのエンジン、それぞれの体験。——5歳にも、80歳にも、経営者にも</h1>
+  <p class="sub">v0.3（課金継続の3層）への追補。<b>データエンジン（計測・平常域・検証ループ・防衛）は1つのまま、体験レイヤーだけが相手に合わせて姿を変える</b>。経営者には「顧問」の顔（v0.3・不変）。子どもと祖父母には、アバター「カンゾーくん」が案内する<b>文字を読まなくても伝わる体験</b>——入力はカメラの前に座るだけ（rPPGの本領）、結果はおてんき、続けた日々は庭に花が咲く。これはB2B健康経営（全世代の従業員）とファミリープラン（LTV拡張）への布石でもある。</p>
+  <div class="kpis"><span class="kpichip">入力の読解力要件: ゼロ（座る・タップ・話す）</span><span class="kpichip">結果の理解時間: 3秒（おてんき・色・声）</span><span class="kpichip">経営者モードの参照枠（顧問）は完全保護——アバターは出さない</span></div>
+
+  <div class="divider">PART 1｜みんなモード — カンゾーくんと、からだの おてんき<small>5歳〜80歳。文字が読めなくても・小さな字が見えなくても完結する1日</small></div>
+
+  <div class="row">
+
+    <!-- M1 morning -->
+    <div class="col">
+      <div class="when"><span class="tm">あさ</span><small>けいそく｜すわるだけ（読解力ゼロ設計）</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>7:20</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864">カンゾーくん</b><span class="date">7がつ12にち</span></div>
+          <div class="avwrap">
+            <svg class="kanzo small" viewBox="0 0 120 108">
+              <path d="M14 42 C10 20 34 8 58 12 C70 4 102 8 108 30 C114 52 100 74 78 84 C60 92 46 96 34 86 C18 74 17 58 14 42 Z" fill="#F2A6B8" stroke="#E2879E" stroke-width="3"/>
+              <circle class="eye" cx="48" cy="46" r="5" fill="#22314f"/>
+              <circle class="eye" cx="78" cy="46" r="5" fill="#22314f"/>
+              <path class="mouth" d="M56 60 Q63 68 72 60" fill="none" stroke="#22314f" stroke-width="3.4" stroke-linecap="round"/>
+              <circle cx="38" cy="58" r="5" fill="#f8c9d4"/><circle cx="88" cy="58" r="5" fill="#f8c9d4"/>
+            </svg>
+          </div>
+          <div class="bubble">おはよう！<br>カメラのまえに すわってね<small>（そんだけで いいよ）</small></div>
+          <div class="camlite">
+            <div class="facelite"></div>
+            <div class="scanlite"></div>
+            <div class="countbig">あと 10びょう！ 🎈</div>
+          </div>
+          <div class="voicebtn"><i>🔊</i> よみあげて もらう</div>
+          <div class="foot">えいぞうは のこりません（数値だけが残る設計）</div>
+          <div class="tabbar"><div class="tab on"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M1｜あさの けいそく — 入力の読解力要件ゼロ</b>非接触rPPGの本領はここで発揮される: 5歳も80歳も「座るだけ」。ボタンも数字入力もない。アバターが声と表情で誘導し、読み上げボタンが全画面に常設。<span>経営者向けに封印していたキャラクターを、ここでは主役にする——モードごとに最適が違う。</span></div>
+    </div>
+
+    <!-- M2 result -->
+    <div class="col">
+      <div class="when"><span class="tm">すぐ</span><small>けっか｜3秒で伝わる「からだの おてんき」</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>7:22</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864">きょうの おてんき</b><span class="date">けいそく できた！</span></div>
+          <div class="weather"><div class="wico">🌞</div><div class="wlab">きょうは はれ！</div><div class="wsub">しんぞうさん、いつもの げんきです</div></div>
+          <div class="avwrap">
+            <svg class="kanzo small" viewBox="0 0 120 108">
+              <path d="M14 42 C10 20 34 8 58 12 C70 4 102 8 108 30 C114 52 100 74 78 84 C60 92 46 96 34 86 C18 74 17 58 14 42 Z" fill="#F2A6B8" stroke="#E2879E" stroke-width="3"/>
+              <path d="M42 44 Q48 38 54 44" fill="none" stroke="#22314f" stroke-width="3.2" stroke-linecap="round"/>
+              <path d="M72 44 Q78 38 84 44" fill="none" stroke="#22314f" stroke-width="3.2" stroke-linecap="round"/>
+              <path class="mouth" d="M54 58 Q63 70 74 58" fill="none" stroke="#22314f" stroke-width="3.4" stroke-linecap="round"/>
+              <circle cx="38" cy="56" r="5" fill="#f8c9d4"/><circle cx="88" cy="56" r="5" fill="#f8c9d4"/>
+            </svg>
+          </div>
+          <div class="bubble">きのう はやく ねたから<br>けさは ぴかぴか だね<small>（きのうの じぶんの おかげ）</small></div>
+          <div class="faces">
+            <div><i>😊</i><span>げんき</span></div>
+            <div class="sel"><i>😌</i><span>ふつう</span></div>
+            <div><i>😪</i><span>ねむい</span></div>
+          </div>
+          <div class="voicebtn"><i>🔊</i> よみあげて もらう</div>
+          <div class="foot">おてんきは たいちょうの めやすです（びょうきの けんさでは ありません）</div>
+          <div class="tabbar"><div class="tab on"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M2｜けっか — 数値を「おてんき」に翻訳</b>62bpmは5歳に伝わらないが「はれ」は3秒で伝わる（内部では平常域バンドと同じ計算）。重要なのは吹き出しの因果——<b>「きのう早く寝たから、今朝ぴかぴか」＝昨日の自分の選択と今日を接続する</b>。これがv0.3の「答え合わせ」の全年齢版であり、行動変容の核。気分は顔タップ1回。<span>くもりの日も責めない: 「そういう日も あるよ。きょうは ゆっくりね」。</span></div>
+    </div>
+
+    <!-- M3 one suggestion -->
+    <div class="col">
+      <div class="when"><span class="tm">ゆうがた</span><small>ひとつだけ｜やってみたくなる 小さな さくせん</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>17:30</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864">きょうの さくせん</b><span class="date">ひとつだけ</span></div>
+          <div class="avwrap">
+            <svg class="kanzo" viewBox="0 0 120 108">
+              <path d="M14 42 C10 20 34 8 58 12 C70 4 102 8 108 30 C114 52 100 74 78 84 C60 92 46 96 34 86 C18 74 17 58 14 42 Z" fill="#F2A6B8" stroke="#E2879E" stroke-width="3"/>
+              <circle class="eye" cx="48" cy="46" r="5" fill="#22314f"/>
+              <circle class="eye" cx="78" cy="46" r="5" fill="#22314f"/>
+              <path class="mouth" d="M56 60 Q63 68 72 60" fill="none" stroke="#22314f" stroke-width="3.4" stroke-linecap="round"/>
+              <circle cx="38" cy="58" r="5" fill="#f8c9d4"/><circle cx="88" cy="58" r="5" fill="#f8c9d4"/>
+              <text x="98" y="26" font-size="16">✨</text><text x="8" y="30" font-size="13">✨</text>
+            </svg>
+          </div>
+          <div class="bubble">こんや、9じに おふとん<br>いってみない？<small>あした、もっと ぴかぴかに なるかも</small></div>
+          <div class="bigbtns">
+            <div class="bb-yes">やってみる！</div>
+            <div class="bb-no">また こんど</div>
+          </div>
+          <div class="notice"><b>あしたの あさ——</b>やくそくを おぼえていて、けっかを いっしょに みます。「9じに ねた ひは、はれが おおい」が、その子/その人 じしんのデータで たまっていく。</div>
+          <div class="voicebtn"><i>🔊</i> よみあげて もらう</div>
+          <div class="foot">むりには すすめません。「また こんど」も だいじな こたえです</div>
+          <div class="tabbar"><div class="tab on"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M3｜ひとつだけ — 提案は1日1つ・巨大2択・拒否権つき</b>v0.3の検証ループ（R-##）と同一エンジン: 「やってみる！」→翌朝おてんきで答え合わせ→その人固有のルールが育つ。5歳の「9じにねる」も80歳の「ゆうがたに10ぷん あるく」も、経営者の「〆は半分」も、<b>データ構造はすべて同じ</b>。<span>「うざくない」原則は全年齢共通——1日1つ・追いかけない・比べない。</span></div>
+    </div>
+
+    <!-- M4 garden -->
+    <div class="col">
+      <div class="when"><span class="tm">いつでも</span><small>にわ｜つづけた日々が 花になる（トレンドの翻訳）</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>19:00</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864">わたしの にわ</b><span class="date">この 7にち</span></div>
+          <div class="garden">
+            <div class="glab">🌞 はれが 5にち！ おはなが さいたよ</div>
+            <div class="plots">
+              <span><i style="font-size:30px">🌸</i>げつ</span>
+              <span><i style="font-size:30px">🌸</i>か</span>
+              <span><i style="font-size:22px">🌱</i>すい</span>
+              <span><i style="font-size:30px">🌷</i>もく</span>
+              <span><i style="font-size:30px">🌸</i>きん</span>
+              <span><i style="font-size:22px">🌱</i>ど</span>
+              <span><i style="font-size:34px">🌻</i>にち</span>
+            </div>
+          </div>
+          <div class="bubble" style="font-size:13.5px">すいようびの めは、よふかしの ひ。<br>それでも つぎのひ、ちゃんと さいたね<small>（くずれても もどれるのが すごいこと）</small></div>
+          <div class="voicebtn"><i>🔊</i> よみあげて もらう</div>
+          <div class="notice" style="font-size:11.5px"><b>おとなの目には——</b>同じデータが経営者モードでは平常域バンドつき折れ線で表示される。庭は「毎日≠完璧」を教える: 芽の日（くもり）があっても翌日咲けば庭は美しい＝<b>回復力の物語化</b>。</div>
+          <div class="foot">くらべるのは きのうの じぶんとだけ。よその にわは みえません</div>
+          <div class="tabbar"><div class="tab"><i></i>きょう</div><div class="tab on"><i></i>にわ</div><div class="tab"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M4｜にわ — グラフが読めなくても「継続」が見える</b>折れ線グラフの読解には訓練が要るが、花と芽は要らない。はれ=花・くもり=芽の7日間の庭は、5歳の「あと2つで ぜんぶ おはな！」と、80歳の「今週もよく咲いた」を同時に生む。<span>他人との比較機能は構造的に存在しない（ダークパターン禁止・全モード共通）。</span></div>
+    </div>
+
+    <!-- M5 senior -->
+    <div class="col">
+      <div class="when"><span class="tm">シニア</span><small>おおきな字モード｜同じ画面・べつの姿</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>7:30</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864;font-size:15px">きょうの からだ</b><span class="date">7月12日（日）</span></div>
+          <div class="weather" style="margin-top:2px"><div class="wico" style="font-size:54px">🌞</div><div class="wlab" style="font-size:24px">おだやかです</div></div>
+          <div class="senior-num">63<small>脈（安静時）・いつもどおり</small></div>
+          <div class="bigline">昨日より ゆっくり眠れた<br>ようですね。</div>
+          <div class="voicebtn" style="padding:14px;font-size:16px"><i>🔊</i> 声で聞く</div>
+          <div class="callbtn">📞 むすこに 今週の様子を送る</div>
+          <div class="foot" style="font-size:10.5px">参考の目安です。気になる時は かかりつけ医に——数値は そのまま見せられます</div>
+          <div class="tabbar"><div class="tab on"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M5｜シニア表示 — 大きな字・1画面1情報・声・家族への橋</b>同じ「みんなモード」の年齢適応: 文字1.4倍・コントラスト強化・タップ標的64px以上・全文読み上げ。「息子に送る」ボタンが見守りの橋になる——<b>本人の尊厳を守る設計（監視ではなく、本人が送る）</b>。かかりつけ医にそのまま見せられるデータ形式は、非医療の立場を守りながら医療との橋にもなる。<span>断定・不安喚起は全年齢で禁止——「おだやかです」までしか言わない。</span></div>
+    </div>
+
+    <!-- M6 family garden -->
+    <div class="col">
+      <div class="when"><span class="tm">かぞく</span><small>かぞくの にわ｜世代をつなぐ見守り（プランの核）</small></div>
+      <div class="phone light">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="status"><span>20:10</span><span>◀ ▲ ▮</span></div>
+          <div class="appbar"><div class="mk"></div><b style="color:#1F3864">かぞくの にわ</b><span class="date">3にんの おてんき</span></div>
+          <div class="famcard"><span class="wx">🌞</span><div class="txt"><div class="nm">わたし（パパ）</div><div class="st">はれ・きょうも けいそくできた</div></div><span style="font-size:20px">🌸</span></div>
+          <div class="famcard"><span class="wx">🌞</span><div class="txt"><div class="nm">ハルト（5さい）</div><div class="st">はれ・9じに ねられた！</div></div><span style="font-size:20px">🌻</span></div>
+          <div class="famcard" style="border-color:#f0d9a8;background:#fffdf6"><span class="wx">⛅</span><div class="txt"><div class="nm">おじいちゃん（80さい）</div><div class="st">くもり・3にち つづいています</div></div><span style="font-size:20px">🌱</span></div>
+          <div class="bubble" style="font-size:13.5px">おじいちゃんの にわ、<br>すこし くもりが つづいてるよ<small>こえを きかせてあげたら どうかな？</small></div>
+          <div class="bigbtns" style="margin-top:8px">
+            <div class="bb-yes">📞 でんわする</div>
+            <div class="bb-no">あとで</div>
+          </div>
+          <div class="foot">みられるのは「おてんき」だけ。くわしい数値は本人だけのもの（同意で選べます）</div>
+          <div class="tabbar"><div class="tab"><i></i>きょう</div><div class="tab"><i></i>にわ</div><div class="tab on"><i></i>かぞく</div></div>
+        </div>
+      </div>
+      <div class="caption"><b>画面M6｜かぞくの にわ — 行動変容の最強トリガーは家族</b>祖父母のくもり3日→「電話してみたら？」——サービスがもたらす行動変容は本人の生活だけでなく<b>家族の関係にも及ぶ</b>。共有されるのは「おてんき」の粒度だけ（数値は本人のもの・同意ベース）＝プライバシーと見守りの両立。ファミリープランのWTPはここから生まれ、解約は「家族の庭を消すこと」になる。<span>v0.3の3層（資産・番人・決算）の「資産」が家族単位に拡張された形。</span></div>
+    </div>
+
+  </div>
+
+  <div class="divider">PART 2｜画面の外へ — テクノロジーはWebに限らない<small>同じエンジンが、鏡・声・テレビ・紙に宿る。UIの最終形態は「UIの消滅」</small></div>
+
+  <div class="row">
+    <div class="dev">
+      <div class="art">🪞</div>
+      <div class="bd"><h4><small>ZERO UI｜洗面所の鏡</small>ミラー計測 — 歯みがきの30秒で終わる朝</h4>
+      <p>洗面台の鏡に映る間にrPPG計測が完了。5歳の「歯みがきのあいだ」も80歳の「顔を洗うついで」も、<b style="color:#fff">操作ゼロ・習慣に寄生</b>する究極の入力。結果は鏡の隅に「🌞」だけ灯る。</p>
+      <div class="ph">実装パス: エッジ端末＋カメラ（T25系）→ β以降の専用デバイス構想。映像は端末内で即時数値化・非保存の原則は不変。</div></div>
+    </div>
+    <div class="dev">
+      <div class="art">🗣️</div>
+      <div class="bd"><h4><small>VOICE｜スマートスピーカー・音声AI</small>「カンゾーくん、きょうの おてんきは？」</h4>
+      <p>画面を一度も見ない日があっていい。音声で今日の1枚を聞き、「やってみる」も声で答える。<b style="color:#fff">読み書き能力・視力・手指の器用さを一切要求しない</b>アクセシビリティの本丸。</p>
+      <div class="ph">実装パス: アプリ内TTS/STT（Web Speech API・パイロットで実装可）→ Alexa/Googleスキル（β）→ 対話型音声AI（P3）。</div></div>
+    </div>
+    <div class="dev">
+      <div class="art">📺</div>
+      <div class="bd"><h4><small>LIVING｜テレビ</small>リビングの大画面に「かぞくの にわ」</h4>
+      <p>夕食後のテレビに家族3世代の庭が映る。データが個人のスマホから<b style="color:#fff">家族の会話の真ん中</b>に出てくる——「おじいちゃんの花、今日咲いたね」が食卓の話題になる。</p>
+      <div class="ph">実装パス: TVブラウザ/キャスト表示（Web資産の流用で開発小）→ Fire TV/Android TVアプリ（P3）。</div></div>
+    </div>
+    <div class="dev">
+      <div class="art">📮</div>
+      <div class="bd"><h4><small>ANALOG｜紙の月次便り</small>「からだの 月次だより」が郵便で届く</h4>
+      <p>80歳の会員には、月次決算を<b style="color:#fff">美しい紙で郵送</b>する。孫の庭の絵と、その月の花の数と、担当の直筆風の一言。デジタルの対極こそ最も洗練された体験になり得る——冷蔵庫に貼られた便りは、解約されないサービスの物理的な証。</p>
+      <div class="ph">実装パス: 月次決算データの自動組版→印刷・発送代行。ファミリープランの上位オプション（原価数百円/月）。</div></div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="avwrap" style="margin:0">
+      <svg class="kanzo" id="demoAv" viewBox="0 0 120 108" style="width:130px;height:118px">
+        <path d="M14 42 C10 20 34 8 58 12 C70 4 102 8 108 30 C114 52 100 74 78 84 C60 92 46 96 34 86 C18 74 17 58 14 42 Z" fill="#F2A6B8" stroke="#E2879E" stroke-width="3"/>
+        <g id="avEyes"><circle class="eye" cx="48" cy="46" r="5" fill="#22314f"/><circle class="eye" cx="78" cy="46" r="5" fill="#22314f"/></g>
+        <path id="avMouth" class="mouth" d="M56 60 Q63 68 72 60" fill="none" stroke="#22314f" stroke-width="3.4" stroke-linecap="round"/>
+        <circle cx="38" cy="58" r="5" fill="#f8c9d4"/><circle cx="88" cy="58" r="5" fill="#f8c9d4"/>
+      </svg>
+    </div>
+    <div class="dright">
+      <h3>ライブデモ｜カンゾーくんは、この場で動いて話します</h3>
+      <p>このモック自体に実装済み: SVGアバター（浮遊・まばたき・表情切替）と、ブラウザ標準の音声合成（Web Speech API）。下のボタンで試せます——つまり<b style="color:#fff">パイロット版にも今日から搭載可能</b>な技術です。</p>
+      <div class="stbtns">
+        <button class="gold" onclick="talk('おはよう！ カメラのまえに すわってね')">🔊 話させる</button>
+        <button onclick="setFace('happy');talk('きょうは はれ！ しんぞうさん げんきだよ')">😊 はれの顔</button>
+        <button onclick="setFace('sleep');talk('そういうひも あるよ。きょうは ゆっくりね')">😪 くもりの顔</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend2">
+    <b>このモックの前提（v0.4＝アダプティブ体験。v0.3の3層・6原則・KPI構造の上に載る「体験の翻訳層」）</b>
+    <table>
+      <tr><th style="width:17%">層</th><th style="width:28%">経営者モード（v0.3・不変）</th><th style="width:28%">みんなモード（v0.4新設）</th><th>共通（全モード不変）</th></tr>
+      <tr><td>入力</td><td>朝1分計測＋夜10秒タップ</td><td>座るだけ（rPPG）＋顔タップ1回・音声可</td><td>義務は朝1回だけ・映像非保存</td></tr>
+      <tr><td>結果の言語</td><td>数値→意味→一手（仮説形）</td><td>おてんき・色・アバターの表情・声</td><td>内部計算は同一（平常域バンド）</td></tr>
+      <tr><td>トレンド</td><td>平常域バンドつき折れ線</td><td>にわ（花・芽）</td><td>他人との比較機能なし</td></tr>
+      <tr><td>行動変容</td><td>検証済みルールR-##・答え合わせ</td><td>1日1つの「さくせん」・翌朝の答え合わせ</td><td>拒否権常設・1日1提案まで</td></tr>
+      <tr><td>トーン</td><td>褒めない・断定しない・引き延ばさない</td><td>はげます・くらべない・あおらない</td><td>責めない・不安喚起しない・ダークパターン禁止</td></tr>
+      <tr><td>キャラクター</td><td><b style="color:#e8a0a8">出さない（顧問の参照枠を保護）</b></td><td>カンゾーくんが主役（ロゴ資産の展開）</td><td>ブランドカラーは同一パレット</td></tr>
+    </table>
+    <ul>
+      <li><b>戦略的意味:</b> みんなモードは①B2B健康経営（20〜70歳の全従業員が使える＝法人提案の弾）②ファミリープラン（家族の庭＝世帯LTV・解約障壁）③rPPG「座るだけ」の技術優位が最も際立つ市場、の3つを同時に開く。<b>ただし2026-2027のGTM主軸はペルソナA（経営者）のまま</b>——みんなモードはT40要件には「設計だけ先行（モード切替可能なデータ構造）」で入れ、実装はB2B/ファミリー決裁後。</li>
+      <li><b>アクセシビリティ規準:</b> みんなモード=タップ標的64px以上・コントラストWCAG AAA・全文読み上げ・ひらがな主体（シニア表示は漢字＋1.4倍）・prefers-reduced-motion対応（アニメーション停止可）。</li>
+      <li><b>規制・倫理（追加分）:</b> 未成年のデータ=保護者同意と閲覧権の設計が必須（個情法・要配慮情報。α対象外、設計のみ先行）。高齢者への表現は不安喚起禁止・受診指示はしない（「かかりつけ医にそのまま見せられる」までが非医療の一線）。家族共有は「おてんき粒度のみ・本人同意ベース」を既定値とする。</li>
+      <li><b>技術スタック（Webに限らない）:</b> 今すぐ=SVG/CSSアバター・Web Speech API（本ページで動作実証済み）／β=ミラー計測エッジ端末・音声スキル・TVキャスト／P3=専用ミラーデバイス・対話型音声AI・紙の月次便り（アナログも一級の選択肢）。</li>
+    </ul>
+  </div>
+</div>
+<script>
+function talk(t){
+  try{
+    const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=.95;u.pitch=1.15;
+    speechSynthesis.cancel();speechSynthesis.speak(u);
+  }catch(e){}
+}
+function setFace(m){
+  const eyes=document.getElementById('avEyes'),mouth=document.getElementById('avMouth');
+  if(m==='sleep'){
+    eyes.innerHTML='<path d="M42 46 Q48 50 54 46" fill="none" stroke="#22314f" stroke-width="3.2" stroke-linecap="round"/><path d="M72 46 Q78 50 84 46" fill="none" stroke="#22314f" stroke-width="3.2" stroke-linecap="round"/>';
+    mouth.setAttribute('d','M58 62 Q63 60 68 62');
+  }else{
+    eyes.innerHTML='<circle class="eye" cx="48" cy="46" r="5" fill="#22314f"/><circle class="eye" cx="78" cy="46" r="5" fill="#22314f"/>';
+    mouth.setAttribute('d','M54 58 Q63 70 74 58');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【モック】肝臓株式会社 会社ホームページ v0.1</title>
+<style>
+  :root{
+    --navy:#1F3864; --accent:#2E74B5; --gold:#C9A353; --ice:#CADCFC; --card:#F2F5FA;
+    --ink:#24292f; --gray:#5f6b7a; --line:#dfe6ef;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Yu Gothic","Noto Sans JP",sans-serif;color:var(--ink);background:#fff;line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center;letter-spacing:.05em}
+  .mockbar b{color:#ffd27a}
+  /* header */
+  header{position:sticky;top:30px;z-index:90;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+  .hwrap{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:12px 20px}
+  .logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .mark{width:40px;height:40px;background:var(--navy);border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 0 2px rgba(201,163,83,.9)}
+  .mark span{color:#fff;font-size:22px;font-weight:700}
+  .mark i{position:absolute;right:4px;bottom:4px;width:6px;height:6px;background:var(--gold)}
+  .lname{line-height:1.25}
+  .lname b{font-size:17px;color:var(--navy);letter-spacing:.06em}
+  .lname small{display:block;font-size:10px;color:var(--gray);letter-spacing:.08em}
+  nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
+  nav a{padding:8px 12px;font-size:13.5px;color:var(--ink);text-decoration:none;border-radius:6px;cursor:pointer}
+  nav a:hover{background:var(--card);color:var(--navy)}
+  nav a.on{color:var(--navy);font-weight:700;border-bottom:2px solid var(--gold);border-radius:6px 6px 0 0}
+  .cta{background:var(--navy);color:#fff !important;border-radius:8px;font-weight:700}
+  .cta:hover{background:var(--accent) !important}
+  /* layout */
+  .page{display:none}
+  .page.on{display:block}
+  section{padding:64px 20px}
+  .wrap{max-width:1080px;margin:0 auto}
+  .kicker{color:var(--gold);font-weight:700;font-size:13px;letter-spacing:.18em;margin-bottom:10px}
+  h1{font-size:34px;color:var(--navy);line-height:1.5}
+  h2{font-size:26px;color:var(--navy);margin-bottom:18px;line-height:1.5}
+  h3{font-size:18px;color:var(--navy);margin:26px 0 10px}
+  .sub{color:var(--gray);font-size:15px}
+  .alt{background:var(--card)}
+  /* hero */
+  .hero{background:linear-gradient(135deg,#16294a 0%,#1F3864 55%,#274a85 100%);color:#fff;padding:88px 20px 76px;position:relative;overflow:hidden}
+  .hero .bigkan{position:absolute;right:-30px;bottom:-70px;font-size:340px;font-weight:800;color:rgba(255,255,255,.05);line-height:1}
+  .hero h1{color:#fff;font-size:40px;margin:14px 0 12px}
+  .hero p.lead{color:var(--ice);font-size:17px;max-width:640px}
+  .btns{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:13px 26px;border-radius:9px;font-size:15px;font-weight:700;text-decoration:none;cursor:pointer;border:none}
+  .btn.gold{background:var(--gold);color:#20293a}
+  .btn.gold:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.6)}
+  .btn.ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+  .btn.navy{background:var(--navy);color:#fff}
+  .btn.navy:hover{background:var(--accent)}
+  /* cards */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:26px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px}
+  .card .num{width:34px;height:34px;border-radius:8px;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:14px}
+  .card h4{color:var(--navy);font-size:16.5px;margin-bottom:8px}
+  .card p{font-size:13.5px;color:var(--gray)}
+  /* placeholder */
+  .ph{border:2px dashed #b9c4d6;border-radius:12px;background:repeating-linear-gradient(45deg,#f6f8fb,#f6f8fb 12px,#eef2f8 12px,#eef2f8 24px);display:flex;align-items:center;justify-content:center;color:#7c8aa0;font-size:13px;text-align:center;padding:12px}
+  /* trust strip */
+  .strip{background:var(--navy);color:#fff;padding:52px 20px}
+  .strip h2{color:#fff}
+  .badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px}
+  .badge{background:rgba(255,255,255,.07);border:1px solid rgba(202,220,252,.3);border-radius:12px;padding:18px;font-size:13.5px}
+  .badge b{display:block;color:var(--gold);margin-bottom:6px;font-size:14.5px}
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+  th,td{border:1px solid var(--line);padding:12px 14px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff;font-weight:600;white-space:nowrap}
+  tr:nth-child(even) td{background:var(--card)}
+  /* news */
+  .news li{list-style:none;display:flex;gap:16px;padding:15px 4px;border-bottom:1px solid var(--line);font-size:14.5px;align-items:baseline}
+  .news time{color:var(--gray);font-size:13px;white-space:nowrap}
+  .tag{font-size:11px;border:1px solid var(--accent);color:var(--accent);border-radius:99px;padding:1px 10px;white-space:nowrap}
+  /* faq */
+  details{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:#fff}
+  summary{padding:15px 18px;cursor:pointer;font-weight:600;color:var(--navy);font-size:14.5px}
+  details p{padding:0 18px 15px;font-size:14px;color:var(--gray)}
+  /* form */
+  .form{max-width:560px}
+  .form label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin:16px 0 6px}
+  .form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid #c3cdda;border-radius:8px;font-size:14px;background:#fff;font-family:inherit}
+  .req{color:#b00020;font-size:11px;margin-left:6px}
+  .note{font-size:12px;color:var(--gray);margin-top:10px}
+  .flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+  .flow .step{background:#fff;border:1.5px solid var(--accent);color:var(--navy);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600}
+  .flow .arr{color:var(--gold);font-weight:800}
+  .flow .kill{border-color:#b00020;color:#b00020;text-decoration:line-through}
+  /* team */
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .avatar{width:86px;height:86px;border-radius:50%;margin-bottom:12px}
+  .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:20px}
+  .value{border-left:4px solid var(--gold);background:#fff;padding:18px 20px;border-radius:0 12px 12px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .value b{color:var(--navy)}
+  .value p{font-size:13.5px;color:var(--gray);margin-top:6px}
+  /* timeline */
+  .tl{border-left:3px solid var(--ice);margin:14px 0 0 8px;padding-left:24px}
+  .tl div{position:relative;padding-bottom:20px;font-size:14.5px}
+  .tl div::before{content:"";position:absolute;left:-30px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+  .tl time{font-weight:700;color:var(--navy);margin-right:12px}
+  footer{background:#16294a;color:#c9d4e8;padding:48px 20px;font-size:13px}
+  footer .fwrap{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;gap:36px;justify-content:space-between}
+  footer a{color:#c9d4e8;text-decoration:none;display:block;margin-bottom:8px;cursor:pointer}
+  footer a:hover{color:#fff}
+  footer .tagline{color:var(--gold);margin-top:10px;font-size:14px}
+  .copyright{max-width:1080px;margin:30px auto 0;border-top:1px solid rgba(255,255,255,.15);padding-top:18px;font-size:12px;color:#8fa0bd}
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+  .quote{font-size:22px;color:var(--navy);font-weight:700;line-height:1.9}
+  .goldline{color:var(--gold)}
+  @media(max-width:760px){.hero h1{font-size:28px} h1{font-size:26px} nav{display:none}}
+</style>
+<style id="brandlogo">.mark,.mk{background:transparent url(data:image/png;base64,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) center/contain no-repeat !important;box-shadow:none !important;border-radius:0 !important}.mark span,.mk span,.mark i{display:none !important}</style></head>
+<body>
+<div class="mockbar"><b>MOCK v0.1（レビュー用）</b>｜会社ホームページ — 上部ナビでページを切替できます｜写真・地図・電話番号・一部日付はダミー／プレースホルダ｜2026-07-11 肝臓株式会社</div>
+
+<header>
+  <div class="hwrap">
+    <div class="logo" onclick="go('home')">
+      <div class="mark"><span>肝</span><i></i></div>
+      <div class="lname"><b>肝臓株式会社</b><small>KANZO Inc. — Health as a Service</small></div>
+    </div>
+    <nav>
+      <a id="nv-home" class="on" onclick="go('home')">ホーム</a>
+      <a id="nv-service" onclick="go('service')">サービス</a>
+      <a id="nv-privacy" onclick="go('privacy')">データとプライバシー</a>
+      <a id="nv-company" onclick="go('company')">会社概要</a>
+      <a id="nv-news" onclick="go('news')">ニュース</a>
+      <a id="nv-recruit" onclick="go('recruit')">採用</a>
+      <a id="nv-contact" class="cta" onclick="go('contact')">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<div class="page on" id="pg-home">
+  <div class="hero">
+    <div class="bigkan">肝</div>
+    <div class="wrap">
+      <div class="kicker">EXECUTIVE BODY MANAGEMENT</div>
+      <h1>健康を、意志の問題から、<br>設計の問題へ。</h1>
+      <p class="lead">肝臓株式会社は、エグゼクティブの身体マネジメント代行です。<br>毎朝1分の非接触計測と、データに基づく設計で、身体を経営資源に変えます。</p>
+      <div class="btns">
+        <a class="btn gold" onclick="go('service')">サービスを見る</a>
+        <a class="btn ghost" onclick="go('privacy')">データの扱いについて</a>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="kicker">HOW IT WORKS</div>
+      <h2>意志は使わない。すべて、設計。</h2>
+      <div class="grid3">
+        <div class="card"><div class="num">1</div><h4>毎朝1分、カメラの前に立つだけ</h4><p>自宅のカメラが非接触でバイタルを計測。装着するものも、入力する手間もありません。</p></div>
+        <div class="card"><div class="num">2</div><h4>Slackに「あなたの設計」が届く</h4><p>計測データと生活ログから、食事・運動・睡眠の設計を非同期でお届け。会議の合間に読めます。</p></div>
+        <div class="card"><div class="num">3</div><h4>90日ごとに、変化をレビュー</h4><p>数値の推移をデータでふり返り、次の90日の設計を更新。感覚ではなく、記録で前進します。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap two">
+      <div class="ph" style="min-height:280px">写真プレースホルダ<br>代表・実写（F-17実写フィルム撮影と同日にスチール撮影）</div>
+      <div>
+        <div class="kicker">FOUNDER = MEMBER No.1</div>
+        <p class="quote">「会員第一号は、<span class="goldline">私です</span>。」</p>
+        <p style="font-size:14.5px;color:var(--gray);margin-top:10px">営業として13年走り続け、健診の数字から目をそらしてきた本人が、データと設計で身体を立て直した記録から、このサービスは生まれました。</p>
+        <div class="btns"><a class="btn navy" onclick="go('company')">代表メッセージを読む</a></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="wrap">
+      <div class="kicker">PROOF OF TRANSPARENCY</div>
+      <h2>映像は保存しない。数値だけが残る。</h2>
+      <div class="badges">
+        <div class="badge"><b>映像は端末内で即時破棄</b>カメラ映像はその場で数値化され、映像そのものは一切保存・送信されません。</div>
+        <div class="badge"><b>クラウドには数値のみ</b>お預かりするのは暗号化された計測数値と生活ログだけです。</div>
+        <div class="badge"><b>同意はいつでも撤回可能</b>何を記録し、何を記録しないか。同意の内容と履歴をいつでも確認・変更できます。</div>
+      </div>
+      <div class="btns"><a class="btn ghost" onclick="go('privacy')">データとプライバシーの詳細</a></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>ニュース</h2>
+      <ul class="news">
+        <li><time>2026.10.01</time><span class="tag">お知らせ</span><span>（ダミー）先行プログラム（α）の募集を開始しました — 審査制</span></li>
+        <li><time>2026.08.20</time><span class="tag">お知らせ</span><span>（ダミー）コーポレートサイトを公開しました</span></li>
+        <li><time>2026.08.03</time><span class="tag">プレスリリース</span><span>肝臓株式会社を設立しました</span></li>
+      </ul>
+      <div class="btns"><a class="btn navy" onclick="go('news')">一覧を見る</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ SERVICE ============ -->
+<div class="page" id="pg-service">
+  <section>
+    <div class="wrap">
+      <div class="kicker">SERVICE</div>
+      <h1>エグゼクティブの身体マネジメント代行</h1>
+      <p class="sub" style="margin-top:12px">これはジムでも、人間ドックでも、健康アプリでもありません。<br>「身体を経営資源として管理したい。ただし時間は1分も払いたくない」——そのための、新しいカテゴリです。</p>
+
+      <h3>体験の流れ</h3>
+      <div class="flow">
+        <span class="step">毎朝1分・非接触計測</span><span class="arr">→</span>
+        <span class="step">Slackに設計が届く（非同期）</span><span class="arr">→</span>
+        <span class="step">90日レビューで設計を更新</span><span class="arr">→</span>
+        <span class="step">データが資産として蓄積</span>
+      </div>
+
+      <h3>既存の選択肢との違い</h3>
+      <table>
+        <tr><th>選択肢</th><th>特徴</th><th>当社との違い</th></tr>
+        <tr><td>人間ドック</td><td>年1回の「点」の計測</td><td>当社は毎日の「線」。変化の途中を捉えます</td></tr>
+        <tr><td>ウェアラブル</td><td>計測はできるが伴走がない</td><td>当社は計測の先の「設計」と伴走まで担います</td></tr>
+        <tr><td>パーソナルジム</td><td>対面・時間拘束</td><td>当社は非接触・非同期。移動も予約も不要です</td></tr>
+      </table>
+
+      <h3>導入事例</h3>
+      <div class="card" style="margin-top:6px">
+        <h4>ケーススタディ #001 — 会員第一号（代表・砂川貴哉）</h4>
+        <p>13年の営業生活で後回しにした身体を、毎朝の計測と食事・運動・睡眠の設計で立て直した記録。数値の推移と設計の全過程を、透明性ページの方針に基づき公開しています。<br><span style="color:#98a4b5">※ 会員の事例は、本人の同意（匿名/実名の選択制）を得た上でβ以降に掲載します。実在しない事例・取引先を掲載することはありません。</span></p>
+      </div>
+
+      <h3>よくある質問</h3>
+      <details><summary>医療サービスですか？</summary><p>いいえ。当社は医療機関ではなく、疾病の診断・治療・予防を目的とするサービスは提供しません。計測・記録・一般的な情報提供と生活の設計支援を行います。疾病に関する個別のご相談は医療機関をご案内します。</p></details>
+      <details><summary>時間はどれくらい必要ですか？</summary><p>毎朝の計測が約1分、Slackの設計確認が週に数分です。移動・予約・対面の拘束はありません。</p></details>
+      <details><summary>カメラの映像はどこに保存されますか？</summary><p>保存されません。映像は端末内でその場で数値化され、即時破棄されます。クラウドに送られるのは暗号化された数値のみです。</p></details>
+      <details><summary>法人（健康経営）での利用はできますか？</summary><p>現在準備中です。ご関心のある企業様はお問い合わせフォームより「法人」を選択してご連絡ください。順にご案内します。</p></details>
+      <div class="btns" style="margin-top:26px"><a class="btn gold" onclick="alert2()">先行プログラムの案内を見る（サービスLPへ）</a></div>
+      <p class="note">※ モックのため遷移しません。本番はサービスLP（別モック）へ接続。</p>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PRIVACY ============ -->
+<div class="page" id="pg-privacy">
+  <section>
+    <div class="wrap">
+      <div class="kicker">PROOF OF TRANSPARENCY</div>
+      <h1>データとプライバシー</h1>
+      <p class="sub" style="margin-top:12px">信頼は、約束ではなく設計で証明する。当社が「何を取り、何を取らないか」をここに明記します。</p>
+
+      <div class="two" style="margin-top:30px">
+        <div class="card" style="border-top:4px solid #b00020">
+          <h4>取らないデータ</h4>
+          <p style="font-size:14px">・カメラの映像そのもの（端末内で即時破棄）<br>・位置情報<br>・端末内の連絡先・写真等<br>・広告目的の行動追跡データ</p>
+        </div>
+        <div class="card" style="border-top:4px solid var(--gold)">
+          <h4>残るデータ</h4>
+          <p style="font-size:14px">・計測された数値（暗号化して保管）<br>・ご自身で記録する生活ログ<br>・Slackでのやり取り（伴走のため）<br>・同意の内容と履歴（いつでも確認・撤回可能）</p>
+        </div>
+      </div>
+
+      <h3>計測の仕組み</h3>
+      <div class="flow">
+        <span class="step">カメラ映像</span><span class="arr">→</span>
+        <span class="step">端末内でその場で数値化</span><span class="arr">→</span>
+        <span class="step kill">映像</span><span class="arr">→</span>
+        <span class="step">暗号化した数値のみクラウドへ</span>
+      </div>
+      <p class="note">映像は端末の外に出ません。「打ち消し線」の通り、映像はこの時点で破棄されます。</p>
+
+      <h3>セキュリティへの取り組み</h3>
+      <table>
+        <tr><th>項目</th><th>内容</th></tr>
+        <tr><td>通信の暗号化</td><td>サイト・サービスの全通信をSSL/TLSで暗号化</td></tr>
+        <tr><td>仮名化</td><td>分析には個人を特定できない仮名化データを使用。「個人を消しても知見が残る」設計</td></tr>
+        <tr><td>アクセス管理</td><td>データへのアクセス権限を最小化し、記録を保持</td></tr>
+        <tr><td>同意の管理</td><td>同意の取得・変更・撤回をすべて記録し、ご本人がいつでも確認可能</td></tr>
+      </table>
+
+      <h3>方針</h3>
+      <p style="font-size:14.5px">・お預かりしたデータを第三者に販売・提供することはありません。<br>・広告目的で利用することはありません。<br>・本サービスは医療機器・医療サービスではありません。表示される数値は参考値であり、疾病の診断・治療・予防を目的としません。</p>
+      <div class="btns" style="margin-top:20px"><a class="btn navy" onclick="alert2()">プライバシーポリシー全文（準備中・T05）</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ COMPANY ============ -->
+<div class="page" id="pg-company">
+  <section>
+    <div class="wrap">
+      <div class="kicker">PHILOSOPHY</div>
+      <h1>企業理念</h1>
+      <div class="vgrid">
+        <div class="value"><b>パーパス</b><p style="font-size:15px;color:var(--navy);font-weight:700">健康を、意志の問題から、設計の問題へ。</p></div>
+        <div class="value"><b>ビジョン</b><p>個人の健康管理を「個人の努力」から「再現可能なインフラ」へ転換する。</p></div>
+        <div class="value"><b>ミッション</b><p>毎朝1分の計測とデータの設計で、身体を経営資源に変える。</p></div>
+      </div>
+      <h3>バリュー（行動指針）</h3>
+      <div class="vgrid">
+        <div class="value"><b>1. 信頼と透明性</b><p>データの安全性と倫理に妥協しない。何を取り、何を取らないかを公開する。</p></div>
+        <div class="value"><b>2. データの資産化</b><p>すべての活動を、次の改善を生む資産として記録する。感覚ではなく記録で語る。</p></div>
+        <div class="value"><b>3. 熱狂を生むUX</b><p>「やらされる」のではなく、自ら測りたくなり、変化を楽しめる仕組みをつくる。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="wrap two">
+      <div class="ph" style="min-height:300px">写真プレースホルダ<br>代表取締役 砂川 貴哉（実写・顔の見える化）</div>
+      <div>
+        <div class="kicker">MESSAGE</div>
+        <h2>代表メッセージ</h2>
+        <p style="font-size:14.5px">肝臓株式会社。……変な名前ですよね。でも一度聞いたら、忘れないはずです。<br><br>
+        営業として走り続けて13年。健診の数字から目をそらした先で、身体は静かに壊れかけていました。転機は、意志ではなく設計に頼ると決めた日です。食事、間食、運動、睡眠——すべてを仕組みに変えた1ヶ月で、内臓は軽くなり、頭は冴え、走れる身体に戻りました。<br><br>
+        この再現性を、時間のない経営者に届けます。会員第一号は、私です。<br><br>
+        <b style="color:var(--navy)">代表取締役　砂川 貴哉</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>役員・顧問</h2>
+      <div class="tgrid">
+        <div class="card"><div class="avatar ph">写真</div><h4>砂川 貴哉</h4><p>代表取締役。法人営業13年（IT大手3社）。エンタープライズ向けCRM/データ基盤の実装を専門とし、自身の体質改善の実体験を本事業のプロトコル原型とする。</p></div>
+        <div class="card"><div class="avatar ph">写真</div><h4>医療顧問（就任準備中）</h4><p>疾病に関わる個別の判断・監修は、医師である医療顧問が担う体制を構築中です。就任後、氏名・経歴をここに掲載します。</p></div>
+      </div>
+
+      <h3>会社概要</h3>
+      <table>
+        <tr><th style="width:180px">社名</th><td>肝臓株式会社（英文表記: KANZO Inc.）</td></tr>
+        <tr><th>代表者</th><td>代表取締役　砂川 貴哉</td></tr>
+        <tr><th>設立</th><td>2026年8月3日</td></tr>
+        <tr><th>資本金</th><td>100万円</td></tr>
+        <tr><th>所在地</th><td>〒141-0033 東京都品川区西品川3-5-3 PASEO大崎201</td></tr>
+        <tr><th>事業内容</th><td>健康の維持増進に関する情報の収集・分析・提供／健康管理に関するオンラインコミュニティの企画・運営／データの収集・分析・活用に関するサービスの提供</td></tr>
+        <tr><th>基盤技術</th><td>Salesforce（データ統合基盤）、非接触バイタル計測技術 ほか</td></tr>
+      </table>
+
+      <h3>沿革</h3>
+      <div class="tl">
+        <div><time>2026.06</time>創業者の体質改善実体験をプロトコル化する構想に着手</div>
+        <div><time>2026.08</time>肝臓株式会社 設立（東京都品川区）</div>
+        <div><time>2026.10</time>（ダミー）先行プログラム（α・審査制）募集開始</div>
+        <div><time>2027</time>（予定）正式サービス開始</div>
+      </div>
+
+      <h3>アクセス</h3>
+      <div class="two">
+        <div class="ph" style="min-height:200px">Googleマップ埋込プレースホルダ<br>（JR大崎駅 徒歩圏）</div>
+        <p style="font-size:14px;color:var(--gray)">〒141-0033 東京都品川区西品川3-5-3 PASEO大崎201<br><br>※ サービスはオンライン完結です。ご来訪による打合せは事前予約制とし、お問い合わせフォームよりご連絡ください。</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ NEWS ============ -->
+<div class="page" id="pg-news">
+  <section>
+    <div class="wrap">
+      <div class="kicker">NEWS</div>
+      <h1>ニュース</h1>
+      <p class="note">運用ルール: 月1件以上の更新を維持（情報の鮮度＝信頼）。以下はモック用ダミーを含みます。</p>
+      <ul class="news" style="margin-top:18px">
+        <li><time>2026.10.01</time><span class="tag">お知らせ</span><span>（ダミー）先行プログラム（α）の募集を開始しました — 審査制・オンライン完結</span></li>
+        <li><time>2026.09.10</time><span class="tag">活動報告</span><span>（ダミー）計測環境の検証状況について — 精度検証の途中経過を公開</span></li>
+        <li><time>2026.08.20</time><span class="tag">お知らせ</span><span>（ダミー）コーポレートサイトを公開しました</span></li>
+        <li><time>2026.08.03</time><span class="tag">プレスリリース</span><span>肝臓株式会社を設立しました — 「健康を、意志の問題から、設計の問題へ。」</span></li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<!-- ============ RECRUIT ============ -->
+<div class="page" id="pg-recruit">
+  <section>
+    <div class="wrap">
+      <div class="kicker">RECRUIT</div>
+      <h1>採用情報</h1>
+      <p class="sub" style="margin-top:12px">いま探しているのは「社員」ではなく、共同創業級の仲間です。</p>
+      <div class="grid3" style="margin-top:26px">
+        <div class="card"><h4>エンジニアリング</h4><p>計測×データ基盤×AIのアーキテクチャを、創業メンバーとして一緒に設計する方。Salesforse/モバイル/データ領域いずれかに強みがあれば。</p></div>
+        <div class="card"><h4>カスタマーサクセス</h4><p>エグゼクティブ会員の伴走設計を担う方。医療・保健・フィットネス領域の知見があれば尚可。</p></div>
+        <div class="card"><h4>働き方</h4><p>非同期・リモート中心。データで語り、意志力に頼らない働き方を、自分たち自身にも適用します。</p></div>
+      </div>
+      <div class="btns" style="margin-top:26px"><a class="btn navy" onclick="go('contact')">話を聞いてみる（お問い合わせへ）</a></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CONTACT ============ -->
+<div class="page" id="pg-contact">
+  <section>
+    <div class="wrap">
+      <div class="kicker">CONTACT</div>
+      <h1>お問い合わせ</h1>
+      <div class="two" style="margin-top:26px">
+        <div class="form">
+          <label>お問い合わせ種別<span class="req">必須</span></label>
+          <select id="ctype" onchange="corp()"><option>サービスについて（個人）</option><option>法人・健康経営について</option><option>取材・その他</option><option>採用について</option></select>
+          <p id="corpnote" class="note" style="display:none;color:var(--accent)">法人向けプログラムは現在準備中です。ご関心をお寄せいただいた企業様から順にご案内します。</p>
+          <label>お名前<span class="req">必須</span></label><input placeholder="砂川 太郎">
+          <label>会社名・役職</label><input placeholder="株式会社◯◯ 代表取締役">
+          <label>メールアドレス<span class="req">必須</span></label><input placeholder="you@example.com">
+          <label>内容<span class="req">必須</span></label><textarea rows="4" placeholder="ご用件をご記入ください"></textarea>
+          <div class="btns"><a class="btn gold" onclick="alert2()">送信する</a></div>
+          <p class="note">送信により<a style="color:var(--accent);cursor:pointer" onclick="go('privacy')">プライバシーポリシー</a>に同意したものとします。<br>※ モックのため送信は無効です。本番はSalesforceに直結（Web-to-Lead）。</p>
+        </div>
+        <div>
+          <div class="card">
+            <h4>連絡先</h4>
+            <p style="font-size:14px">電話: 03-XXXX-XXXX（クラウド固定電話・取得後掲載／平日10:00-17:00）<br>メール: info@（ドメイン取得後掲載）<br>所在地: 東京都品川区西品川3-5-3 PASEO大崎201</p>
+          </div>
+          <div class="card" style="margin-top:14px">
+            <h4>お急ぎの方へ</h4>
+            <p style="font-size:14px">よくある質問は<a style="color:var(--accent);cursor:pointer" onclick="go('service')">サービスページのFAQ</a>にまとめています。データの取り扱いは<a style="color:var(--accent);cursor:pointer" onclick="go('privacy')">データとプライバシー</a>をご覧ください。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="fwrap">
+    <div>
+      <div class="logo" style="align-items:flex-start">
+        <div class="mark"><span>肝</span><i></i></div>
+        <div class="lname"><b style="color:#fff">肝臓株式会社</b><small style="color:#8fa0bd">KANZO Inc. — Health as a Service</small></div>
+      </div>
+      <div class="tagline">健康を、意志の問題から、設計の問題へ。</div>
+    </div>
+    <div>
+      <a onclick="go('service')">サービス</a>
+      <a onclick="go('privacy')">データとプライバシー</a>
+      <a onclick="go('company')">会社概要</a>
+      <a onclick="go('news')">ニュース</a>
+    </div>
+    <div>
+      <a onclick="go('recruit')">採用情報</a>
+      <a onclick="go('contact')">お問い合わせ</a>
+      <a onclick="alert2()">プライバシーポリシー（準備中）</a>
+      <a onclick="alert2()">特定商取引法に基づく表記（販売開始時に掲載）</a>
+      <a onclick="alert2()">外部送信ポリシー（タグ導入時に掲載）</a>
+    </div>
+  </div>
+  <div class="copyright">© 2026 KANZO Inc. All rights reserved.｜本サービスは医療機器・医療サービスではありません。</div>
+</footer>
+
+<script>
+  var pages=['home','service','privacy','company','news','recruit','contact'];
+  function go(id){
+    pages.forEach(function(p){
+      document.getElementById('pg-'+p).classList.toggle('on', p===id);
+      document.getElementById('nv-'+p).classList.toggle('on', p===id);
+    });
+    window.scrollTo({top:0});
+  }
+  function corp(){
+    var v=document.getElementById('ctype').value;
+    document.getElementById('corpnote').style.display = v.indexOf('法人')>=0 ? 'block':'none';
+  }
+  function alert2(){ /* モック: ダイアログは使用しない */ var n=document.createElement('div'); n.textContent='（モック）本番で実装されます'; n.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1F3864;color:#fff;padding:10px 22px;border-radius:99px;font-size:13px;z-index:999;box-shadow:0 6px 20px rgba(0,0,0,.25)'; document.body.appendChild(n); setTimeout(function(){n.remove()},1800); }
+</script>
+</body>
+</html>
