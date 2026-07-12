@@ -28,6 +28,7 @@
   .phone{width:360px;height:760px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;color:#e8eef8;transition:background .8s ease}
   .phone[data-scene="0"]{background:linear-gradient(180deg,#0a1526 0%,#12233f 55%,#1e3054 100%)}
   .phone[data-scene="1"]{background:linear-gradient(180deg,#0e1a30 0%,#182b4a 100%)}
+  .phone[data-scene="1B"]{background:linear-gradient(180deg,#0e2038 0%,#153a5c 55%,#1e4a70 100%)}
   .phone[data-scene="2"]{background:linear-gradient(180deg,#0e2038 0%,#14385a 55%,#f2a04c22 100%)}
   .phone[data-scene="3"]{background:linear-gradient(180deg,#0e2038 0%,#182b4a 55%,#f6c45333 100%)}
   .phone[data-scene="4"]{background:linear-gradient(180deg,#0e2038 0%,#22406b 55%,#f6c45355 100%)}
@@ -58,6 +59,25 @@
 
   /* === SCENE 1: 5秒スキャン === */
   .scanwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px}
+  /* === SCENE 1B: 5秒フィードバック（呼吸＋処理状況） === */
+  .fbwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;text-align:center}
+  .fbbreath{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(255,217,138,.18),rgba(95,208,138,.06) 60%,transparent 80%);display:flex;align-items:center;justify-content:center;margin-bottom:22px;position:relative}
+  .fbbreath::before{content:"";position:absolute;inset:16px;border-radius:50%;border:2px solid rgba(95,208,138,.4);animation:breath 4.8s ease-in-out infinite}
+  .fbbreath::after{content:"";position:absolute;inset:32px;border-radius:50%;border:1.5px solid rgba(255,217,138,.55);animation:breath 4.8s ease-in-out infinite;animation-delay:.35s}
+  @keyframes breath{0%,100%{transform:scale(.72);opacity:.5}50%{transform:scale(1.05);opacity:1}}
+  .fbdot{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#ffd98a,#c9a353);box-shadow:0 0 26px rgba(255,217,138,.6);animation:breath 4.8s ease-in-out infinite}
+  .fbmsg{font-size:16.5px;color:#fff;font-weight:800;line-height:1.65;margin-bottom:14px;letter-spacing:.02em;min-height:44px;padding:0 8px;transition:opacity .3s}
+  .fbchecks{width:100%;max-width:260px;text-align:left;margin:0 auto 18px}
+  .fbcheck{display:flex;align-items:center;gap:10px;padding:6px 4px;font-size:13px;color:#5f7396;opacity:0;transform:translateX(-4px);transition:opacity .5s ease,transform .5s ease,color .3s}
+  .fbcheck.on{opacity:1;transform:none;color:#cadcfc}
+  .fbcheck.done{color:var(--green)}
+  .fbcheck .fmk{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .3s}
+  .fbcheck.done .fmk{background:var(--green);border-color:var(--green);color:#0e2038}
+  .fbcheck.done .fmk::before{content:"✓";font-weight:800}
+  .fbtiny{font-size:11.5px;color:#7d90b4;line-height:1.7;margin-bottom:16px;max-width:290px}
+  .fbtiny b{color:#cadcfc;font-weight:600}
+  .fbprogress{width:100%;max-width:240px;height:4px;background:rgba(202,220,252,.15);border-radius:99px;overflow:hidden}
+  .fbbar{height:100%;width:0;background:linear-gradient(90deg,var(--warm),var(--green));border-radius:99px;transition:width linear}
   .oval{position:relative;width:220px;height:270px;border-radius:50%/46%;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#233a66,#1a2b4e 60%,#152343);margin-bottom:24px}
   .oval .simface{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#2a3f6e,#182848 65%)}
   .ovring{position:absolute;inset:-3px;border-radius:50%/46%;border:3px dashed rgba(201,163,83,.85);pointer-events:none;transition:border-color .3s}
@@ -201,7 +221,22 @@
               <div class="countbig" id="countbig" style="display:none"></div>
             </div>
             <div class="scansub" id="scanS">タップは不要です。ガイドに顔が入ると自動で始まります</div>
-            <div class="btstatus"><div class="dot"></div><div><b>ELECOM 体組成計 接続中</b><span>体重・体脂肪率・BMIを自動読取り（乗るだけでOK）</span></div></div>
+            <div class="btstatus"><div class="dot"></div><div><b>Tanita 体組成計 接続中</b><span>体重・体脂肪率・BMI・内臓脂肪Lvを自動読取り（乗るだけでOK）</span></div></div>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 1B: 5秒待ちフィードバック（呼吸＋処理状況） ============ -->
+        <div class="scenebox" data-scene="1B">
+          <div class="fbwrap">
+            <div class="fbbreath"><div class="fbdot"></div></div>
+            <div class="fbmsg" id="fbMsg">読み取り完了。<br>今朝の1枚を組み立てています。</div>
+            <div class="fbchecks">
+              <div class="fbcheck" data-idx="0"><span class="fmk"></span>計測データを取得</div>
+              <div class="fbcheck" data-idx="1"><span class="fmk"></span>あなたの平常域と比較</div>
+              <div class="fbcheck" data-idx="2"><span class="fmk"></span>今日の1枚を組み立て</div>
+            </div>
+            <div class="fbtiny">数字が出るまで、あと数秒。<br><b>深呼吸してもいいし、しなくても大丈夫。</b></div>
+            <div class="fbprogress"><div class="fbbar" id="fbBar"></div></div>
           </div>
         </div>
 
@@ -319,10 +354,11 @@
       <h3><small>DESIGN NOTES</small>「気分が乗らない朝」の5原則</h3>
       <ul>
         <li><b>①1タップで終わる導線を最上流に</b>：既定パスは「▶ はじめる」だけ。前日値をプリセットとして流し込み、変えるものだけタップして直す。既定で完了できる=脳を使わない。</li>
-        <li><b>②数字は打たせない</b>：ELECOM体組成計はBluetoothで、心拍は5秒rPPGで、睡眠はGoogle Healthから。全部だめでも「昨日と同じ」がプリセット。手打ちは「例外」に降格。</li>
+        <li><b>②数字は打たせない</b>：Tanita体組成計はBluetoothで、心拍は5秒rPPGで、睡眠はGoogle Healthから。全部だめでも「昨日と同じ」がプリセット。手打ちは「例外」に降格。</li>
         <li><b>③選択肢を5個に絞る</b>：体調は絵文字ワンタップ・「ふつう」がデフォ。7段階も1-10も採点疲れを生む。<b>ワンタップで送信=最速12秒完了</b>。</li>
         <li><b>④「今日はパス」を1級市民に</b>：スキップは目立つ場所に。連続日数の煽り・「◯日で目標達成」は<b>実装しない</b>（ダークパターン禁止=D-Hおよびv0.7ゲーミフィケーション禁止則）。</li>
-        <li><b>⑤朝の色は「静か」→「暖」へ</b>：起床画面は寒色（覚醒前）→スキャン→プレビューで暖色→完了で明るく。<b>視覚の光量で身体を起こす</b>。褒めない・鳴らない・振動控えめ。</li>
+        <li><b>⑤朝の色は「静か」→「暖」へ</b>：起床画面は寒色（覚醒前）→スキャン→<b>フィードバック(5秒・呼吸)</b>→プレビューで暖色→完了で明るく。<b>視覚の光量で身体を起こす</b>。褒めない・鳴らない・振動控えめ。</li>
+        <li><b>⑥5秒スキャン後の「呼吸5秒」</b>：スキャン直後は自律神経が最も静かな瞬間。ここで「深呼吸してもいい・しなくてもいい」という<b>強要しない誘導</b>を挟み、処理状況を3ステップで見せる。ダークパターン（勝手にカウントアップされる連続日数など）は表示しない。単純に「今、あなたのデータで計算しています」を伝える窓。</li>
       </ul>
 
       <h3><small>INTERACTION MAP</small>実装した4フロー</h3>
@@ -381,7 +417,36 @@ async function runScan(){
   cb.style.display = 'none'; document.getElementById('oval').classList.remove('scanning');
   sh.textContent = '✓ 完了・映像は破棄しました'; ss.textContent = '体重・体脂肪率も同時に読取り完了';
   await wait(800);
+  await runFeedback();
   setScene(2);
+}
+
+/* Scene 1B: 5秒フィードバック（呼吸＋処理状況） */
+async function runFeedback(){
+  setScene('1B');
+  const checks = document.querySelectorAll('#pg-morning .fbcheck, .fbcheck');
+  const msgs = [
+    '読み取り完了。<br>今朝の1枚を組み立てています。',
+    '数字がそろいました。<br>あなたの平常域と重ねています。',
+    '落ち着いた朝と読めます。<br>まもなく結果が出ます。'
+  ];
+  const fbMsg = document.getElementById('fbMsg');
+  const fbBar = document.getElementById('fbBar');
+  fbBar.style.transition = 'none'; fbBar.style.width = '0%';
+  checks.forEach(c=>{c.classList.remove('on','done');});
+  await wait(60);
+  fbBar.style.transition = 'width 5s linear';
+  fbBar.style.width = '100%';
+  const seq = [
+    {t:120, act:()=>{checks[0]?.classList.add('on');}},
+    {t:900, act:()=>{checks[0]?.classList.add('done'); checks[1]?.classList.add('on');}},
+    {t:1600, act:()=>{fbMsg.innerHTML = msgs[1];}},
+    {t:2500, act:()=>{checks[1]?.classList.add('done'); checks[2]?.classList.add('on');}},
+    {t:3400, act:()=>{fbMsg.innerHTML = msgs[2];}},
+    {t:4400, act:()=>{checks[2]?.classList.add('done');}}
+  ];
+  seq.forEach(s => setTimeout(s.act, s.t));
+  await wait(5000);
 }
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 
