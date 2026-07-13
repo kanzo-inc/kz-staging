@@ -11,7 +11,8 @@
 <meta name="theme-color" content="#1F3864">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【モック】v0.8.0「メイン検証統合版」5秒スキャン・実写対話・朝の書き留め・週次⇄月次カレンダー｜肝臓株式会社</title>
+<!-- VERSION_TAG: KANZO_APP-V07_v0.8.3_MORNING-15SEC-RELAXED_20260713 -->
+<title>【モック】v0.8.3「朝の書き留め15秒化・緩和版プロトコル反映」実写対話・ワンタップ音声・取扱説明書｜肝臓株式会社</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--green:#4caf78;--coral:#e8506a;--coral2:#f06e85}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -221,74 +222,137 @@
 <style id="brandlogo">.mark,.mk{background:transparent url(data:image/png;base64,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) center/contain no-repeat !important;box-shadow:none !important;border-radius:0 !important}.mark span,.mk span,.mark i{display:none !important}</style>
 </head>
 <body>
-<div class="mockbar"><b>MOCK v0.8.0（メイン検証統合版・NFR準拠）</b>｜①朝の5秒スキャン ②実写アバター対話 ③押して話すワンタップ音声 ④朝の書き留め（1分UI） ⑤週次⇄月次カレンダー｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+<div class="mockbar"><b>MOCK v0.8.3（朝の書き留め15秒化・緩和版プロトコル反映）</b>｜①朝の書き留め（初回のみ撮影のコツ→<b>15秒スキャン</b>→1.8秒FB→書き留め→週次ボタン導線） ②実写アバター対話 ③押して話すワンタップ音声｜数値はダミー｜2026-07-13 肝臓株式会社</div>
 
 <div class="wrap">
-  <div class="kicker">SERVICE EXPERIENCE v0.8 — MAIN VERIFICATION TARGET (INTEGRATED)</div>
-  <h1>朝は5秒。話したい時は、ワンタップ。書き留めるのは1分。振り返るのは1目。</h1>
-  <p class="sub">v0.8はv0.7の3機能に、朝の書き留めと週次⇄月次カレンダーを統合。<b>①朝5秒スキャン</b>（意志力ゼロでも成立）<b>②カンゾーくん/ちゃん実写通話UI</b><b>③ワンタップ音声（AIDMA導線）</b><b>④朝の書き留め（1分UI・気分乗らない朝に優しい）</b><b>⑤週次⇄月次カレンダー（1目で振り返り・NFR準拠の気遣い文言実装）</b>。設計原則は「褒めない・断定しない・引き延ばさない」（v0.3継承）＋「Proof of Transparency」＋「気遣いはブランドの技術的実装」（claude/24 NFR）。</p>
-  <div class="kpis"><span class="kpichip hot">★新: 朝の書き留め・週次⇄月次カレンダー統合</span><span class="kpichip hot">朝スキャン5秒</span><span class="kpichip">TTFR 0.5〜1.0秒（相槌ファースト）</span><span class="kpichip">NFR SLO：気遣い文言7階層・5段階通知</span><span class="kpichip">接地率100%＝会員データにない話はしない</span><span class="kpichip">AIであることを名乗る</span></div>
+  <div class="kicker">SERVICE EXPERIENCE v0.8.3 — 朝の書き留め15秒化・緩和版プロトコル反映</div>
+  <h1>朝は1分。書き留めた瞬間に、今週が見える。話したい時は、ワンタップ。</h1>
+  <p class="sub">v0.8.3はD-O 4タブIAに整合させた3機能構成。<b>①朝の書き留め</b>（初回のみ撮影のコツ3ルール→15秒スキャン→1.8秒フィードバック→書き留め→<b>書き留め完了で週次カレンダーが自動フェードイン</b>・気分が乗らない朝に優しい・NFR準拠）<b>②カンゾーくん/ちゃん実写通話UI</b><b>③ワンタップ音声（AIDMA導線）</b>。設計原則は「褒めない・断定しない・引き延ばさない」（v0.3継承）＋「Proof of Transparency」＋「気遣いはブランドの技術的実装」（claude/24 NFR）。</p>
+  <div class="kpis"><span class="kpichip hot">★新: 朝の書き留め・週次⇄月次カレンダー統合</span><span class="kpichip hot">朝スキャン15秒（緩和版3ルール）</span><span class="kpichip">TTFR 0.5〜1.0秒（相槌ファースト）</span><span class="kpichip">NFR SLO：気遣い文言7階層・5段階通知</span><span class="kpichip">接地率100%＝会員データにない話はしない</span><span class="kpichip">AIであることを名乗る</span></div>
 
-  <div class="divider">PRIORITY 1｜朝の5秒スキャン<small>「▶ スキャンを試す」でカメラが起動します（映像は端末の外に出ません・その場で破棄）。カメラなしのシミュレーションも可</small></div>
+  <div class="divider">D-O｜情報アーキテクチャ v0.1（会員向けアプリのボトム4タブ）<small>2026-07-13決裁済（`claude/00`§21）。「タブ数の膨張禁止・1追加=1統合」ルールでMoat維持。親規範=D-M経営理念。</small></div>
 
-  <div class="scanrow">
-    <div class="phone">
-      <div class="notch"></div>
-      <div class="screen">
-        <div class="status"><span>6:31</span><span>◀ ▲ ▮</span></div>
-        <div class="appbar"><div class="mk" style="background:var(--navy);box-shadow:inset 0 0 0 2px rgba(201,163,83,.9)"></div><b>肝臓株式会社</b><span class="date">7月13日（月）</span></div>
-        <div class="greet">おはようございます。</div>
-        <div class="greetsub" id="scanSub">顔を合わせて、<b>5秒</b>。それだけで今日が始まります。</div>
-        <div class="scanbox" id="scanbox">
-          <div class="glab" id="scanGlab">顔をガイドに合わせてください</div>
-          <div class="oval" id="oval">
-            <video id="cam" autoplay playsinline muted style="display:none"></video>
-            <div class="simface" id="simface"></div>
-            <div class="ovring" id="ovring"></div>
-            <div class="sweep"></div>
-            <div class="bigcount" id="bigcount">5</div>
-            <div class="discard" id="discard"><b>✓ 映像を破棄しました</b><span>端末内で数値化 → 映像は消去</span></div>
-          </div>
-          <div class="chkrow"><span class="chk" id="chkL">光量</span><span class="chk" id="chkP">位置</span></div>
-        </div>
-        <div class="scanmeter" id="scanmeter">
-          <div class="ringwrap">
-            <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="rgba(202,220,252,.15)" stroke-width="6"/><circle id="ringbar" cx="32" cy="32" r="27" fill="none" stroke="#C9A353" stroke-width="6" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"/></svg>
-            <div class="pct" id="ringpct">–</div>
-          </div>
-          <div class="tx"><b id="meterT">準備OK</b><span id="meterS">下のボタンでスキャン開始。押した後は、画面を見ているだけ。</span></div>
-        </div>
-        <div class="resultcard" id="resultcard">
-          <div class="rt">TODAY — 今日の1枚（6:31 計測 #43）</div>
-          <div class="rgrid">
-            <div class="rcell okc"><div class="v">63<small> bpm</small></div><div class="l">安静時心拍・平常域内</div></div>
-            <div class="rcell"><div class="v">14<small> /分</small></div><div class="l">呼吸（参考値）</div></div>
-            <div class="rcell"><div class="v">◎</div><div class="l">平常域 60–64</div></div>
-          </div>
-          <div class="rnote">5秒スキャンは<b>クイック推定（参考精度）</b>です。週1回の60秒精密スキャンで、あなたの平常域を校正します。[src:計測#43・平常域は直近21件から算出]</div>
-        </div>
-        <div class="scanctas">
-          <button class="bigscan" id="scanGo"><svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 15.4A5.4 5.4 0 1 1 12 7.6a5.4 5.4 0 0 1 0 10.8z"/></svg><span id="scanGoLab">押してスキャン<small>5秒・顔を向けるだけ</small></span></button>
-          <div class="scansub"><span id="scanSim">カメラなしで見る</span>　・　<span id="scanHow">うまく測るコツ</span></div>
-        </div>
-        <div class="privline">映像は保存されません（端末内で即時数値化・即時破棄）</div>
-        <div class="scanhow" id="scanhow">
-          <div class="shcard">
-            <b>うまく測るコツ（3つだけ）</b>
-            <div class="shrow"><svg viewBox="0 0 48 48"><circle cx="24" cy="20" r="8" fill="#f6c453"/><g stroke="#f6c453" stroke-width="3" stroke-linecap="round"><line x1="24" y1="4" x2="24" y2="9"/><line x1="38" y1="8" x2="34.5" y2="11.5"/><line x1="44" y1="20" x2="39" y2="20"/><line x1="10" y1="8" x2="13.5" y2="11.5"/><line x1="4" y1="20" x2="9" y2="20"/></g><path d="M14 44 C14 36 18 32 24 32 C30 32 34 36 34 44 Z" fill="#2E74B5"/><circle cx="24" cy="26" r="5" fill="#f6d7c3"/></svg><div><b>① 明るい場所で、正面から</b><span>窓際やライトの下がベスト。背中側に強い光（逆光）だけ避けてください。</span></div></div>
-            <div class="shrow"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="14" ry="18" fill="none" stroke="#C9A353" stroke-width="2.5" stroke-dasharray="5 4"/><ellipse cx="24" cy="24" rx="8" ry="10" fill="#f6d7c3"/><circle cx="21" cy="22" r="1.3" fill="#22314f"/><circle cx="27" cy="22" r="1.3" fill="#22314f"/><path d="M21 28 Q24 30 27 28" stroke="#b96a5f" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><div><b>② ガイドの枠に顔を合わせる</b><span>スマホは顔の高さに。枠に入れば自動で始まります（タップ不要）。</span></div></div>
-            <div class="shrow"><svg viewBox="0 0 48 48"><circle cx="24" cy="26" r="16" fill="none" stroke="#2E74B5" stroke-width="3"/><line x1="24" y1="26" x2="24" y2="15" stroke="#2E74B5" stroke-width="3" stroke-linecap="round"/><line x1="24" y1="26" x2="31" y2="30" stroke="#e8506a" stroke-width="3" stroke-linecap="round"/><rect x="20" y="2" width="8" height="4" rx="2" fill="#2E74B5"/><text x="24" y="45" text-anchor="middle" font-size="8" fill="#5f6b7a" font-weight="700">5秒</text></svg><div><b>③ そのまま5秒、動かない</b><span>話さない・笑わなくていい・呼吸はふつうに。<b>動きだけがノイズ</b>になります。</span></div></div>
-            <button id="shGo">わかった、はじめる</button>
-            <div class="shskip" id="shClose">閉じる</div>
-          </div>
-        </div>
-        <div class="tabbar"><div class="tab on"><i></i>今日</div><div class="tab"><i></i>トレンド</div><div class="tab"><i></i>設定</div></div>
+  <div style="max-width:1560px;margin:26px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px">
+
+    <!-- ① 今日 -->
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1.5px solid var(--line);border-radius:16px;padding:22px 22px 20px;color:#c9d4e8;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-18px;right:-18px;width:80px;height:80px;background:radial-gradient(circle at center,rgba(201,163,83,.14),transparent 70%);pointer-events:none"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(201,163,83,.16);border:1px solid rgba(201,163,83,.4);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--gold)">①</div>
+        <h3 style="color:#fff;font-size:16px;letter-spacing:.02em;margin:0">今日</h3>
+        <span style="margin-left:auto;font-size:10px;color:var(--gold);background:rgba(201,163,83,.1);border:1px solid rgba(201,163,83,.4);border-radius:99px;padding:2px 8px;font-weight:700">βローンチ即時</span>
       </div>
+      <p style="font-size:13px;line-height:1.75;color:#e8eef8;margin-bottom:10px"><b style="color:#fff">現在の状態と、今日やることを1画面</b>で提示</p>
+      <ul style="font-size:12px;color:#9fb0cf;padding-left:16px;line-height:1.7;list-style:disc;margin-bottom:12px">
+        <li>「今日の1枚」（書き留めの再表示）</li>
+        <li>「今日やること」（AI提案）</li>
+        <li>気遣い文言レイヤー（NFR §2L2）</li>
+        <li>クイック再計測ボタン内包</li>
+      </ul>
+      <div style="padding-top:10px;border-top:1px dashed rgba(202,220,252,.15);font-size:11px;color:#9db0cc;line-height:1.6"><b style="color:var(--gold)">D-M整合:</b> 第2条-1「必要以上の入力を求めない」</div>
     </div>
-    <div class="caption">
-      <div class="pt"><b>なぜ「1分」→「5秒」なのか（設計判断）</b>起床直後は1日で最も意志力が低い。60秒の拘束は「今日はいいや」を生む唯一の摩擦だった。5秒なら<b>歯磨きの前に終わる</b>——継続率の分母を守る設計変更。<span>タップ不要: 顔がガイドに入った瞬間に自動開始（光量・位置の自動チェック→カウントダウン）。</span></div>
-      <div class="pt"><b>精度との交換条件（正直に設計に書く）</b>rPPGは計測時間が短いほど誤差が出る。だから5秒は<b>クイック推定（参考値）</b>と明示し、<b>週1回の60秒精密スキャンで平常域を校正</b>する二段構え。「速さは毎日・精度は週次」で両取りする。会員に求める協力は<b>「5秒の静止」ただ1つ</b>——動作は一切不要（rPPGでは動きだけがノイズ源）。<span>この5秒制約はT40要件（rPPGアルゴリズム選定の足切り条件）に反映。</span></div>
-      <div class="pt"><b>信頼の演出は最後の0.6秒</b>スキャン完了の瞬間に「✓ 映像を破棄しました」を<b>目の前で見せる</b>。Proof of Transparencyは文言ではなく、毎朝の体験で証明する。</div>
+
+    <!-- ② 庭（にわ） -->
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1.5px solid var(--line);border-radius:16px;padding:22px 22px 20px;color:#c9d4e8;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-18px;right:-18px;width:80px;height:80px;background:radial-gradient(circle at center,rgba(76,175,120,.16),transparent 70%);pointer-events:none"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(76,175,120,.18);border:1px solid rgba(76,175,120,.5);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#7fd4a2">②</div>
+        <h3 style="color:#fff;font-size:16px;letter-spacing:.02em;margin:0">庭（にわ）</h3>
+        <span style="margin-left:auto;font-size:10px;color:#7fd4a2;background:rgba(76,175,120,.1);border:1px solid rgba(76,175,120,.4);border-radius:99px;padding:2px 8px;font-weight:700">βローンチ即時</span>
+      </div>
+      <p style="font-size:13px;line-height:1.75;color:#e8eef8;margin-bottom:10px"><b style="color:#fff">週次⇄月次カレンダー</b>による可視化・振り返り</p>
+      <ul style="font-size:12px;color:#9fb0cf;padding-left:16px;line-height:1.7;list-style:disc;margin-bottom:12px">
+        <li>今週の庭・今月の庭</li>
+        <li>将来「今季（3ヶ月）」「今年」拡張</li>
+        <li>気遣い文言オーバーレイ・遷移フェード</li>
+        <li>「庭」＝KANZO独自ブランド語彙（8月商標検討）</li>
+      </ul>
+      <div style="padding-top:10px;border-top:1px dashed rgba(202,220,252,.15);font-size:11px;color:#9db0cc;line-height:1.6"><b style="color:#7fd4a2">D-M整合:</b> 第7条（将来フィジカルAI連携で物理環境データ接続）</div>
+    </div>
+
+    <!-- ③ はなす -->
+    <div style="background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1.5px solid var(--line);border-radius:16px;padding:22px 22px 20px;color:#c9d4e8;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-18px;right:-18px;width:80px;height:80px;background:radial-gradient(circle at center,rgba(143,180,232,.16),transparent 70%);pointer-events:none"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(143,180,232,.18);border:1px solid rgba(143,180,232,.5);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#a8c4ff">③</div>
+        <h3 style="color:#fff;font-size:16px;letter-spacing:.02em;margin:0">はなす</h3>
+        <span style="margin-left:auto;font-size:10px;color:#a8c4ff;background:rgba(143,180,232,.1);border:1px solid rgba(143,180,232,.4);border-radius:99px;padding:2px 8px;font-weight:700">段階リリース</span>
+      </div>
+      <p style="font-size:13px;line-height:1.75;color:#e8eef8;margin-bottom:10px"><b style="color:#fff">3層サブモード</b>で会員の対話ニーズをカバー</p>
+      <div style="font-size:11.5px;color:#9fb0cf;line-height:1.7;margin-bottom:12px">
+        <div style="padding:6px 10px;background:rgba(143,180,232,.08);border-left:3px solid #a8c4ff;border-radius:4px;margin-bottom:6px"><b style="color:#fff">A. AI肝臓くん</b><span style="color:var(--gray);font-size:10px;margin-left:6px">βローンチ即時・24/7・AI駆動・非診断</span></div>
+        <div style="padding:6px 10px;background:rgba(143,180,232,.05);border-left:3px solid rgba(168,196,255,.5);border-radius:4px;margin-bottom:6px"><b style="color:#fff">B. 医療顧問予約</b><span style="color:var(--gray);font-size:10px;margin-left:6px">β後3ヶ月解禁・月次・要予約</span></div>
+        <div style="padding:6px 10px;background:rgba(143,180,232,.03);border-left:3px solid rgba(168,196,255,.3);border-radius:4px"><b style="color:#fff">C. 他会員対話</b><span style="color:var(--gray);font-size:10px;margin-left:6px">G2以降・承認制・匿名化</span></div>
+      </div>
+      <div style="padding-top:10px;border-top:1px dashed rgba(202,220,252,.15);font-size:11px;color:#9db0cc;line-height:1.6"><b style="color:#a8c4ff">必須:</b> 毎セッション冒頭で「AI・非診断・非緊急」を明示（薬機法対応・12§1）</div>
+    </div>
+
+    <!-- ④ 説明書（Moat） -->
+    <div style="background:linear-gradient(160deg,rgba(232,80,106,.14),rgba(232,80,106,.03));border:1.5px solid rgba(232,80,106,.55);border-radius:16px;padding:22px 22px 20px;color:#c9d4e8;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(232,80,106,.12)">
+      <div style="position:absolute;top:-18px;right:-18px;width:100px;height:100px;background:radial-gradient(circle at center,rgba(232,80,106,.22),transparent 70%);pointer-events:none"></div>
+      <div style="position:absolute;top:12px;right:14px;font-size:9px;color:#ffb0c0;background:rgba(232,80,106,.2);border:1px solid rgba(232,80,106,.5);border-radius:99px;padding:2px 8px;font-weight:800;letter-spacing:.1em">★MOAT</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(232,80,106,.2);border:1px solid rgba(232,80,106,.6);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#ffc9d4">④</div>
+        <h3 style="color:#fff;font-size:16px;letter-spacing:.02em;margin:0">説明書</h3>
+      </div>
+      <p style="font-size:13px;line-height:1.75;color:#e8eef8;margin-bottom:10px"><b style="color:#fff">会員の"取扱説明書"</b>——個人データが個別化された知的資産へ結晶化</p>
+      <ul style="font-size:12px;color:#9fb0cf;padding-left:16px;line-height:1.7;list-style:disc;margin-bottom:10px">
+        <li>体質・傾向・NG時間帯・自分最適プロトコル</li>
+        <li>Salesforce SoR蓄積データから月次自動生成</li>
+        <li>他者に説明できる自分 = 尊厳の実感</li>
+        <li>退会時に本人が持ち出せる設計</li>
+      </ul>
+      <div style="padding:10px 12px;background:rgba(232,80,106,.08);border:1px dashed rgba(232,80,106,.4);border-radius:8px;margin-bottom:10px">
+        <div style="font-size:10.5px;color:#ffc9d4;letter-spacing:.1em;font-weight:800;margin-bottom:4px">G1（2027-06-30）稼働予定</div>
+        <div style="font-size:11px;color:#e8eef8;line-height:1.55">データ蓄積30日以上の会員から個別化開始。ラボDay 30以降で初期構造を本人試作。</div>
+      </div>
+      <div style="padding-top:10px;border-top:1px dashed rgba(202,220,252,.15);font-size:11px;color:#9db0cc;line-height:1.6"><b style="color:#ffc9d4">D-M整合:</b> 第2条-5「廃棄の規律」＋NRR100%+の離脱コスト源泉</div>
+    </div>
+
+  </div>
+
+  <div style="max-width:1560px;margin:24px auto 0;padding:16px 22px;background:rgba(201,163,83,.06);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;font-size:12px;color:#c9d4e8;line-height:1.7">
+    <b style="color:var(--gold);font-size:11px;letter-spacing:.1em">設計原則（D-O §設計原則）:</b><br>
+    ①タブ数の膨張禁止（"1追加=1統合"ルール） ／ ②community機能は「はなす」内サブモード③Cに配置・独立タブ化はG3以降で再検討 ／ ③「計測」は独立タブにせず今日タブに"クイック再計測"ボタンで内包 ／ ④5タブ以上に膨張したら、既存の統合を検討する
+  </div>
+
+  <div class="divider">PRIORITY 1｜朝の書き留め → 週次⇄月次カレンダー（1分UI + 自動連携）<small>「（初回のみ撮影のコツ3ルール）→15秒スキャン→1.8秒フィードバック→今日を書き留める→振り返る」の一気通貫UI。書き留め完了で下段の週次カレンダーが自動フェードイン。会員は次のアクション不要で「今日と過去1週間」の連続文脈を得られる。</small></div>
+
+  <div style="max-width:1560px;margin:26px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+    <div style="width:390px;height:820px;position:relative">
+      <iframe src="app-morning.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="朝の書き留め モック"></iframe>
+    </div>
+    <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
+      <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>朝の書き留め v1.1 → 週次連携の設計判断</h3>
+      <p style="margin-bottom:14px"><b>①「保存」ではなく「書き留める」</b>——「データを取られる」ネガティブ感を排除し、「あなたの本に1行足す」ポジティブメタファーへ。</p>
+      <p style="margin-bottom:14px"><b>②15秒スキャン＋緩和版3ルール（v1.1・claude/29 v0.4）</b>——精度確保のため当初5秒→15秒に延長。ただし「立てかけるだけ・逆光だけ回避・15秒いつも通り」の3ルールに絞り、完璧な撮影条件は強いない。撮影のコツは<b>初回のみ</b>表示し、以降は毎朝の1タップに戻す＝こだわりを強要しない設計。逆光ヒューリスティックも「気にせず続ける」を許容する非ブロッキング表示。</p>
+      <p style="margin-bottom:14px"><b>②-b スキャン後の1.8秒フィードバック</b>——「引き延ばさない」原則（v0.3）に基づき、計測後の待機は短縮＝朝のストレスを最小化。</p>
+      <p style="margin-bottom:14px"><b>③LIVE演出＋映像破棄の可視化</b>——「Proof of Transparency」の実装。「映像を破棄しました」を目の前で見せる。</p>
+      <p style="margin-bottom:14px"><b>④「撮り直す」ボタンの位置</b>——「今日を書き留める」の直下に配置。誤タップリスクは破線セパレーター＋アウトラインボタン（視覚的に副次）で低減。</p>
+      <p style="margin-bottom:14px"><b>⑤書き留め完了→自動で振り返り（v0.8.1新設）</b>——完了メッセージ後1.5秒で下段の週次カレンダーが自動フェードイン＋スムーズスクロール。会員は「次に何する？」の意思決定を強いられない。</p>
+      <p style="margin-bottom:0;margin-top:8px"><a href="app-morning.html" style="color:var(--gold);text-decoration:underline;font-size:12px">別画面で開く →</a></p>
+    </div>
+  </div>
+
+  <!-- 自動フェードインする週次⇄月次カレンダー（書き留め完了で表示） -->
+  <div id="weekPanel" style="opacity:0;max-height:0;overflow:hidden;transition:opacity .8s ease,max-height .8s ease;margin-top:24px">
+    <div style="max-width:1560px;margin:0 auto;padding:14px 24px;background:rgba(246,196,83,.08);border:1px solid rgba(246,196,83,.35);border-radius:14px;text-align:center;font-size:13.5px;color:#ffd27a">
+      <b>▼ 書き留め完了 → 週次カレンダーが自動遷移しました</b>
+      <small style="display:block;color:var(--gray);margin-top:4px;font-size:11px">実サービスでは書き留め直後にこの画面が表示される想定です</small>
+    </div>
+    <div style="max-width:1560px;margin:16px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+      <div style="width:390px;height:820px;position:relative">
+        <iframe src="app-week.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="週次⇄月次カレンダー モック"></iframe>
+      </div>
+      <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
+        <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>週次⇄月次デュアルビュー v0.2.3の設計判断</h3>
+        <p style="margin-bottom:14px"><b>①1タップで期間切替</b>——上部トグルで「週次（7日をリッチに）／月次（31日を一望）」を切替。詳細パネルは共通で使いまわし。</p>
+        <p style="margin-bottom:14px"><b>②月次はスクロール0の圧縮詳細</b>——物理193pxの狭い領域に6メトリクス＋ドリルボタン＋編集/削除。「操作を最小限に」原則を厳守。</p>
+        <p style="margin-bottom:14px"><b>③セル背景色＋気分絵文字</b>——月次で「良/普通/逸脱」を一目判別。彩度を意図的に下げてtraffic light化を回避。</p>
+        <p style="margin-bottom:14px"><b>④NFR実装3点</b>——気遣い文言オーバーレイ（claude/24 §2 L2）、更新通知バナー（§3-4 T+24hスタイル）、ページ遷移フェード（§1 S-01）。</p>
+        <p style="margin-bottom:14px"><b>⑤色は状態、色は評価ではない</b>——「良い/悪い」ではなく「あなたの平常域との距離」を表す。v0.3「褒めない・断定しない」の徹底。</p>
+        <p style="margin-bottom:0"><b>⑥単独URLでの独立検証も可能</b>：<a href="app-week.html" style="color:var(--gold);text-decoration:underline">別画面で開く →</a></p>
+      </div>
     </div>
   </div>
 
@@ -349,40 +413,7 @@
     </div>
   </div>
 
-  <div class="divider">PRIORITY 4｜朝の書き留め（1分UI）<small>「5秒スキャン→1.8秒フィードバック→今日を書き留める」3段構え。気分が乗らない朝の低エネルギー会員に優しい設計。実物モックがそのまま埋め込まれています。</small></div>
-
-  <div style="max-width:1560px;margin:26px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
-    <div style="width:390px;height:820px;position:relative">
-      <iframe src="app-morning.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="朝の書き留め モック"></iframe>
-    </div>
-    <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
-      <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>朝の書き留め v1.0の設計判断</h3>
-      <p style="margin-bottom:14px"><b>①「保存」ではなく「書き留める」</b>——「データを取られる」ネガティブ感を排除し、「あなたの本に1行足す」ポジティブメタファーへ。</p>
-      <p style="margin-bottom:14px"><b>②5秒スキャン後の1.8秒フィードバック</b>——「引き延ばさない」原則（v0.3）に基づき、5秒待たせない。データ表示までを短縮＝朝のストレスを最小化。</p>
-      <p style="margin-bottom:14px"><b>③LIVE演出＋映像破棄の可視化</b>——「Proof of Transparency」の実装。「映像を破棄しました」を目の前で見せる。</p>
-      <p style="margin-bottom:14px"><b>④「撮り直す」ボタンの位置</b>——「今日を書き留める」の直下に配置。誤タップリスクは破線セパレーター＋アウトラインボタン（視覚的に副次）で低減。</p>
-      <p style="margin-bottom:0"><b>⑤単独URLでの独立検証も可能</b>：<a href="app-morning.html" style="color:var(--gold);text-decoration:underline">別画面で開く →</a></p>
-    </div>
-  </div>
-
-  <div class="divider">PRIORITY 5｜週次⇄月次カレンダー（振り返りモジュール）<small>「1目で今週。1画面で今月。タップして深く」。NFR準拠：気遣い文言オーバーレイ・更新通知バナー・遷移フェード実装済。実物モックが埋め込まれています。</small></div>
-
-  <div style="max-width:1560px;margin:26px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
-    <div style="width:390px;height:820px;position:relative">
-      <iframe src="app-week.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="週次⇄月次カレンダー モック"></iframe>
-    </div>
-    <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
-      <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>週次⇄月次デュアルビュー v0.2.3の設計判断</h3>
-      <p style="margin-bottom:14px"><b>①1タップで期間切替</b>——上部トグルで「週次（7日をリッチに）／月次（31日を一望）」を切替。詳細パネルは共通で使いまわし。</p>
-      <p style="margin-bottom:14px"><b>②月次はスクロール0の圧縮詳細</b>——物理193pxの狭い領域に6メトリクス＋ドリルボタン＋編集/削除。「操作を最小限に」原則を厳守。</p>
-      <p style="margin-bottom:14px"><b>③セル背景色＋気分絵文字</b>——月次で「良/普通/逸脱」を一目判別。彩度を意図的に下げてtraffic light化を回避。</p>
-      <p style="margin-bottom:14px"><b>④NFR実装3点</b>——気遣い文言オーバーレイ（claude/24 §2 L2）、更新通知バナー（§3-4 T+24hスタイル）、ページ遷移フェード（§1 S-01）。</p>
-      <p style="margin-bottom:14px"><b>⑤色は状態、色は評価ではない</b>——「良い/悪い」ではなく「あなたの平常域との距離」を表す。v0.3「褒めない・断定しない」の徹底。</p>
-      <p style="margin-bottom:0"><b>⑥単独URLでの独立検証も可能</b>：<a href="app-week.html" style="color:var(--gold);text-decoration:underline">別画面で開く →</a></p>
-    </div>
-  </div>
-
-  <div class="divider">ENGINEERING NOTES v0.8<small>音声3層・5秒スキャン制約・AIDMA導線・権利方針・NFR統合</small></div>
+  <div class="divider">ENGINEERING NOTES v0.8.3<small>音声3層・15秒スキャン（緩和版プロトコル）・AIDMA導線・権利方針・NFR統合</small></div>
 
   <div class="eng">
     <h3><small>VOICE ARCHITECTURE</small>声の3層構造 — 「デモの声」がそのまま本番仕様書になる</h3>
@@ -394,12 +425,13 @@
     </table>
     <p style="font-size:12.5px"><b>権利方針（決定事項として記録）:</b> 「オープンサービスの音声を収集して学習」は<b>採用しない</b>——他者音声の無断学習は権利侵害リスク（著作権・パブリシティ権・利用規約違反）があり、Proof of Transparencyと矛盾する。代わりに<b>商用ライセンスが明確なニューラルTTS</b>（本モックの収録音声が品質基準）を採用し、βで本人（創業者）の声の正式収録＋ライセンス契約済みTTSでの調整を行う。機嫌が斜めの50代男性に心地よい声の設計値: <span class="gold">速さ−8〜−12%・高さ−4〜−6Hz・相槌は短く・共感時はさらに遅く・過剰な明るさ禁止</span>（収録デモで実装済み）。</p>
 
-    <h3 style="margin-top:18px"><small>5-SECOND SCAN CONSTRAINT</small>5秒スキャンの技術要件（T40へ反映）</h3>
+    <h3 style="margin-top:18px"><small>15-SECOND SCAN — RELAXED PROTOCOL</small>15秒スキャンの技術要件（claude/29 v0.4・T40へ反映）</h3>
     <ul class="cl">
-      <li><b>足切り条件:</b> rPPGアルゴリズム選定は「5秒でHR推定・許容誤差±5bpm（参考値表示）」を必須要件とする。達成できないベンダー/OSSは週次60秒モードのみでの採用に格下げ。</li>
-      <li><b>二段計測:</b> 毎日=5秒クイック（参考値・трендの連続性が目的）／週1=60秒精密（平常域の校正・データ資産の正確性担保）。UIは毎日同じ・精密日は「今日はゆっくり測る日」と前夜に予告。</li>
-      <li><b>自動開始:</b> 顔検出→光量・位置チェック→カウントダウンまでタップ0回。起床時の認知負荷を「顔を向ける」1動作に固定。</li>
-      <li><b>破棄の可視化:</b> 完了0.6秒の「✓映像を破棄しました」演出は毎回必須（Proof of Transparencyの日次接点）。</li>
+      <li><b>スキャン時間の見直し（5秒→15秒）:</b> 手持ちスマホでのrPPGはモーションアーティファクト・自動露出変動に弱く、5秒では有効データが不足（研究標準は30秒・30fps）。日次の実運用値を<b>15秒</b>に設定。ただし精度を「診断」ではなく「傾向・気づき」の水準（許容誤差±8〜10bpm目安）に置き、完璧な撮影条件は会員に強いない。</li>
+      <li><b>緩和版3ルール:</b> ①その場にあるものに立てかけるだけ ②逆光だけ回避 ③15秒いつも通り——の3点のみ。研究水準（専用スタンド・60-90cm厳守・無表情静止・安定照明）は<b>月1〜2回の較正時のみ</b>任意で実施し、緩和版との精度差を定量把握する（二段運用）。<b>根拠=経営理念第3条（会員に強いる前に創業者自身の朝で検証）＋優先順位③UXによる熱狂（やらされ感の排除）</b>。</li>
+      <li><b>足切り条件（改訂）:</b> rPPGアルゴリズム/SDK選定は「手持ち・非固定・一般照明の15秒動画でHR推定が傾向把握に足る」を必須要件とする。モーション頑健な手法（CHROM/POS等）と、動画内の安定区間を自動選択する処理で、会員側の静止負担をエンジニアリングで肩代わりする。</li>
+      <li><b>自動開始:</b> 顔検出→光量・位置チェック→カウントダウンまでタップ0回。起床時の認知負荷を「顔を向ける」1動作に固定。撮影のコツ提示は<b>初回オンボーディングのみ</b>（Salesforce SoRの会員別完了フラグで永続化）。</li>
+      <li><b>破棄の可視化:</b> 完了時の「✓映像を破棄しました」演出は毎回必須（Proof of Transparencyの日次接点）。</li>
     </ul>
 
     <h3 style="margin-top:18px"><small>AIDMA ENTRY DESIGN</small>会話入口の設計 — 初手で迷ったら離反する</h3>
@@ -556,7 +588,7 @@ const INTENTS=[
   a:()=>`承知しました。引き留めはしません。手順は設定→解約、2分で終わります。1つだけ事実を——あなたの取扱説明書には検証済みルールが${M.rules.length}本、${M.count}回分の計測記録があります。全て持ち出せます。決める前に人間の担当と話すこともできます。`,
   f:['担当に伝えて','やっぱり続ける']},
  {p:/(ありがとう|たすかる|助かる|いいね|やっぱり続ける)/,e:'happy',az:'az09',meta:null,
-  a:()=>`こちらこそ。私はあなたのデータの番人です。明日の朝も、5秒だけ顔を見せてください。それで十分です。`,
+  a:()=>`こちらこそ。私はあなたのデータの番人です。明日の朝も、15秒だけ顔を見せてください。置ける場所に立てかけて、いつも通りで十分です。`,
   f:['今朝の数値は？','今日は何をすればいい？']}
 ];
 const FALLBACK={e:'gentle',az:'az06',meta:'正直なフォールバック（推測で答えない）',
@@ -733,71 +765,23 @@ if(localStorage.getItem('kz_seen')==='1'){
   setTimeout(()=>{addMsg('k','おかえりなさい。今朝の計測は完了しています（#'+(M.count)+'・平常域内）。赤いボタンで話しかけるか、下のチップからどうぞ。');setChips([]);},400);
 }
 
-/* ================= 5-second scan ================= */
-const scanGo=document.getElementById('scanGo'),scanSim=document.getElementById('scanSim'),cam=document.getElementById('cam'),simface=document.getElementById('simface');
-const ovring=document.getElementById('ovring'),scanbox=document.getElementById('scanbox'),bigcount=document.getElementById('bigcount');
-const chkL=document.getElementById('chkL'),chkP=document.getElementById('chkP');
-const ringbar=document.getElementById('ringbar'),ringpct=document.getElementById('ringpct'),meterT=document.getElementById('meterT'),meterS=document.getElementById('meterS');
-const resultcard=document.getElementById('resultcard'),discard=document.getElementById('discard'),scanSub=document.getElementById('scanSub'),scanGlab=document.getElementById('scanGlab');
-let scanStream=null,scanRunning=false;
-const scanhow=document.getElementById('scanhow');
-document.getElementById('scanHow').onclick=()=>scanhow.classList.add('on');
-document.getElementById('shClose').onclick=()=>scanhow.classList.remove('on');
-document.getElementById('shGo').onclick=()=>{scanhow.classList.remove('on');localStorage.setItem('kz_scan_seen','1');startScan(true);};
-scanGo.onclick=()=>{if(!localStorage.getItem('kz_scan_seen')){scanhow.classList.add('on');return}startScan(true);};
-scanSim.onclick=()=>startScan(false);
-async function startScan(useCam){
-  if(scanRunning)return;scanRunning=true;
-  resultcard.classList.remove('on');discard.classList.remove('on');
-  chkL.classList.remove('on');chkP.classList.remove('on');ovring.classList.remove('ok');
-  ringbar.style.strokeDashoffset=169.6;ringpct.textContent='–';
-  if(useCam){
-    try{
-      scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:480}});
-      cam.srcObject=scanStream;cam.style.display='block';simface.style.display='none';
-    }catch(e){
-      meterT.textContent='カメラが使えないため、シミュレーションで進めます';useCam=false;
-    }
-  }
-  if(!useCam){cam.style.display='none';simface.style.display='block';}
-  /* phase 1: align (auto-check, no tap) */
-  scanGlab.textContent='顔をガイドに合わせてください';
-  meterT.textContent='位置合わせ中…';meterS.textContent='タップは不要です。ガイドに顔が入ると自動で始まります。';
-  await wait(900);chkL.classList.add('on');
-  await wait(500);chkP.classList.add('on');ovring.classList.add('ok');
-  scanGlab.textContent='そのまま、動かないでください';
-  /* phase 2: 5-second countdown */
-  scanbox.classList.add('scanning');
-  const T=5000,t0=performance.now();
-  meterT.textContent='計測中';
-  await new Promise(res=>{
-    (function tick(){
-      const el=performance.now()-t0,ratio=Math.min(1,el/T);
-      ringbar.style.strokeDashoffset=169.6*(1-ratio);
-      ringpct.textContent=Math.round(ratio*100)+'%';
-      const remain=Math.ceil((T-el)/1000);
-      bigcount.textContent=remain;bigcount.classList.toggle('on',el<T);
-      meterS.textContent='残り '+remain+'秒 — 画面を見ているだけでOK。';
-      if(el<T)requestAnimationFrame(tick);else res();
-    })();
-  });
-  bigcount.classList.remove('on');scanbox.classList.remove('scanning');
-  /* phase 3: discard visual (trust moment) */
-  if(scanStream){scanStream.getTracks().forEach(tr=>tr.stop());scanStream=null;}
-  cam.style.display='none';simface.style.display='block';
-  discard.classList.add('on');
-  meterT.textContent='数値化 完了';meterS.textContent='映像は端末内で破棄されました。残ったのは数値だけです。';
-  await wait(1100);
-  discard.classList.remove('on');
-  /* phase 4: result */
-  resultcard.classList.add('on');
-  scanSub.innerHTML='完了。今日も<b>5秒</b>でした。あとは何もしなくて大丈夫です。';
-  scanGlab.textContent='また明日の朝に';
-  ringpct.textContent='✓';
-  scanRunning=false;
-  document.getElementById('scanGoLab').innerHTML='もう一度スキャン<small>5秒・いつでもどうぞ</small>';
-}
-function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+/* NOTE: 旧・app-v07内蔵の5秒スキャンJSは削除（朝の計測UIはapp-morning.htmlのiframeに一本化・v0.8.3）。 */
+</script>
+
+<script>
+// v0.8.1: 朝の書き留めiframeから完了通知を受けて週次カレンダーを自動フェードイン
+(function(){
+  window.addEventListener('message', function(ev) {
+    if (!ev || !ev.data || ev.data.type !== 'kanzo:morning-complete') return;
+    var wp = document.getElementById('weekPanel');
+    if (!wp) return;
+    wp.style.maxHeight = '1400px';
+    wp.style.opacity = '1';
+    setTimeout(function(){
+      wp.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 400);
+  }, false);
+})();
 </script>
 </body>
 </html>

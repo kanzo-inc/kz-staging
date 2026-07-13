@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- VERSION_TAG: KANZO_APP-MORNING_v1.1_RELAXED-PROTOCOL_20260713 -->
+<title>【モック】朝の計測 UI/UX v1.1｜肝臓株式会社</title>
+<style>
+  :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--coral:#e8506a;--coral2:#f06e85;--green:#5fd08a;--warm:#f6c453}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Noto Sans JP",sans-serif;background:#0b1526;color:#e8eef8;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center}
+  .mockbar b{color:#ffd27a}
+  .wrap{max-width:1400px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;color:#fff;margin-bottom:8px}
+  .sub{color:var(--gray);font-size:13.5px;max-width:940px}
+  .sub b{color:#fff}
+  .kicker{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+  .kpis{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .kpichip{border:1px solid rgba(201,163,83,.55);border-radius:99px;padding:4px 16px;font-size:12px;color:#e8dcc0}
+  .kpichip.hot{border-color:var(--coral);color:#ffc9d4;font-weight:700}
+  .divider{max-width:1400px;margin:46px auto 0;color:var(--gold);font-weight:800;font-size:15px;letter-spacing:.1em;text-align:center}
+  .divider small{display:block;color:var(--gray);font-weight:400;font-size:12px;letter-spacing:.02em;margin-top:4px}
+
+  .layout{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:26px}
+  .phone{width:360px;height:760px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;color:#e8eef8;transition:background .8s ease}
+  .phone[data-scene="0"]{background:linear-gradient(180deg,#0a1526 0%,#12233f 55%,#1e3054 100%)}
+  .phone[data-scene="1"]{background:linear-gradient(180deg,#0e1a30 0%,#182b4a 100%)}
+  .phone[data-scene="1B"]{background:linear-gradient(180deg,#0e2038 0%,#153a5c 55%,#1e4a70 100%)}
+  .phone[data-scene="2"]{background:linear-gradient(180deg,#0e2038 0%,#14385a 55%,#f2a04c22 100%)}
+  .phone[data-scene="3"]{background:linear-gradient(180deg,#0e2038 0%,#182b4a 55%,#f6c45333 100%)}
+  .phone[data-scene="4"]{background:linear-gradient(180deg,#0e2038 0%,#22406b 55%,#f6c45355 100%)}
+  .notch{width:120px;height:24px;background:#050a14;border-radius:0 0 16px 16px;margin:0 auto;flex-shrink:0}
+  .screen{flex:1;padding:14px 20px 0;display:flex;flex-direction:column;overflow:hidden;position:relative}
+  .screen>*{flex-shrink:0}
+  .status{display:flex;justify-content:space-between;font-size:11px;color:#9db0cf;margin-bottom:12px}
+  .scenebox{flex:1;display:none;flex-direction:column;animation:fadein .35s ease;min-height:0}
+  .scenebox.on{display:flex}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* === SCENE 0: 起動画面（1タップ完了パス） === */
+  .greet{font-size:32px;font-weight:800;color:#fff;letter-spacing:.02em;margin-top:6px;line-height:1.35}
+  .greet small{display:block;font-size:14px;color:var(--gray);font-weight:400;margin-top:8px;letter-spacing:0}
+  .sun{font-size:34px;margin-bottom:4px;display:block}
+  .lead{margin-top:auto;margin-bottom:14px;color:#c9d4e8;font-size:13.5px;line-height:1.8}
+  .lead b{color:#ffd27a}
+  .bigbtn{width:100%;border:none;border-radius:24px;padding:22px 12px;font-size:20px;font-weight:800;font-family:inherit;cursor:pointer;color:#fff;background:radial-gradient(circle at 30% 25%,var(--coral2),var(--coral));box-shadow:0 12px 30px rgba(232,80,106,.5);position:relative;transition:transform .15s}
+  .bigbtn:hover{transform:scale(1.02)}
+  .bigbtn:active{transform:scale(.98)}
+  .bigbtn::after{content:"";position:absolute;inset:-8px;border-radius:32px;border:3px solid rgba(232,80,106,.5);animation:btnpulse 2.2s ease-out infinite}
+  @keyframes btnpulse{0%{transform:scale(.94);opacity:1}70%{transform:scale(1.12);opacity:0}100%{opacity:0}}
+  .bigbtn small{display:block;font-size:11.5px;font-weight:600;opacity:.9;margin-top:3px;letter-spacing:.04em}
+  .subactions{display:flex;flex-direction:column;gap:8px;margin-top:20px;margin-bottom:6px}
+  .subactions button{background:transparent;border:1px solid rgba(202,220,252,.28);color:#c9d4e8;padding:11px;border-radius:14px;font-size:13px;cursor:pointer;font-family:inherit}
+  .subactions button:hover{background:rgba(202,220,252,.06)}
+  .subactions .skip{border:none;color:#7d90b4;text-decoration:underline;text-underline-offset:3px;padding:8px;font-size:11.5px}
+
+  /* === SCENE 0B: 撮影のコツ（初回のみ・claude/29 v0.4準拠） === */
+  .tipswrap{flex:1;display:flex;flex-direction:column;padding:4px 0}
+  .tiphead{text-align:center;margin-bottom:4px}
+  .tiphead b{color:#fff;font-size:17px;font-weight:800;display:block;margin-bottom:4px}
+  .tiphead small{color:var(--gray);font-size:11.5px;line-height:1.6;display:block}
+  .tipcards{display:flex;flex-direction:column;gap:9px;margin:16px 0}
+  .tipcard{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.045);border:1px solid rgba(202,220,252,.16);border-radius:14px;padding:11px 13px}
+  .tipcard .ticon{width:38px;height:38px;border-radius:50%;background:rgba(95,208,138,.14);border:1px solid rgba(95,208,138,.5);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .tipcard .ttxt b{display:block;color:#fff;font-size:13px;font-weight:700;margin-bottom:1px}
+  .tipcard .ttxt span{display:block;color:var(--gray);font-size:11px;line-height:1.5}
+  .tipfoot{margin-top:auto;color:#7d90b4;font-size:10.5px;line-height:1.7;text-align:center;padding:0 6px 6px}
+  .tipfoot b{color:#a8b8d4;font-weight:600}
+
+  /* === SCENE 1: 15秒スキャン（旧5秒・claude/29 v0.4で延長） === */
+  .scanwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px}
+  /* === カメラ実映像（oval内） === */
+  .oval #cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#000}
+  .oval.live-on #cam{display:block !important}
+  .oval.live-on #simface{display:none}
+  .camerr{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:9.5px;color:#f6c453;background:rgba(0,0,0,.5);padding:4px 6px;line-height:1.4;display:none}
+  .oval.simmode #camerr{display:block}
+  .ovalwrap{position:relative;width:220px;margin:0 auto}
+  .scanbadge{position:absolute;top:6px;right:-4px;background:rgba(232,80,106,.95);color:#fff;font-size:10px;font-weight:800;letter-spacing:.16em;padding:4px 10px;border-radius:99px;display:none;box-shadow:0 4px 14px rgba(232,80,106,.5);z-index:5;pointer-events:none}
+  .scanbadge::before{content:"● ";animation:blink 1.4s ease-in-out infinite}
+  @keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:.35}}
+  .ovalwrap:has(.oval.live-on) .scanbadge{display:block}
+  .ovalwrap:has(.oval.scanning) .scanbadge{background:rgba(255,217,138,.97);color:#20293a;box-shadow:0 4px 14px rgba(255,217,138,.4)}
+  /* :has fallback for older browsers */
+  .oval.live-on ~ .scanbadge{display:block}
+  .oval.scanning ~ .scanbadge{background:rgba(255,217,138,.97);color:#20293a;box-shadow:0 4px 14px rgba(255,217,138,.4)}
+  .discardov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,17,30,.88);border-radius:50%/46%;backdrop-filter:blur(4px);z-index:8}
+  .discardov.on{display:flex;animation:fadein .3s}
+  .discardin{text-align:center;padding:0 10px}
+  .discardin b{color:#5fd08a;font-size:13px;display:block;margin-bottom:4px}
+  .discardin span{color:#cadcfc;font-size:10px;line-height:1.5}
+  /* === SCENE 1B: 5秒フィードバック（呼吸＋処理状況） === */
+  .fbwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;text-align:center}
+  .fbbreath{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(255,217,138,.18),rgba(95,208,138,.06) 60%,transparent 80%);display:flex;align-items:center;justify-content:center;margin-bottom:22px;position:relative}
+  .fbbreath::before{content:"";position:absolute;inset:16px;border-radius:50%;border:2px solid rgba(95,208,138,.4);animation:breath 1.8s ease-in-out infinite}
+  .fbbreath::after{content:"";position:absolute;inset:32px;border-radius:50%;border:1.5px solid rgba(255,217,138,.55);animation:breath 1.8s ease-in-out infinite;animation-delay:.15s}
+  @keyframes breath{0%,100%{transform:scale(.78);opacity:.55}50%{transform:scale(1.06);opacity:1}}
+  .fbdot{width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#ffd98a,#c9a353);box-shadow:0 0 26px rgba(255,217,138,.6);animation:breath 1.8s ease-in-out infinite}
+  .fbmsg{font-size:16.5px;color:#fff;font-weight:800;line-height:1.65;margin-bottom:14px;letter-spacing:.02em;min-height:44px;padding:0 8px;transition:opacity .3s}
+  .fbchecks{width:100%;max-width:260px;text-align:left;margin:0 auto 18px}
+  .fbcheck{display:flex;align-items:center;gap:10px;padding:6px 4px;font-size:13px;color:#5f7396;opacity:0;transform:translateX(-4px);transition:opacity .5s ease,transform .5s ease,color .3s}
+  .fbcheck.on{opacity:1;transform:none;color:#cadcfc}
+  .fbcheck.done{color:var(--green)}
+  .fbcheck .fmk{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .3s}
+  .fbcheck.done .fmk{background:var(--green);border-color:var(--green);color:#0e2038}
+  .fbcheck.done .fmk::before{content:"✓";font-weight:800}
+  .fbtiny{font-size:11.5px;color:#7d90b4;line-height:1.7;margin-bottom:16px;max-width:290px}
+  .fbtiny b{color:#cadcfc;font-weight:600}
+  .fbprogress{width:100%;max-width:240px;height:4px;background:rgba(202,220,252,.15);border-radius:99px;overflow:hidden}
+  .fbbar{height:100%;width:0;background:linear-gradient(90deg,var(--warm),var(--green));border-radius:99px;transition:width linear}
+  .oval{position:relative;width:220px;height:270px;border-radius:50%/46%;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#233a66,#1a2b4e 60%,#152343);margin-bottom:24px}
+  .oval .simface{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#2a3f6e,#182848 65%)}
+  .ovring{position:absolute;inset:-3px;border-radius:50%/46%;border:3px dashed rgba(201,163,83,.85);pointer-events:none;transition:border-color .3s}
+  .ovring.ok{border-style:solid;border-color:var(--green)}
+  .sweep{position:absolute;left:8%;right:8%;height:2.5px;background:linear-gradient(90deg,transparent,#ffd98a,transparent);top:12%;opacity:0;pointer-events:none}
+  .scanning .sweep{opacity:1;animation:sweepmv 1.6s ease-in-out infinite}
+  @keyframes sweepmv{0%,100%{top:12%}50%{top:84%}}
+  .countbig{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 4px 30px rgba(0,0,0,.6)}
+  .scanhint{color:#cadcfc;font-size:15px;text-align:center;margin-bottom:12px;font-weight:700}
+  .scansub{color:var(--gray);font-size:11.5px;text-align:center}
+  .propchip{color:#a8c9ff;font-size:10.5px;text-align:center;margin-top:6px;opacity:.85}
+  .ringsvg{position:absolute;inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);transform:rotate(-90deg);pointer-events:none;display:none}
+  .oval.scanning .ringsvg{display:block}
+  .ringsvg circle{fill:none;stroke-width:3}
+  .ringsvg .rtrack{stroke:rgba(255,255,255,.08)}
+  .ringsvg .rbar{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+  .backlighthint{position:absolute;left:6px;right:6px;bottom:34px;background:rgba(15,23,42,.92);border:1px solid rgba(246,196,83,.55);border-radius:12px;padding:8px 10px;font-size:10px;color:#ffe1a8;line-height:1.5;display:none;z-index:6;animation:fadein .3s}
+  .backlighthint.on{display:block}
+  .backlighthint b{display:block;color:#ffd27a;font-size:10.5px;margin-bottom:2px}
+  .btstatus{margin-top:22px;background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.18);border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:11px;width:100%;font-size:12.5px}
+  .btstatus .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
+  .btstatus b{color:#fff}
+  .btstatus span{color:var(--gray);font-size:11px;display:block;margin-top:2px}
+
+  /* === SCENE 2: プレビュー（前日値プリセット） === */
+  .prevhead{text-align:center;margin-bottom:6px;flex-shrink:0}
+  .prevhead b{color:#fff;font-size:15.5px;font-weight:800;letter-spacing:.04em}
+  .prevhead small{display:block;color:var(--gray);font-size:10.5px;margin-top:2px}
+  /* === retake area: 「書き留める」の下・視覚的セパレータ＋二次的スタイル === */
+  .retakearea{margin-top:5px;padding-top:5px;border-top:1px dashed rgba(202,220,252,.18);text-align:center;flex-shrink:0;padding-bottom:20px}
+  .retakehead{font-size:9.5px;color:#7d90b4;letter-spacing:.04em;margin-bottom:4px;line-height:1.3}
+  .retakemainbtn{background:transparent;border:1.5px solid rgba(202,220,252,.35);color:#a8b8d4;font-size:11.5px;font-weight:700;padding:5px 14px;border-radius:99px;cursor:pointer;font-family:inherit;letter-spacing:.03em;transition:all .18s;min-width:52%}
+  .retakemainbtn:hover{background:rgba(202,220,252,.08);color:#e8eef8;border-color:rgba(202,220,252,.6)}
+  .retakemainbtn:active{transform:scale(.97)}
+  .retakemainbtn .rico{display:inline-block;margin-right:5px;font-weight:800;font-size:13px}
+  .stats{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;margin:0 -4px;padding:0 4px 2px}
+  .stats::-webkit-scrollbar{width:0}
+  .stat{background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.15);border-radius:13px;padding:7px 13px;display:flex;align-items:center;gap:12px;position:relative;cursor:pointer;transition:background .15s;min-height:48px}
+  .stat:hover{background:rgba(255,255,255,.09)}
+  .stat.band{border-color:rgba(95,208,138,.45);background:rgba(95,208,138,.06)}
+  .stat.warn{border-color:rgba(246,196,83,.5);background:rgba(246,196,83,.08)}
+  .stat .emj{font-size:22px;line-height:1;width:26px;text-align:center;flex-shrink:0}
+  .stat .lbl{font-size:10.5px;color:var(--gray);letter-spacing:.04em;margin-bottom:1px}
+  .stat .val{font-size:17px;font-weight:800;color:#fff;line-height:1.2}
+  .stat .val small{font-size:10.5px;color:var(--gray);font-weight:600;margin-left:3px}
+  .stat .diff{margin-left:auto;text-align:right;font-size:10.5px;color:var(--gray);line-height:1.3}
+  .stat .diff b{color:#fff;font-weight:700}
+  .stat .diff.up b{color:var(--warm)}
+  .stat .diff.same b{color:var(--gray)}
+  .stat .diff.down b{color:var(--green)}
+  .stat .band-tag{font-size:9px;color:var(--green);background:rgba(95,208,138,.15);border:1px solid rgba(95,208,138,.5);border-radius:99px;padding:0 7px;margin-top:2px;display:inline-block;line-height:1.5}
+  .stat .warn-tag{font-size:9px;color:var(--warm);background:rgba(246,196,83,.15);border:1px solid rgba(246,196,83,.5);border-radius:99px;padding:0 7px;margin-top:2px;display:inline-block;line-height:1.5}
+  .edit{position:absolute;top:8px;right:10px;font-size:9px;color:#7d90b4;opacity:.7}
+
+  .moodbox{background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.13);border-radius:14px;padding:6px 10px 7px;margin-top:5px;flex-shrink:0;display:flex;align-items:center;gap:10px}
+  .moodq{font-size:11.5px;color:#c9d4e8;font-weight:600;flex-shrink:0;letter-spacing:.02em;line-height:1.35;text-align:left}
+  .moods{display:flex;justify-content:space-between;gap:3px;flex:1}
+  .mood{flex:1;background:none;border:1.5px solid rgba(202,220,252,.15);border-radius:11px;padding:5px 2px 4px;cursor:pointer;font-family:inherit;transition:all .15s;color:#fff}
+  .mood:hover{border-color:rgba(202,220,252,.5)}
+  .mood.on{background:rgba(246,196,83,.15);border-color:var(--warm);box-shadow:0 0 0 2px rgba(246,196,83,.15)}
+  .mood .m{font-size:20px;line-height:1.1;display:block;margin-bottom:1px}
+  .mood .t{font-size:8.5px;color:var(--gray);letter-spacing:.01em;line-height:1}
+  .mood.on .t{color:var(--warm);font-weight:700}
+  .footbar{margin-top:12px;display:flex;gap:8px}
+  .footbar button{flex:1;border:none;border-radius:16px;padding:14px 8px;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit}
+  .send{background:var(--gold);color:#20293a;flex:2}
+  .send:disabled{background:#5a6480;color:#8fa0bd;cursor:default;box-shadow:none}
+  .later{background:transparent;border:1px solid rgba(202,220,252,.25);color:#c9d4e8}
+  /* === commitbar (書き留めるボタン・所有メタファー・案A) === */
+  .commitbar{margin-top:6px;text-align:center;flex-shrink:0}
+  .cmtbtn{width:100%;border:none;border-radius:14px;padding:9px 10px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;background:linear-gradient(180deg,#e6c476,#c9a353);color:#20293a;box-shadow:0 6px 18px rgba(201,163,83,.35);letter-spacing:.02em;transition:transform .12s}
+  .cmtbtn:hover{filter:brightness(1.06)}
+  .cmtbtn:active{transform:scale(.98)}
+  .cmtbtn small{display:block;font-size:10.5px;font-weight:600;opacity:.72;margin-top:0;letter-spacing:.03em}
+  .cmttrust{margin-top:4px;font-size:9.5px;color:#7d90b4;line-height:1.35;text-align:center;padding:0 4px}
+  .cmttrust span{display:block;margin:0}
+  .cmttrust b{color:#a8b8d4;font-weight:400}
+  .cmtlater{margin-top:6px}
+  .cmtlater span{font-size:10px;color:#5f7396;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .cmtlater span:hover{color:#9db0cc}
+
+  /* === SCENE 3: 送信中 === */
+  .sending{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .sending .spin{width:60px;height:60px;border-radius:50%;border:4px solid rgba(202,220,252,.15);border-top-color:var(--warm);animation:spin 1s linear infinite;margin-bottom:20px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .sending b{color:#fff;font-size:16px;margin-bottom:6px}
+  .sending span{color:var(--gray);font-size:12px}
+
+  /* === SCENE 4: 完了 === */
+  .donewrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 0}
+  .donemark{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--warm),var(--gold));display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 12px 32px rgba(246,196,83,.45);margin-bottom:22px;animation:pop .55s cubic-bezier(.2,.9,.3,1.3)}
+  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .donetitle{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px}
+  .donesub{color:#cadcfc;font-size:13.5px;line-height:1.8;margin-bottom:24px}
+  .weeklink{background:linear-gradient(135deg,rgba(246,196,83,.14),rgba(246,196,83,.04));border:1.5px solid rgba(246,196,83,.55);color:#ffd27a;border-radius:16px;padding:15px 20px;margin:18px 0 8px;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:320px;transition:all .25s ease;animation:weeklinkGlow 2.6s ease-in-out infinite;box-shadow:0 4px 18px rgba(246,196,83,.12);font-family:inherit;position:relative;overflow:hidden}
+  .weeklink:hover{background:linear-gradient(135deg,rgba(246,196,83,.28),rgba(246,196,83,.08));transform:translateY(-2px);box-shadow:0 10px 28px rgba(246,196,83,.32);border-color:rgba(246,196,83,.9)}
+  .weeklink svg{width:22px;height:22px;flex-shrink:0;fill:#ffd27a;filter:drop-shadow(0 0 6px rgba(246,196,83,.4))}
+  .wl-text{font-size:14px;letter-spacing:.02em}
+  .wl-arrow{font-size:20px;transition:transform .25s;font-weight:800}
+  .weeklink:hover .wl-arrow{transform:translateX(6px)}
+  .weeklink::after{content:"";position:absolute;top:50%;left:-30%;width:30%;height:200%;background:linear-gradient(90deg,transparent,rgba(246,196,83,.15),transparent);transform:translateY(-50%) rotate(15deg);animation:weeklinkSweep 3.2s ease-in-out infinite;pointer-events:none}
+  @keyframes weeklinkGlow{0%,100%{box-shadow:0 4px 18px rgba(246,196,83,.12)}50%{box-shadow:0 8px 26px rgba(246,196,83,.32),0 0 0 3px rgba(246,196,83,.06)}}
+  @keyframes weeklinkSweep{0%{left:-30%}70%,100%{left:130%}}
+  .doneprev{background:rgba(255,255,255,.06);border:1px solid rgba(202,220,252,.22);border-radius:16px;padding:14px 16px;font-size:12.5px;color:#c9d4e8;line-height:1.7;width:100%;text-align:left}
+  .doneprev b{color:#ffd27a;display:block;margin-bottom:4px;font-size:10.5px;letter-spacing:.14em}
+  .doneprev small{color:var(--gray);display:block;margin-top:6px;font-size:10.5px}
+  .exit{margin-top:auto;margin-bottom:6px;background:transparent;border:none;color:#7d90b4;font-size:12px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-family:inherit;padding:10px}
+
+  /* editモーダル */
+  .editmodal{position:absolute;inset:0;background:rgba(8,14,26,.86);z-index:30;display:none;align-items:flex-end;padding:16px;backdrop-filter:blur(4px)}
+  .editmodal.on{display:flex}
+  .editcard{background:#152343;border-radius:22px;padding:20px;width:100%;color:#fff}
+  .editcard b{display:block;font-size:14px;margin-bottom:12px}
+  .editcard input{width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(202,220,252,.25);border-radius:12px;padding:12px 14px;color:#fff;font-size:20px;font-weight:700;font-family:inherit;text-align:center}
+  .editrow{display:flex;gap:8px;margin-top:14px}
+  .editrow button{flex:1;border:none;border-radius:12px;padding:12px;font-weight:700;font-family:inherit;font-size:13px;cursor:pointer}
+  .editcancel{background:rgba(255,255,255,.08);color:#c9d4e8}
+  .editok{background:var(--gold);color:#20293a}
+
+  /* 手動入力パネル */
+  .manualwrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:2px 4px 8px}
+  .mnrow{background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.15);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:12px}
+  .mnrow .lbl{flex:1;font-size:12px;color:#cadcfc}
+  .mnrow input{width:80px;background:rgba(255,255,255,.08);border:1.5px solid rgba(202,220,252,.2);border-radius:10px;padding:8px 10px;color:#fff;font-size:15px;font-weight:700;font-family:inherit;text-align:right}
+  .mnrow .unit{font-size:11px;color:var(--gray);min-width:32px}
+
+  /* 説明パネル */
+  .notes{width:420px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13px;color:#c9d4e8}
+  .notes h3{color:#fff;font-size:15px;margin-bottom:8px}
+  .notes h3 small{color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px}
+  .notes p{margin-bottom:14px}
+  .notes b{color:#fff}
+  .notes .gold{color:var(--gold)}
+  .notes ul{margin:6px 0 14px 20px}
+  .notes ul li{margin-bottom:6px;font-size:12.5px;line-height:1.75}
+  .devchip{display:inline-block;background:rgba(46,116,181,.15);border:1px solid rgba(46,116,181,.5);color:#cadcfc;border-radius:99px;padding:2px 10px;font-size:10.5px;letter-spacing:.06em;margin-right:6px}
+
+  @media(max-width:820px){.notes{width:auto}}
+</style>
+</head>
+<body>
+<div class="mockbar"><b>MOCK 朝の計測 v1.1（レビュー用・実働）</b>｜1タップ完了・前日値プリセット・体調は絵文字ワンタップ・rPPGスキャンは15秒（claude/29 v0.4 緩和版プロトコル反映）｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+
+<div class="wrap">
+  <div class="kicker">MORNING INPUT — 気分が乗らない朝のための設計</div>
+  <h1>朝は、押すだけ。<br>数字は、自動で埋まる。</h1>
+  <p class="sub">朝は1日で最も意志力が低い時間帯。ここで「入力」を求めたら99%脱落する——だから<b>最短1タップで完了できる導線</b>を最上流に置き、手打ちは「例外」に降格する。前日値プリセット・スワイプ調整・体調絵文字ワンタップ・「今日はパス」も等価に扱う——ダークパターン禁止（連続日数の煽り・スコアの序列化なし）。rPPGスキャンは<b>精度確保のため15秒</b>に調整（claude/29 v0.4・当初5秒から延長）だが、<b>「立てかけるだけ・逆光回避・15秒」の3ルール</b>だけを守れば良い緩和版プロトコルとして設計——完璧な撮影条件を強いらない。<b>下のモックは実際に動きます</b>——「▶ はじめる」から試してください。</p>
+  <div class="kpis"><span class="kpichip hot">★確定KPI: 約25秒以内で完了（スキャン15秒＋確認・送信）</span><span class="kpichip">タップ数 中央値 3（1タップ完了パスあり）</span><span class="kpichip">「今日はパス」も1級市民</span><span class="kpichip">褒めない・連続日数煽らない</span></div>
+
+  <div class="divider">実働モック｜6:45起床直後シミュレーション<small>「▶ はじめる」で（初回のみ撮影のコツ）→15秒スキャン→前日値からの差分だけ確認→絵文字1タップ→完了</small></div>
+
+  <div class="layout">
+    <div class="phone" id="phone" data-scene="0">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="status"><span id="clock">6:45</span><span>◀ ▲ ▮</span></div>
+
+        <!-- ============ SCENE 0: 起動画面 ============ -->
+        <div class="scenebox on" data-scene="0">
+          <span class="sun">🌤</span>
+          <div class="greet">おはよう、<br>砂川さん。<small>今朝も5秒で。あとは全部、私が。</small></div>
+          <div class="lead">通知を押すと <b>この画面が開くだけ</b>。<br>目を開いた瞬間に、赤いボタンだけがあります。</div>
+          <button class="bigbtn" id="startBtn">▶ はじめる<small>顔を向けるだけ・15秒</small></button>
+          <div class="subactions">
+            <button id="manualBtn">手で入力する</button>
+            <button class="skip" id="passBtn">今日はパス（記録なし）</button>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 0B: 撮影のコツ（初回のみ・claude/29 v0.4） ============ -->
+        <div class="scenebox" data-scene="0B">
+          <div class="tipswrap">
+            <div class="tiphead"><b>はじめる前に、3つだけ</b><small>完璧じゃなくて大丈夫。この3つだけ意識してください</small></div>
+            <div class="tipcards">
+              <div class="tipcard"><div class="ticon">📱</div><div class="ttxt"><b>立てかけるだけ</b><span>マグカップや本など、その場にあるものでOK。専用の道具は要りません</span></div></div>
+              <div class="tipcard"><div class="ticon">💡</div><div class="ttxt"><b>逆光だけ避ける</b><span>背中に窓など強い光が来なければOK。他の明るさは気にしなくて大丈夫</span></div></div>
+              <div class="tipcard"><div class="ticon">⏱</div><div class="ttxt"><b>15秒、いつも通り</b><span>無表情も静止も不要です。座ったまま普段通りで結構です</span></div></div>
+            </div>
+            <button class="bigbtn" id="tipsStartBtn" style="margin-top:auto">はじめる</button>
+            <div class="tipfoot">次回からはこの説明は出ません。<b>「もう一度、コツを見る」</b>はいつでも設定から。</div>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 1: 15秒スキャン（旧5秒・claude/29 v0.4で延長） ============ -->
+        <div class="scenebox" data-scene="1">
+          <div class="scanwrap">
+            <div class="scanhint" id="scanH">顔をガイドに合わせてください</div>
+            <div class="ovalwrap">
+              <div class="oval" id="oval">
+                <video id="cam" autoplay playsinline muted style="display:none"></video>
+                <div class="simface" id="simface"></div>
+                <div class="camerr" id="camerr">📷 カメラが使えないためシミュレーション表示中</div>
+                <svg class="ringsvg" id="ringsvg" viewBox="0 0 100 100" preserveAspectRatio="none"><circle class="rtrack" cx="50" cy="50" r="47"/><circle class="rbar" id="ringbar" cx="50" cy="50" r="47" stroke-dasharray="295" stroke-dashoffset="0"/></svg>
+                <div class="ovring" id="ovring"></div>
+                <div class="sweep"></div>
+                <div class="countbig" id="countbig" style="display:none"></div>
+                <div class="backlighthint" id="backlighthint"><b>💡 背景が明るいようです</b>窓を背にしていたら少し向きを変えると精度が上がります（気にせず続けてもOK）</div>
+                <div class="discardov" id="discardov"><div class="discardin"><b>✓ 映像を破棄しました</b><span>端末内で数値化 → その場で消去</span></div></div>
+              </div>
+              <div class="scanbadge" id="scanbadge">LIVE</div>
+            </div>
+            <div class="scansub" id="scanS">タップは不要です。ガイドに顔が入ると自動で始まります</div>
+            <div class="propchip" id="propchip">📱 置ける場所があれば置くと安定します（なくてもOK）</div>
+            <div class="btstatus"><div class="dot"></div><div><b>Tanita 体組成計 接続中</b><span>体重・体脂肪率・BMI・内臓脂肪Lvを自動読取り（乗るだけでOK）</span></div></div>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 1B: 5秒待ちフィードバック（呼吸＋処理状況） ============ -->
+        <div class="scenebox" data-scene="1B">
+          <div class="fbwrap">
+            <div class="fbbreath"><div class="fbdot"></div></div>
+            <div class="fbmsg" id="fbMsg">読み取り完了。<br>今朝の1枚を組み立てています。</div>
+            <div class="fbchecks">
+              <div class="fbcheck" data-idx="0"><span class="fmk"></span>計測データを取得</div>
+              <div class="fbcheck" data-idx="1"><span class="fmk"></span>あなたの平常域と比較</div>
+              <div class="fbcheck" data-idx="2"><span class="fmk"></span>今日の1枚を組み立て</div>
+            </div>
+            <div class="fbprogress"><div class="fbbar" id="fbBar"></div></div>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 2: プレビュー ============ -->
+        <div class="scenebox" data-scene="2">
+          <div class="prevhead">
+            <b>今朝のあなた</b>
+            <small>7/14（火）・計測 #2</small>
+          </div>
+          <div class="stats" id="stats">
+            <div class="stat band" data-key="rhr" data-yday="—" data-today="68" data-unit="bpm" data-min="40" data-max="120" data-step="1">
+              <span class="emj">🫀</span>
+              <div><div class="lbl">安静時心拍</div><div class="val" id="v-rhr">68<small>bpm</small></div><span class="band-tag">平常域は明日確立</span></div>
+              <div class="diff same" id="d-rhr"><b>昨日と同じ</b></div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat" data-key="weight" data-yday="83.2" data-today="83.4" data-unit="kg" data-min="40" data-max="200" data-step="0.1">
+              <span class="emj">⚖️</span>
+              <div><div class="lbl">体重</div><div class="val" id="v-weight">83.4<small>kg</small></div></div>
+              <div class="diff up" id="d-weight"><b>+0.2</b><br>昨日 83.2</div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat band" data-key="fat" data-yday="18.5" data-today="18.4" data-unit="%" data-min="5" data-max="50" data-step="0.1">
+              <span class="emj">📊</span>
+              <div><div class="lbl">体脂肪率</div><div class="val" id="v-fat">18.4<small>%</small></div><span class="band-tag">30代標準の下限側</span></div>
+              <div class="diff down" id="d-fat"><b>−0.1</b><br>昨日 18.5</div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat warn" data-key="visceral" data-yday="9.5" data-today="9.5" data-unit="Lv" data-min="1" data-max="30" data-step="0.5">
+              <span class="emj">⚠️</span>
+              <div><div class="lbl">内臓脂肪</div><div class="val" id="v-visceral">9.5<small>Lv</small></div><span class="warn-tag">10.0までが標準・要監視</span></div>
+              <div class="diff same" id="d-visceral"><b>昨日と同じ</b></div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat" data-key="sleep" data-yday="7.15" data-today="7.05" data-unit="h" data-min="0" data-max="14" data-step="0.05">
+              <span class="emj">🌙</span>
+              <div><div class="lbl">睡眠</div><div class="val" id="v-sleep">7h05<small>・スコア81</small></div></div>
+              <div class="diff same" id="d-sleep"><b>昨日と同水準</b></div>
+              <div class="edit">タップで調整</div>
+            </div>
+          </div>
+          <div class="moodbox">
+            <div class="moodq">今朝の<br>体調は？</div>
+            <div class="moods" id="moods">
+              <button class="mood" data-mood="1"><span class="m">😴</span><span class="t">きつい</span></button>
+              <button class="mood" data-mood="2"><span class="m">🥱</span><span class="t">重い</span></button>
+              <button class="mood" data-mood="3"><span class="m">😐</span><span class="t">ふつう</span></button>
+              <button class="mood on" data-mood="4"><span class="m">🙂</span><span class="t">良い</span></button>
+              <button class="mood" data-mood="5"><span class="m">✨</span><span class="t">絶好調</span></button>
+            </div>
+          </div>
+          <div class="commitbar">
+            <button class="cmtbtn" id="sendBtn">今日を書き留める<small>あなたの取扱説明書に、1ページ</small></button>
+            <div class="cmttrust">
+              <span>・取扱説明書に1ページ（いつでもエクスポート可）</span>
+              <span>・7:00にSlackで「今日の1枚」</span>
+            </div>
+          </div>
+          <div class="retakearea">
+            <div class="retakehead">スキャンの写りが気になったら</div>
+            <button class="retakemainbtn" id="retakeBtn" aria-label="スキャンをやり直す"><span class="rico">↺</span>もう一度スキャン</button>
+            <span id="laterBtn" style="display:none"></span>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 3: 書き留め中 ============ -->
+        <div class="scenebox" data-scene="3">
+          <div class="sending">
+            <div class="spin"></div>
+            <b>書き留めています…</b>
+            <span>あなたの取扱説明書に、1ページ追加中</span>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 4: 完了 ============ -->
+        <div class="scenebox" data-scene="4">
+          <div class="donewrap">
+            <div class="donemark">🎈</div>
+            <div class="donetitle">書き留めました。</div>
+            <div class="donesub">あなたの取扱説明書に、1ページ加わりました。<br>「今日の1枚」は7:00に、Slackで。</div>
+            <div class="doneprev">
+              <b>7:00 に届く予定</b>
+              🫀 心拍は昨日と同水準。落ち着いた朝と読めます。<br>
+              ⚖️ 体重 +0.2kg — トレンドは1週間で見ましょう。<br>
+              ⚠️ 内臓脂肪 9.5 — 変化なし。10.0を越えたら夜の記録が主役です。<br>
+              <small>根拠: 計測 #2 ／ 平常域は7件で確立（あと5件）</small>
+            </div>
+            <button class="weeklink" id="weekBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2z"/><circle cx="17" cy="17" r="4.5" fill="#0e2038" opacity=".9"/><circle cx="17" cy="17" r="3.6" fill="rgba(246,196,83,.95)"/><path d="M15.3 17.2l1.2 1.2 2.2-2.4" stroke="#0e2038" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="wl-text">この1週間を、俯瞰する</span>
+              <b class="wl-arrow">→</b>
+            </button>
+            <button class="exit" id="exitBtn">↺ もう一度みる（デモ用）</button>
+          </div>
+        </div>
+
+        <!-- ============ 手動入力（例外パス） ============ -->
+        <div class="scenebox" data-scene="M">
+          <div class="prevhead"><b>手で入力</b><small>スワイプでも打ち込みでも</small></div>
+          <div class="manualwrap">
+            <div class="mnrow"><span class="lbl">体重</span><input type="number" step="0.1" value="83.4"><span class="unit">kg</span></div>
+            <div class="mnrow"><span class="lbl">体脂肪率</span><input type="number" step="0.1" value="18.4"><span class="unit">%</span></div>
+            <div class="mnrow"><span class="lbl">BMI</span><input type="number" step="0.1" value="22.9"><span class="unit">—</span></div>
+            <div class="mnrow"><span class="lbl">筋肉量</span><input type="number" step="0.1" value="64.3"><span class="unit">kg</span></div>
+            <div class="mnrow"><span class="lbl">内臓脂肪</span><input type="number" step="0.5" value="9.5"><span class="unit">Lv</span></div>
+            <div class="mnrow"><span class="lbl">基礎代謝</span><input type="number" step="1" value="1929"><span class="unit">kcal</span></div>
+            <div class="mnrow"><span class="lbl">睡眠</span><input type="number" step="0.05" value="7.05"><span class="unit">h</span></div>
+            <div class="mnrow"><span class="lbl">起床時HR</span><input type="number" step="1" value="71"><span class="unit">bpm</span></div>
+          </div>
+          <div class="footbar">
+            <button class="later" id="mnBack">← 戻る</button>
+            <button class="send" id="mnSend">今日を書き留める</button>
+          </div>
+        </div>
+
+        <!-- editモーダル -->
+        <div class="editmodal" id="editmodal">
+          <div class="editcard">
+            <b id="editLabel">体重を調整</b>
+            <input type="number" id="editInput" step="0.1" value="83.4">
+            <div class="editrow">
+              <button class="editcancel" id="editCancel">キャンセル</button>
+              <button class="editok" id="editOk">この値にする</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <h3><small>DESIGN NOTES</small>「気分が乗らない朝」の5原則</h3>
+      <ul>
+        <li><b>①1タップで終わる導線を最上流に</b>：既定パスは「▶ はじめる」だけ。前日値をプリセットとして流し込み、変えるものだけタップして直す。既定で完了できる=脳を使わない。</li>
+        <li><b>②数字は打たせない</b>：Tanita体組成計はBluetoothで、心拍は15秒rPPGで、睡眠はGoogle Healthから。全部だめでも「昨日と同じ」がプリセット。手打ちは「例外」に降格。</li>
+        <li><b>③選択肢を5個に絞る</b>：体調は絵文字ワンタップ・「ふつう」がデフォ。7段階も1-10も採点疲れを生む。<b>ワンタップで送信=最速12秒完了</b>。</li>
+        <li><b>④「今日はパス」を1級市民に</b>：スキップは目立つ場所に。連続日数の煽り・「◯日で目標達成」は<b>実装しない</b>（ダークパターン禁止=D-Hおよびv0.7ゲーミフィケーション禁止則）。</li>
+        <li><b>⑤朝の色は「静か」→「暖」へ</b>：起床画面は寒色（覚醒前）→スキャン→<b>フィードバック(5秒・呼吸)</b>→プレビューで暖色→完了で明るく。<b>視覚の光量で身体を起こす</b>。褒めない・鳴らない・振動控えめ。</li>
+        <li><b>⑥5秒スキャン後の「呼吸5秒」</b>：スキャン直後は自律神経が最も静かな瞬間。ここで「深呼吸してもいい・しなくてもいい」という<b>強要しない誘導</b>を挟み、処理状況を3ステップで見せる。ダークパターン（勝手にカウントアップされる連続日数など）は表示しない。単純に「今、あなたのデータで計算しています」を伝える窓。</li>
+        <li><b>⑦保存ボタンは「送る」ではなく「書き留める」</b>：「送信」「保存」はデータが会員から会社に移る受動的ニュアンス→プライバシー不安のトリガー。ここでは<b>会員が自分の取扱説明書に1ページ追加する能動行為</b>として設計（案A・v0.3の資産化戦略と直結）。ボタン直下に淡色3行で①追加先②Slackお届け時刻③エクスポート可を明記——<b>恐怖ではなく品格として透明性を組み込む</b>。</li>
+        <li><b>⑧「撮り直す」の位置＝発見性×誤タップ防止のバランス設計</b>：主行動「書き留める」の直下ではなく、<b>点線セパレータ＋説明ヘッダー「スキャンの写りが気になったら」＋アウトライン形式の二次ボタン</b>で分離。①視覚的階層で誤タップ排除（金色フィル vs 灰色アウトライン） ②説明ヘッダーで意図確認（テキストを読む＝一瞬の熟考が入る） ③破線区切りで領域を心理的に隔てる。<b>心理的安全性の担保</b>——特にメイク前・寝起き直後の映りに敏感な会員（属性を問わず）が、<b>データを"我慢して受け入れる"のではなく"自分で選び直す"</b>ことができる。他の状態（体調選択・調整済み値）は保持。データ品質と会員自尊心の両立。</li>
+        <li><b>⑨【v1.1新設】rPPG精度と継続性のトレードオフ＝「緩和版プロトコル」（claude/29 v0.4）</b>：研究水準の撮影条件（専用スタンド固定・60-90cm厳守・無表情完全静止・安定照明・20-30秒）は精度は高いが、日常のアドヒアランスを破壊すると創業者自身の実地テストで判明（経営理念第3条＝会員に強いる前に創業者が検証）。<b>「立てかけるだけ・逆光だけ回避・15秒いつも通り」の3ルールに絞った緩和版</b>を採用し、想定精度は±3-5bpmから±8-10bpm程度に緩めた。本サービスは診断ではなく傾向・気づきの可視化という規制設計原則（測る・記録する・見せる・一般情報＝適法地帯）とも整合的——精度至上主義は「UXによる熱狂：やらされ感のなさ」という経営理念の優先順位と衝突しうるため、継続性を優先する意思決定。撮影のコツ（Scene 0B）は<b>初回のみ表示</b>し、以降は毎朝のフローに戻す（こだわりを強要しない）。逆光ヒューリスティックは実カメラの映像から中央(顔)と周辺(背景)の明るさを比較する簡易ロジックで、検知しても<b>強制修正はさせず「気にせず続ける」を許容</b>。</li>
+      </ul>
+
+      <h3><small>INTERACTION MAP</small>実装した4フロー</h3>
+      <ul>
+        <li><span class="devchip">1タップ完了</span>▶はじめる→15秒スキャン（初回のみ撮影のコツ）→前日値プリセットで自動埋め→「これで送る」<b>（実測約25秒・タップ3回）</b></li>
+        <li><span class="devchip">部分修正</span>プレビュー画面で修正したい行だけタップ→スライダー/数値入力→この値にする→送る<b>（実測約30秒）</b></li>
+        <li><span class="devchip">手動フル入力</span>「手で入力する」→8項目を打ち込み→送る<b>（実測60秒・例外パス）</b></li>
+        <li><span class="devchip">スキップ</span>「今日はパス」→ワンタップで終了。<b>減点ゼロ・翌朝も同じ挨拶で迎える</b>（責めない設計）</li>
+      </ul>
+
+      <h3><small>DATA SCHEMA</small>取得項目（claude/91準拠）</h3>
+      <p><b>体組成計（ELECOM EFSBTW01WH）</b>: 体重・体脂肪率・BMI・筋肉量・内臓脂肪Lv・基礎代謝<br><b>Google Health</b>: 睡眠h・睡眠スコア・起床時HR<br><b>体調</b>: 1-5段階（絵文字）<br><b>夜チェック</b>: 就寝時刻・夕食終了時刻・会食有無 <span style="color:#7d90b4">（朝と分離。21:50に別UIで10秒）</span></p>
+
+      <h3><small>ABOUT YOU</small>この画面がやらないこと</h3>
+      <ul>
+        <li>❌ 連続日数の表示（「14日連続！」→ 切れた翌日の脱落が加速）</li>
+        <li>❌ 目標体重までのカウントダウン（プレッシャー装置）</li>
+        <li>❌ 他人との比較・ランキング（v0.3で禁止決裁済み）</li>
+        <li>❌ プッシュ通知の攻撃性（1日1回・6:45のみ・音なし推奨）</li>
+        <li>❌ 「今日の1枚」を即座に見せる（<b>7:00配信で「読みに行く」体験にする</b>——朝は入力、通勤で読む）</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 状態機械 ============ */
+const phone = document.getElementById('phone');
+const scenes = document.querySelectorAll('.scenebox');
+function setScene(s){
+  phone.dataset.scene = s;
+  scenes.forEach(el => el.classList.toggle('on', el.dataset.scene === String(s)));
+}
+document.getElementById('clock').textContent = ((new Date().getHours()<7||new Date().getHours()>=22)?'6:45':new Date().toTimeString().slice(0,5));
+
+/* Scene 0 buttons */
+/* 撮影のコツ（0B）は初回のみ表示。「こだわりすぎない」= 毎朝は出さない（claude/29 v0.4） */
+let tipsShown = false;
+function startFlow(){
+  if(!tipsShown){ setScene('0B'); } else { runScan(); }
+}
+document.getElementById('startBtn').onclick = () => startFlow();
+document.getElementById('tipsStartBtn').onclick = () => { tipsShown = true; runScan(); };
+document.getElementById('retakeBtn').onclick = () => runScan(); /* 撮り直し: コツは表示済みなので直接スキャンへ */
+document.getElementById('manualBtn').onclick = () => setScene('M');
+document.getElementById('passBtn').onclick = () => {
+  setScene(4);
+  document.querySelector('.donetitle').textContent = 'また明日。';
+  document.querySelector('.donesub').innerHTML = '今日の記録はしませんでした——それでいいです。<br>連続日数は数えません。明日も同じ挨拶で迎えます。';
+  document.querySelector('.doneprev').style.display = 'none';
+  var wb = document.getElementById('weekBtn'); if (wb) wb.style.display = 'none';
+};
+
+/* Scene 1: 5秒スキャン（実カメラ映像＋rPPG風UI） */
+let camStream = null;
+async function tryCamera(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return null;
+    const s = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+    return s;
+  }catch(e){ return null; }
+}
+function stopCamera(){
+  if(camStream){
+    try{ camStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    camStream = null;
+  }
+  const v = document.getElementById('cam');
+  if(v){ try{ v.pause(); v.srcObject = null; }catch(e){} }
+}
+/* 逆光ヒューリスティック（claude/29 v0.4）: 顔中央 vs 周辺(背景)の明るさを比較し、
+   背景が顔より大幅に明るい場合のみ「逆光かもしれません」を非ブロッキングで一度だけ提示する。
+   強制はしない＝気にせず続けられる（こだわりすぎない設計） */
+function checkBacklight(video){
+  try{
+    if(!video.videoWidth) return false;
+    const c = document.createElement('canvas');
+    c.width = 40; c.height = 30;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(video, 0, 0, 40, 30);
+    const centerData = ctx.getImageData(14, 8, 12, 14).data;
+    const edgeData = ctx.getImageData(0, 0, 6, 30).data;
+    const lum = d => { let s=0,n=0; for(let i=0;i<d.length;i+=4){ s += 0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]; n++; } return s/n; };
+    const centerLum = lum(centerData), edgeLum = lum(edgeData);
+    return (edgeLum - centerLum) > 55; /* 背景が顔より明らかに明るい=逆光の可能性 */
+  }catch(e){ return false; }
+}
+
+async function runScan(){
+  setScene(1);
+  const oval = document.getElementById('oval');
+  const ov = document.getElementById('ovring'), sh = document.getElementById('scanH'), ss = document.getElementById('scanS');
+  const cam = document.getElementById('cam');
+  const dov = document.getElementById('discardov');
+  const blhint = document.getElementById('backlighthint');
+  const propchip = document.getElementById('propchip');
+  const ringbar = document.getElementById('ringbar');
+  oval.classList.remove('live-on','simmode','scanning');
+  dov.classList.remove('on'); blhint.classList.remove('on');
+  ov.classList.remove('ok');
+  propchip.style.display = 'block';
+  sh.textContent = 'カメラを起動しています…'; ss.textContent = 'カメラの許可ダイアログが出たら「許可」してください';
+  /* 実カメラ起動 */
+  camStream = await tryCamera();
+  if(camStream){
+    cam.srcObject = camStream;
+    try{ await cam.play(); }catch(e){}
+    oval.classList.add('live-on');
+    sh.textContent = '顔をガイドに合わせてください';
+    ss.textContent = 'タップは不要です。ガイドに顔が入ると自動で始まります';
+  }else{
+    oval.classList.add('simmode');
+    sh.textContent = '顔をガイドに合わせてください（シミュレーション）';
+    ss.textContent = 'カメラが使えない環境のため、動作イメージだけ表示します';
+  }
+  await wait(900); ov.classList.add('ok');
+  sh.textContent = '光量OK・位置OK'; ss.textContent = 'そのまま、15秒だけいつも通りでお願いします';
+  /* 逆光チェック（実カメラ時のみ・1回だけ非ブロッキングで提示） */
+  if(camStream && checkBacklight(cam)){
+    blhint.classList.add('on');
+    await wait(2400);
+    blhint.classList.remove('on');
+  }
+  propchip.style.display = 'none';
+  await wait(300);
+  oval.classList.add('scanning');
+  const cb = document.getElementById('countbig'); cb.style.display = 'flex';
+  const DURATION = 15;
+  const CIRC = 295; /* 2*PI*47 */
+  ringbar.style.transition = 'none'; ringbar.style.strokeDashoffset = '0';
+  for(let n=DURATION;n>=1;n--){
+    cb.textContent = n;
+    ringbar.style.transition = 'stroke-dashoffset 1s linear';
+    ringbar.style.strokeDashoffset = String(CIRC * (1 - n/DURATION));
+    await wait(1000);
+  }
+  cb.style.display = 'none'; oval.classList.remove('scanning');
+  /* Proof of Transparency: 実際にカメラを止めて映像を破棄したことを見せる */
+  stopCamera();
+  oval.classList.remove('live-on','simmode');
+  dov.classList.add('on');
+  sh.textContent = '✓ 完了・映像を破棄しました'; ss.textContent = 'クラウドに残るのは数値だけ（体重・体脂肪率も同時に読取り完了）';
+  await wait(1100);
+  dov.classList.remove('on');
+  await runFeedback();
+  setScene(2);
+}
+
+/* Scene 1B: 1.8秒フィードバック（引き延ばさない・v0.3三原則と整合） */
+async function runFeedback(){
+  setScene('1B');
+  const checks = document.querySelectorAll('.fbcheck');
+  const fbMsg = document.getElementById('fbMsg');
+  const fbBar = document.getElementById('fbBar');
+  fbBar.style.transition = 'none'; fbBar.style.width = '0%';
+  checks.forEach(c=>{c.classList.remove('on','done');});
+  await wait(40);
+  fbBar.style.transition = 'width 1.8s linear';
+  fbBar.style.width = '100%';
+  const seq = [
+    {t:40,  act:()=>{checks[0]?.classList.add('on');}},
+    {t:380, act:()=>{checks[0]?.classList.add('done'); checks[1]?.classList.add('on');}},
+    {t:800, act:()=>{checks[1]?.classList.add('done'); checks[2]?.classList.add('on');}},
+    {t:1100,act:()=>{
+      checks[2]?.classList.add('done');
+      fbMsg.innerHTML = '落ち着いた朝と読めます。<br>まもなく結果が出ます。';
+    }}
+  ];
+  seq.forEach(s => setTimeout(s.act, s.t));
+  await wait(1800);
+}
+function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+/* Scene 2: mood選択 */
+const moods = document.querySelectorAll('.mood');
+moods.forEach(b => b.onclick = () => { moods.forEach(x => x.classList.remove('on')); b.classList.add('on'); });
+
+/* Scene 2: 値タップで編集 */
+let editingKey = null;
+const em = document.getElementById('editmodal');
+document.querySelectorAll('.stat').forEach(row => {
+  row.onclick = () => {
+    editingKey = row.dataset.key;
+    document.getElementById('editLabel').textContent = row.querySelector('.lbl').textContent + ' を調整';
+    document.getElementById('editInput').value = row.dataset.today;
+    document.getElementById('editInput').step = row.dataset.step;
+    document.getElementById('editInput').min = row.dataset.min;
+    document.getElementById('editInput').max = row.dataset.max;
+    em.classList.add('on');
+  };
+});
+document.getElementById('editCancel').onclick = () => em.classList.remove('on');
+document.getElementById('editOk').onclick = () => {
+  const v = document.getElementById('editInput').value;
+  const row = document.querySelector(`.stat[data-key="${editingKey}"]`);
+  row.dataset.today = v;
+  const unit = row.dataset.unit;
+  const disp = editingKey === 'sleep' ? formatSleep(parseFloat(v)) + '<small>・スコア81</small>' : v + `<small>${unit==='—'?'':unit}</small>`;
+  row.querySelector('.val').innerHTML = disp;
+  em.classList.remove('on');
+};
+function formatSleep(h){ const H=Math.floor(h); const M=Math.round((h-H)*60); return `${H}h${String(M).padStart(2,'0')}`; }
+
+/* Scene 2: 送る */
+document.getElementById('sendBtn').onclick = async () => {
+  setScene(3);
+  await wait(1400);
+  setScene(4);
+};
+document.getElementById('laterBtn').onclick = () => setScene(0);
+
+/* 手動入力 */
+document.getElementById('mnBack').onclick = () => setScene(0);
+document.getElementById('mnSend').onclick = async () => { setScene(3); await wait(1400); setScene(4); };
+
+/* Scene 4 exit */
+document.getElementById('exitBtn').onclick = () => setScene(0);
+// weekBtn: iframe内なら親に通知（自動遷移トリガー）、スタンドアロンなら週次画面に直接遷移
+document.getElementById('weekBtn').onclick = () => {
+  if (window.parent !== window) {
+    try { window.parent.postMessage({ type: 'kanzo:morning-complete', ts: Date.now() }, '*'); return; } catch(e) {}
+  }
+  window.location.href = 'app-week.html';
+};
+</script>
+</body>
+</html>
