@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#1F3864">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>肝臓株式会社｜パイロット版 v0.1（会員第一号エディション）</title>
+<title>肝臓株式会社｜パイロット版 v0.3（会員第一号エディション・D-O 4タブIA準拠）</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--dk2:#16294a;--line:rgba(202,220,252,.18);--green:#9fd4a3;--pink:#e8a0a8}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -90,16 +90,34 @@
 </style>
 </head>
 <body>
+<!-- 事業計画データv2バナー: 2026-07-13時点の最新決裁事項を反映 -->
+<div style="max-width:1560px;margin:0 auto 24px;padding:14px 22px;background:linear-gradient(135deg,rgba(232,80,106,.08),rgba(201,163,83,.06));border:1.5px solid rgba(232,80,106,.35);border-radius:14px;font-size:12px;color:#c9d4e8;line-height:1.7;font-family:'Hiragino Sans','Noto Sans JP',sans-serif">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:8px">
+    <b style="color:#ffb0c0;font-size:11.5px;letter-spacing:.1em">★事業計画データ v2（2026-07-13時点）反映済</b>
+    <span style="font-size:10.5px;color:#9db0cc">D-M経営理念・D-O UI情報アーキテクチャ・D-026設立日変更を反映</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 16px;font-size:11.5px;color:#e8eef8">
+    <div>📅 <b>設立予定</b>: 2026年11月2日（月）</div>
+    <div>💰 <b>資本金</b>: 100万円＋公庫融資900万円</div>
+    <div>🎯 <b>North Star</b>: 2030年NASDAQ</div>
+    <div>⚖️ <b>経営理念</b>: D-M第1〜7条（8月決裁待ち）</div>
+    <div>📱 <b>UI IA</b>: D-O 4タブ（今日/庭/はなす/説明書）</div>
+    <div>⭐ <b>Moat</b>: 会員の"取扱説明書"（G1稼働）</div>
+    <div>🏢 <b>Position</b>: 経営インフラ（BtoC×高単価）</div>
+    <div>🌐 <b>長期</b>: フィジカルAI連携（Phase 5・2030+）</div>
+  </div>
+</div>
+
+
 <div class="app">
-  <div class="pilotbar"><b>PILOT v0.1｜会員第一号エディション</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
+  <div class="pilotbar"><b>PILOT v0.3｜会員第一号エディション（D-O 4タブIA準拠）</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
   <div class="appbar"><div class="mk" id="logo"></div><b>肝臓株式会社</b><span class="date" id="hdrDate"></span></div>
   <main id="main"></main>
   <div class="tabbar">
     <div class="tab on" data-t="today"><i></i>今日</div>
-    <div class="tab" data-t="trend"><i></i>トレンド</div>
+    <div class="tab" data-t="garden"><i></i>庭</div>
+    <div class="tab" data-t="talk"><i></i>はなす</div>
     <div class="tab" data-t="book"><i></i>説明書</div>
-    <div class="tab" data-t="story"><i></i>物語</div>
-    <div class="tab" data-t="setting"><i></i>設定</div>
   </div>
   <div class="toast" id="toast"></div>
 </div>
@@ -234,31 +252,140 @@ function vToday(){
     const d=S.days[dk]||(S.days[dk]={});d.note=document.getElementById('inNote').value;save();toast('おやすみなさい。明朝、答え合わせを。');
   };
 }
-function vTrend(){
-  const es=entries().filter(e=>e.rhr).slice(-30);const b=baseline();
-  let h=`<h2>トレンド<small>安静時心拍・直近30件${b.ready?`｜あなたの平常域 ${b.lo}–${b.hi} bpm`:''}</small></h2>`;
-  if(es.length<2){h+=`<div class="empty">データが2件以上たまるとグラフが表示されます。<br>まずは明日の朝も、1分だけ。</div>`;main.innerHTML=h;return;}
+function vGarden(){
+  const es=entries().filter(e=>e.rhr);const b=baseline();
+  let h=`<h2>庭 <small>今週の庭と今月の庭——数値を「時間の中で」眺める場所</small></h2>`;
+  h+=`<div class="seg" id="gvSeg" style="margin:8px 0 4px"><div data-v="week" class="sel" style="flex:1;padding:9px">今週の庭</div><div data-v="month" style="flex:1;padding:9px">今月の庭</div></div>`;
+  h+=`<div id="gvBody"></div>`;
+  h+=`<div class="footnote">参考値です。診断ではありません。色は「あなたの平常域との距離」を表し、良し悪しの評価ではありません。</div>`;
+  main.innerHTML=h;
+  const view=(v)=>{
+    document.querySelectorAll('#gvSeg div').forEach(d=>d.classList.toggle('sel',d.dataset.v===v));
+    const body=document.getElementById('gvBody');
+    if(v==='week') body.innerHTML=renderWeekView(es,b);
+    else body.innerHTML=renderMonthView(es,b);
+  };
+  document.querySelectorAll('#gvSeg div').forEach(el=>el.onclick=()=>view(el.dataset.v));
+  view('week');
+}
+function renderWeekView(es,b){
+  const last=es.slice(-30);
+  if(last.length<2)return `<div class="empty">データが2件以上たまるとグラフが表示されます。<br>まずは明日の朝も、1分だけ。</div>`;
   const W=380,H=190,P=26;
-  const vals=es.map(e=>+e.rhr);const mn=Math.min(...vals)-3,mx=Math.max(...vals)+3;
-  const X=i=>P+ i*(W-P-8)/Math.max(1,es.length-1);
+  const vals=last.map(e=>+e.rhr);const mn=Math.min(...vals)-3,mx=Math.max(...vals)+3;
+  const X=i=>P+ i*(W-P-8)/Math.max(1,last.length-1);
   const Y=v=>H-18-((v-mn)*(H-38)/(mx-mn));
   let svg=`<svg width="100%" viewBox="0 0 ${W} ${H}">`;
   if(b.ready){svg+=`<rect x="${P-4}" y="${Y(b.hi)}" width="${W-P-4}" height="${Y(b.lo)-Y(b.hi)}" fill="rgba(127,168,224,.14)"/>
-   <line x1="${P-4}" x2="${W}" y1="${Y(b.hi)}" y2="${Y(b.hi)}" stroke="rgba(127,168,224,.45)" stroke-dasharray="3 3"/>
-   <line x1="${P-4}" x2="${W}" y1="${Y(b.lo)}" y2="${Y(b.lo)}" stroke="rgba(127,168,224,.45)" stroke-dasharray="3 3"/>`;}
-  es.forEach((e,i)=>{if(e.dinner)svg+=`<rect x="${X(i)-2.5}" y="16" width="5" height="${H-34}" fill="rgba(232,160,168,.22)"/>`;});
+    <line x1="${P-4}" x2="${W}" y1="${Y(b.hi)}" y2="${Y(b.hi)}" stroke="rgba(127,168,224,.45)" stroke-dasharray="3 3"/>
+    <line x1="${P-4}" x2="${W}" y1="${Y(b.lo)}" y2="${Y(b.lo)}" stroke="rgba(127,168,224,.45)" stroke-dasharray="3 3"/>`;}
+  last.forEach((e,i)=>{if(e.dinner)svg+=`<rect x="${X(i)-2.5}" y="16" width="5" height="${H-34}" fill="rgba(232,160,168,.22)"/>`;});
   [mn+3,Math.round((mn+mx)/2),mx-3].forEach(g=>{svg+=`<text x="2" y="${Y(g)+3}" fill="#8fa0bd" font-size="9">${g}</text>`;});
-  svg+=`<polyline points="${es.map((e,i)=>X(i)+','+Y(+e.rhr)).join(' ')}" fill="none" stroke="#C9A353" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
-  const le=es[es.length-1];svg+=`<circle cx="${X(es.length-1)}" cy="${Y(+le.rhr)}" r="4" fill="#C9A353"/></svg>`;
-  h+=`<div class="card">${svg}<div class="legendrow"><span class="lg-band">あなたの平常域${b.ready?`（${b.lo}–${b.hi}）`:'（確立中）'}</span><span class="lg-meal">会食翌朝</span></div></div>`;
-  if(b.ready){h+=`<div class="story"><span class="lab2">この線の読み方</span>青い帯があなたの「平常」——<b>計測${b.count}回から確定した、世界に一つの基準線</b>です。帯の外に出ても、戻る速さがあなたの回復力です。</div>`;}
-  else{h+=`<div class="story"><span class="lab2">確立中</span>平常域の確定まで、あと<b> ${7-b.count}回</b>の計測です。</div>`;}
-  h+=`<div class="footnote">参考値です。診断ではありません。</div>`;
+  svg+=`<polyline points="${last.map((e,i)=>X(i)+','+Y(+e.rhr)).join(' ')}" fill="none" stroke="#C9A353" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const le=last[last.length-1];svg+=`<circle cx="${X(last.length-1)}" cy="${Y(+le.rhr)}" r="4" fill="#C9A353"/></svg>`;
+  let h=`<div class="card"><div class="lab">WEEKLY｜安静時心拍・直近30件${b.ready?`｜平常域 ${b.lo}–${b.hi} bpm`:''}</div>${svg}<div class="legendrow"><span class="lg-band">あなたの平常域${b.ready?`（${b.lo}–${b.hi}）`:'（確立中）'}</span><span class="lg-meal">会食翌朝</span></div></div>`;
+  const w=last.slice(-7);
+  if(w.length>=7){
+    const feelOK=w.filter(e=>e.feel!==2&&e.feel!=null).length;
+    const din=w.filter(e=>e.dinner).length;
+    const early=w.filter(e=>e.bed!=null&&e.bed<=1).length;
+    const avg=Math.round(w.reduce((s,e)=>s+ +e.rhr,0)/w.length*10)/10;
+    h+=`<div class="card"><div class="lab">直近7日の物語</div>
+      <div class="story"><span class="lab2">発見 1</span>平均心拍 <b>${avg}bpm</b>${b.ready?`（平常値 ${b.med}）`:''}・会食 <b>${din}回</b>をこなしました。</div>
+      <div class="story"><span class="lab2">発見 2</span>22時台までの就寝が <b>${early}日</b>。${early>=4?'この習慣があなたの土台になりつつあります。':'来週、あと1日だけ増やせるか試します。'}</div>
+      <div class="story"><span class="lab2">発見 3</span>体感が「軽い・ふつう」だった日は <b>${feelOK}日</b>（チェックイン分）。</div>
+      <div class="action"><b>来週の設計（1つだけ）</b>${din>0?'次の会食で、説明書のルールを1本だけ検証します。':'就寝時刻を1段だけ早める実験をします。'}</div></div>`;
+  } else {
+    h+=`<div class="story"><span class="lab2">週次の物語</span>7日分のデータがたまると「発見」が3つ表示されます。現在 ${w.length}/7 日。</div>`;
+  }
+  return h;
+}
+function renderMonthView(es,b){
+  const ym=today().slice(0,7);const m=es.filter(e=>e.date.startsWith(ym));
+  if(m.length<3)return `<div class="empty">今月のデータが3件以上たまると月次カレンダーが表示されます。<br>現在 ${m.length}件。</div>`;
+  const [yr,mo]=ym.split('-').map(n=>+n);
+  const first=new Date(yr,mo-1,1);const last=new Date(yr,mo,0);
+  const daysInMonth=last.getDate();const firstDow=first.getDay();
+  const byDate={};m.forEach(e=>{byDate[e.date]=e;});
+  let cells='';
+  for(let i=0;i<firstDow;i++){cells+=`<div style="padding:6px 3px;text-align:center;font-size:9px;color:#3d4a63"></div>`;}
+  for(let d=1;d<=daysInMonth;d++){
+    const dkey=`${yr}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const e=byDate[dkey];
+    let bg='rgba(255,255,255,.03)';let dot='';let feelEmo='';
+    if(e){
+      if(b.ready){
+        const r=+e.rhr;
+        if(r<b.lo)bg='rgba(127,168,224,.18)';
+        else if(r>b.hi)bg='rgba(232,160,168,.22)';
+        else bg='rgba(159,212,163,.16)';
+      } else bg='rgba(201,163,83,.14)';
+      dot=`<div style="font-size:9.5px;color:#dbe5f5;margin-top:1px">${e.rhr}</div>`;
+      if(e.feel===0)feelEmo='<span style="font-size:9px">○</span>';
+      else if(e.feel===1)feelEmo='<span style="font-size:9px">◎</span>';
+      else if(e.feel===2)feelEmo='<span style="font-size:9px;color:#e8a0a8">△</span>';
+    }
+    cells+=`<div style="padding:5px 2px;text-align:center;background:${bg};border-radius:5px;font-size:9.5px;line-height:1.2;min-height:36px">${d}<br>${dot}${feelEmo}</div>`;
+  }
+  let h=`<div class="card"><div class="lab">MONTHLY｜${mo}月のカレンダー（進行中）</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:8px 0;font-size:9px;color:var(--gray)">
+      <div style="text-align:center">日</div><div style="text-align:center">月</div><div style="text-align:center">火</div><div style="text-align:center">水</div><div style="text-align:center">木</div><div style="text-align:center">金</div><div style="text-align:center">土</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">${cells}</div>
+    <div class="legendrow" style="margin-top:10px"><span style="color:#7fa8e0">●</span>平常域より低い <span style="color:#9fd4a3">●</span>平常域内 <span style="color:#e8a0a8">●</span>平常域より高い</div></div>`;
+  if(m.length>=10){
+    const mFeel=m.filter(e=>e.feel!==2&&e.feel!=null).length;
+    const mDin=m.filter(e=>e.dinner).length;
+    const mEarly=m.filter(e=>e.bed!=null&&e.bed<=1).length;
+    const ver=S.rules.filter(r=>r.active&&r.n>=3&&r.ok/r.n>=.6).length;
+    h+=`<div class="card"><div class="lab">身体の月次決算（${mo}月・進行中）</div>
+      <div class="pltable">
+        <div class="plrow"><span class="k">快調日数<small>体感「軽い・ふつう」</small></span><span class="v">${mFeel}<small>/${m.length}日</small></span></div>
+        <div class="plrow"><span class="k">会食<small>こなした回数</small></span><span class="v">${mDin}<small>回</small></span></div>
+        <div class="plrow"><span class="k">22時台就寝</span><span class="v">${mEarly}<small>日</small></span></div>
+        <div class="plrow"><span class="k">検証済みルール<small>説明書の資産</small></span><span class="v">${ver}<small>本</small></span></div>
+      </div>
+      <div class="guard"><b>役割の宣言:</b> 平常値が安定した月の私たちの仕事は、改善の演出ではなく<b>「崩れの兆候をあなたより先に見つけること」</b>。異常のない月は「異常なし」と短く言います。</div></div>`;
+  }
+  return h;
+}
+function vTalk(){
+  let h=`<h2>はなす <small>AIとの対話・医療顧問・会員コミュニティの3層</small></h2>`;
+  // A. AI肝臓くん（βローンチ即時・簡易プレースホルダー）
+  h+=`<div class="card" style="border-color:rgba(143,180,232,.45)"><div class="lab" style="color:#a8c4ff">A. AI肝臓くん <span style="font-size:9px;background:rgba(143,180,232,.15);border:1px solid rgba(143,180,232,.5);border-radius:99px;padding:1px 8px;margin-left:8px;color:#a8c4ff;letter-spacing:.05em">βローンチ即時・24/7</span></div>
+    <h4>非診断・非緊急のAI対話</h4>
+    <p style="font-size:11.5px;color:#c9d4e8;line-height:1.7;margin-bottom:10px">あなたの計測データと申告に基づいて、AI肝臓くんが対話相手になります。<br><b style="color:#ffc9d4">医療診断はしません。緊急時は救急に。</b></p>
+    <div style="background:rgba(143,180,232,.06);border:1px dashed rgba(143,180,232,.35);border-radius:10px;padding:11px 13px;font-size:11.5px;color:#c9d4e8;line-height:1.7;margin-bottom:8px">
+      <b style="color:#a8c4ff;font-size:10px;letter-spacing:.1em">対話サンプル</b><br>
+      <b>あなた:</b> 今日、心拍が普段より高いんだけど、大丈夫？<br>
+      <b>肝臓くん:</b> 今朝の${(entries().slice(-1)[0]?.rhr)||'—'}bpmは、直近の平常域と比べて${baseline().ready?'見えます。':'まだ確立中'}。1日限りなら誤差の範囲。2日続くなら、直近の睡眠・会食を突き合わせて仮説を立てましょう。（AI・非診断）
+    </div>
+    <input type="text" placeholder="肝臓くんに話しかける…" style="width:100%;padding:9px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;color:#fff;font-size:12.5px;font-family:inherit" disabled>
+    <div class="done" style="text-align:left;margin-top:8px">※ 実稼働はβローンチ以降。本パイロットではプレースホルダー表示のみ。</div>
+  </div>`;
+  // B. 医療顧問予約
+  h+=`<div class="card"><div class="lab">B. 医療顧問への予約 <span style="font-size:9px;background:rgba(201,163,83,.15);border:1px solid rgba(201,163,83,.4);border-radius:99px;padding:1px 8px;margin-left:8px;color:var(--gold);letter-spacing:.05em">βローンチ後3ヶ月・月次予約</span></div>
+    <p style="font-size:11.5px;color:#c9d4e8;line-height:1.7">医療監修者との月次オンラインセッション（承認済み）。<br>予約は月1回まで無料・追加は別途費用。</p>
+    <button class="btn sub" disabled style="opacity:.55;cursor:not-allowed">予約する（β後解禁）</button>
+  </div>`;
+  // C. 他会員対話
+  h+=`<div class="card"><div class="lab">C. 他会員との対話 <span style="font-size:9px;background:rgba(159,212,163,.15);border:1px solid rgba(159,212,163,.4);border-radius:99px;padding:1px 8px;margin-left:8px;color:var(--green);letter-spacing:.05em">G2以降・承認制・匿名化</span></div>
+    <p style="font-size:11.5px;color:#c9d4e8;line-height:1.7">他の会員との匿名対話（承認制・希望者のみ・G2 = 2027年12月以降）。<br>あなたのデータを共有する場合は毎回明示的な同意が必要（D-M第2条-4「共有の規律」）。</p>
+    <button class="btn sub" disabled style="opacity:.55;cursor:not-allowed">参加を希望（G2以降）</button>
+  </div>`;
+  h+=`<div class="footnote">「はなす」は3層構成: A.AI（β即時）／ B.医療顧問（β+3ヶ月）／ C.他会員（G2以降）。<br>いずれもD-M経営理念 第1条-4「AIであることを名乗る」・第2条-4「共有の規律」に準拠。</div>`;
   main.innerHTML=h;
 }
 function vBook(){
   const act=S.rules.filter(r=>r.active);
-  let h=`<h2>あなたの取扱説明書<small>検証済み ${act.filter(r=>r.n>=3&&r.ok/r.n>=.6).length}本｜検証中 ${act.filter(r=>!(r.n>=3&&r.ok/r.n>=.6)).length}本</small></h2>`;
+  const n=entries().length;
+  let h=`<h2>説明書 <small>あなた専用の"取扱説明書"（G1稼働予定・Salesforce SoR蓄積で個別化）</small></h2>`;
+  h+=`<div class="card" style="border-color:rgba(232,80,106,.45)"><div class="lab" style="color:#ffc9d4">★MOAT｜会員の"取扱説明書"</div>
+    <p style="font-size:12px;color:#c9d4e8;line-height:1.7;margin-bottom:8px">検証済み <b style="color:var(--green)">${act.filter(r=>r.n>=3&&r.ok/r.n>=.6).length}本</b>｜検証中 <b>${act.filter(r=>!(r.n>=3&&r.ok/r.n>=.6)).length}本</b>｜総計 <b>${n}日分</b>のデータ</p>
+    <div style="background:rgba(232,80,106,.06);border:1px dashed rgba(232,80,106,.4);border-radius:10px;padding:9px 12px;font-size:10.5px;color:#c9d4e8;line-height:1.65;margin-bottom:8px">
+      <b style="color:#ffc9d4">G1（2027-06-30）稼働予定</b>: データ蓄積30日以上の会員から、個別化された「取扱説明書」がSalesforce SoRから月次自動生成される予定。本パイロットは会員第一号（創業者本人）の先行実装。
+    </div>
+  </div>`;
   act.forEach(r=>{
     const verified=r.n>=3&&r.ok/r.n>=.6;
     h+=`<div class="pbcard"><div class="rid">${r.id}｜${esc(r.cat)} <span>${verified?`<span class="vbadge">✓ 検証済み ×${r.ok}</span>`:`<span class="vbadge pend">▷ 検証中 ${r.ok}/${r.n}</span>`}</span></div>
@@ -269,7 +396,23 @@ function vBook(){
     <label>カテゴリ</label><select id="nrCat"><option>会食</option><option>睡眠</option><option>昼</option><option>運動</option><option>その他</option></select>
     <label>ルール <small>(自分への指示形で)</small></label><input type="text" id="nrTitle" placeholder="例: 会食前にナッツを少し食べる">
     <button class="btn sub" id="btnAddRule">追加する（夜チェックインの選択肢に載ります）</button></div>`;
-  h+=`<div class="story"><span class="lab2">この説明書について</span>あなたの計測と申告から育つ、<b>世界に1冊のドキュメント</b>です。設定タブからいつでも全データをエクスポートできます——あなたのデータは、あなたのもの。</div>`;
+  // 設定機能を統合
+  h+=`<details><summary style="color:var(--gold);font-weight:700;font-size:12px;margin-top:16px">⚙ 設定・データ管理</summary>
+    <div class="card"><div class="lab">DATA｜エクスポート / インポート</div>
+      <p class="mini" style="margin-bottom:8px">記録 ${n}日分。CSVは検証用コワーク・Salesforce取込（IF-01/17相当）と互換の列設計です。</p>
+      <button class="btn sub" id="btnCsv">CSVをダウンロード（検証・分析用）</button>
+      <button class="btn sub" id="btnJson">JSONをダウンロード（完全バックアップ）</button>
+      <label style="margin-top:12px">JSONを復元 <small>(バックアップから)</small></label><input type="file" id="inFile" accept=".json" style="font-size:12px;color:var(--gray)">
+    </div>
+    <div class="card"><div class="lab">PILOT｜お試し</div>
+      <button class="btn sub" id="btnDemo">デモデータを投入（14日分・ダミー）</button>
+      <p class="mini">画面の動きを先に見たい場合に。実データ運用前に「全消去」してください。</p>
+      <button class="btn sub" id="btnWipe" style="border-color:rgba(232,160,168,.5);color:#e8a0a8">全データを消去する</button></div>
+    <div class="card"><div class="lab">D-M整合｜退会時のデータ返還（第2条-5 廃棄の規律）</div>
+      <p class="mini">経営理念第2条-5「廃棄の規律」に基づき、退会時には本人希望に応じてデータを完全消去。上記のJSONエクスポートは、退会時の本人返還フォーマットの先行実装です。</p>
+    </div>
+    <div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.3（2026-07-13・D-O 4タブIA準拠）。会員第一号=創業者自身の実装（D-M第3条「創業者から始める規律」の実践）。データは端末内のみ・外部送信ゼロ（Privacy by Design）。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>
+  </details>`;
   main.innerHTML=h;
   document.getElementById('btnAddRule').onclick=()=>{
     const t=document.getElementById('nrTitle').value.trim();if(!t){toast('ルールを入力してください');return;}
@@ -277,92 +420,53 @@ function vBook(){
     S.rules.push({id:'R-'+String(maxN+1).padStart(2,'0'),cat:document.getElementById('nrCat').value,title:t,n:0,ok:0,active:true});
     save();toast('説明書に追加しました');render();
   };
+  // 設定機能のイベント（details 内なので、要素が存在する場合のみ bind）
+  const bindSettings=()=>{
+    const dl=(name,text,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();};
+    const csvBtn=document.getElementById('btnCsv');
+    if(csvBtn) csvBtn.onclick=()=>{
+      let csv='date,rhr_bpm,weight_kg,bedtime_slot,dinner_last_night,feel,rules_kept,note\n';
+      entries().forEach(e=>{csv+=[e.date,e.rhr||'',e.w||'',e.bed!=null?BEDS[e.bed]:'',e.dinner?1:0,e.feel!=null?['light','normal','heavy'][e.feel]:'',(e.rules_kept||[]).join('|'),'"'+String(e.note||'').replace(/"/g,'""')+'"'].join(',')+'\n';});
+      dl('kanzo_pilot_'+today()+'.csv',csv,'text/csv');toast('CSVを書き出しました');
+    };
+    const jsonBtn=document.getElementById('btnJson');
+    if(jsonBtn) jsonBtn.onclick=()=>{dl('kanzo_pilot_backup_'+today()+'.json',JSON.stringify(S,null,1),'application/json');toast('バックアップを書き出しました');};
+    const fileIn=document.getElementById('inFile');
+    if(fileIn) fileIn.onchange=ev=>{
+      const f=ev.target.files[0];if(!f)return;const rd=new FileReader();
+      rd.onload=()=>{try{const d=JSON.parse(rd.result);if(d.days&&d.rules){S=d;save();toast('復元しました');render();}else toast('形式が違います');}catch(e){toast('読み込み失敗');}};
+      rd.readAsText(f);
+    };
+    const demoBtn=document.getElementById('btnDemo');
+    if(demoBtn) demoBtn.onclick=()=>{
+      if(!confirm('デモデータ（14日分・ダミー）を投入します。よろしいですか？'))return;
+      const base=62;
+      for(let i=14;i>=1;i--){
+        const dk=addDays(today(),-i);
+        const dinner=[3,6,9,12].includes(i);
+        const bed=dinner?3:(i%3===0?2:1);
+        const rhr=base+(dinner?4+Math.round(Math.random()*2):Math.round(Math.random()*3)-1)+(bed<=1?-1:0);
+        S.days[dk]={rhr,bed,dinner,feel:rhr>base+4?2:(rhr<base?0:1),rules_kept:dinner?['R-03','R-08']:['R-01'],note:'',_credited:false};
+      }
+      sortedDates().forEach(dk=>creditRules(dk));
+      save();toast('デモデータを投入しました');render();
+    };
+    const wipeBtn=document.getElementById('btnWipe');
+    if(wipeBtn) wipeBtn.onclick=()=>{
+      if(!confirm('全データを消去します。エクスポートは済んでいますか？'))return;
+      localStorage.removeItem(LS);S=load();save();toast('消去しました');render();
+    };
+  };
+  // details を開いたときに bind（初回のためbindSettings一度呼ぶ）
+  bindSettings();
+  document.querySelector('details').ontoggle=bindSettings;
 }
-function vStory(){
-  const es=entries().filter(e=>e.rhr);const b=baseline();
-  let h=`<h2>あなたの物語<small>週次と月次——数字が資産に変わる場所</small></h2>`;
-  if(es.length<7){h+=`<div class="empty">7日分のデータがたまると「週次の物語」が、<br>1ヶ月で「身体の月次決算」が届きます。<br><br>現在 ${es.length}/7 日</div>`;}
-  else{
-    const w=es.slice(-7);const feelOK=w.filter(e=>e.feel!==2&&e.feel!=null).length;
-    const din=w.filter(e=>e.dinner).length;
-    const early=w.filter(e=>e.bed!=null&&e.bed<=1).length;
-    const avg=Math.round(w.reduce((s,e)=>s+ +e.rhr,0)/w.length*10)/10;
-    h+=`<div class="card"><div class="lab">WEEKLY｜直近7日の物語</div>
-      <div class="story"><span class="lab2">発見 1</span>平均心拍 <b>${avg}bpm</b>${b.ready?`（平常値 ${b.med}）`:''}・会食 <b>${din}回</b>をこなしました。</div>
-      <div class="story"><span class="lab2">発見 2</span>22時台までの就寝が <b>${early}日</b>。${early>=4?'この習慣があなたの土台になりつつあります。':'来週、あと1日だけ増やせるか試します。'}</div>
-      <div class="story"><span class="lab2">発見 3</span>体感が「軽い・ふつう」だった日は <b>${feelOK}日</b>（チェックイン分）。</div>
-      <div class="action"><b>来週の設計（1つだけ）</b>${din>0?'次の会食で、説明書のルールを1本だけ検証します。':'就寝時刻を1段だけ早める実験をします。'}</div></div>`;
-    /* monthly */
-    const ym=today().slice(0,7);const m=es.filter(e=>e.date.startsWith(ym));
-    if(m.length>=10){
-      const mFeel=m.filter(e=>e.feel!==2&&e.feel!=null).length;
-      const mDin=m.filter(e=>e.dinner).length;
-      const mEarly=m.filter(e=>e.bed!=null&&e.bed<=1).length;
-      const ver=S.rules.filter(r=>r.active&&r.n>=3&&r.ok/r.n>=.6).length;
-      h+=`<div class="card"><div class="lab">MONTHLY｜身体の月次決算（${+ym.slice(5)}月・進行中）</div>
-        <div class="pltable">
-          <div class="plrow"><span class="k">快調日数<small>体感「軽い・ふつう」</small></span><span class="v">${mFeel}<small>/${m.length}日</small></span></div>
-          <div class="plrow"><span class="k">会食<small>こなした回数</small></span><span class="v">${mDin}<small>回</small></span></div>
-          <div class="plrow"><span class="k">22時台就寝</span><span class="v">${mEarly}<small>日</small></span></div>
-          <div class="plrow"><span class="k">検証済みルール<small>説明書の資産</small></span><span class="v">${ver}<small>本</small></span></div>
-        </div>
-        <div class="guard"><b>役割の宣言:</b> 平常値が安定した月の私たちの仕事は、改善の演出ではなく<b>「崩れの兆候をあなたより先に見つけること」</b>。異常のない月は「異常なし」と短く言います。</div></div>`;
-    }
-  }
-  h+=`<div class="footnote">数値はあなたの記録に基づく参考値です。効果を保証するものではありません。</div>`;
-  main.innerHTML=h;
-}
-function vSetting(){
-  const n=entries().length;
-  let h=`<h2>設定・データ<small>あなたのデータは、あなたのもの</small></h2>`;
-  h+=`<div class="card"><div class="lab">DATA｜エクスポート / インポート</div>
-    <p class="mini" style="margin-bottom:8px">記録 ${n}日分。CSVは検証用コワーク・Salesforce取込（IF-01相当）と互換の列設計です。</p>
-    <button class="btn sub" id="btnCsv">CSVをダウンロード（検証・分析用）</button>
-    <button class="btn sub" id="btnJson">JSONをダウンロード（完全バックアップ）</button>
-    <label style="margin-top:12px">JSONを復元 <small>(バックアップから)</small></label><input type="file" id="inFile" accept=".json" style="font-size:12px;color:var(--gray)">
-  </div>`;
-  h+=`<div class="card"><div class="lab">PILOT｜お試し</div>
-    <button class="btn sub" id="btnDemo">デモデータを投入（14日分・ダミー）</button>
-    <p class="mini">画面の動きを先に見たい場合に。実データ運用前に「全消去」してください。</p>
-    <button class="btn sub" id="btnWipe" style="border-color:rgba(232,160,168,.5);color:#e8a0a8">全データを消去する</button></div>`;
-  h+=`<div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.1（2026-07-12）。モックv0.3「課金継続の3層（資産・番人・決算）」の実働検証用。データは端末内のみ・外部送信ゼロ（プライバシー・バイ・デザイン）。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>`;
-  main.innerHTML=h;
-  const dl=(name,text,type)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();};
-  document.getElementById('btnCsv').onclick=()=>{
-    let csv='date,rhr_bpm,weight_kg,bedtime_slot,dinner_last_night,feel,rules_kept,note\n';
-    entries().forEach(e=>{csv+=[e.date,e.rhr||'',e.w||'',e.bed!=null?BEDS[e.bed]:'',e.dinner?1:0,e.feel!=null?['light','normal','heavy'][e.feel]:'',(e.rules_kept||[]).join('|'),'"'+String(e.note||'').replace(/"/g,'""')+'"'].join(',')+'\n';});
-    dl('kanzo_pilot_'+today()+'.csv',csv,'text/csv');toast('CSVを書き出しました');
-  };
-  document.getElementById('btnJson').onclick=()=>{dl('kanzo_pilot_backup_'+today()+'.json',JSON.stringify(S,null,1),'application/json');toast('バックアップを書き出しました');};
-  document.getElementById('inFile').onchange=ev=>{
-    const f=ev.target.files[0];if(!f)return;const rd=new FileReader();
-    rd.onload=()=>{try{const d=JSON.parse(rd.result);if(d.days&&d.rules){S=d;save();toast('復元しました');render();}else toast('形式が違います');}catch(e){toast('読み込み失敗');}};
-    rd.readAsText(f);
-  };
-  document.getElementById('btnDemo').onclick=()=>{
-    if(!confirm('デモデータ（14日分・ダミー）を投入します。よろしいですか？'))return;
-    const base=62;
-    for(let i=14;i>=1;i--){
-      const dk=addDays(today(),-i);
-      const dinner=[3,6,9,12].includes(i);
-      const bed=dinner?3:(i%3===0?2:1);
-      const rhr=base+(dinner?4+Math.round(Math.random()*2):Math.round(Math.random()*3)-1)+(bed<=1?-1:0);
-      S.days[dk]={rhr,bed,dinner,feel:rhr>base+4?2:(rhr<base?0:1),rules_kept:dinner?['R-03','R-08']:['R-01'],note:'',_credited:false};
-    }
-    /* run credits chronologically */
-    sortedDates().forEach(dk=>creditRules(dk));
-    save();toast('デモデータを投入しました');render();
-  };
-  document.getElementById('btnWipe').onclick=()=>{
-    if(!confirm('全データを消去します。エクスポートは済んでいますか？'))return;
-    localStorage.removeItem(LS);S=load();save();toast('消去しました');render();
-  };
-}
+
 /* ================= router ================= */
 let TAB='today';
 function render(){
   document.getElementById('hdrDate').innerHTML=jdate(today())+'<br>会員 No.001';
-  ({today:vToday,trend:vTrend,book:vBook,story:vStory,setting:vSetting})[TAB]();
+  ({today:vToday,garden:vGarden,talk:vTalk,book:vBook})[TAB]();
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===TAB));
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{TAB=t.dataset.t;render();window.scrollTo(0,0);});
