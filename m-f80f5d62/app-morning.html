@@ -6,8 +6,8 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- VERSION_TAG: KANZO_APP-MORNING_v1.1_RELAXED-PROTOCOL_20260713 -->
-<title>【モック】朝の計測 UI/UX v1.1｜肝臓株式会社</title>
+<!-- VERSION_TAG: KANZO_APP-MORNING_v1.2_BODYCOMP-INPUT_20260714 -->
+<title>【モック】朝の計測 UI/UX v1.2（体組成計6項目+体調）｜肝臓株式会社</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--coral:#e8506a;--coral2:#f06e85;--green:#5fd08a;--warm:#f6c453}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -253,7 +253,7 @@
 </style>
 </head>
 <body>
-<div class="mockbar"><b>MOCK 朝の計測 v1.1（レビュー用・実働）</b>｜1タップ完了・前日値プリセット・体調は絵文字ワンタップ・rPPGスキャンは15秒（claude/29 v0.4 緩和版プロトコル反映）｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+<div class="mockbar"><b>MOCK 朝の計測 v1.2（レビュー用・実働）</b>｜書き留め項目＝体組成計6項目（体重・BMI・体脂肪率・筋肉量・内臓脂肪・基礎代謝）＋体調・1画面確認・rPPGスキャンは15秒（claude/29 v0.4）｜数値はダミー｜2026-07-14 肝臓株式会社</div>
 
 <div class="wrap">
   <div class="kicker">MORNING INPUT — 気分が乗らない朝のための設計</div>
@@ -340,34 +340,40 @@
             <small>7/14（火）・計測 #2</small>
           </div>
           <div class="stats" id="stats">
-            <div class="stat band" data-key="rhr" data-yday="—" data-today="68" data-unit="bpm" data-min="40" data-max="120" data-step="1">
-              <span class="emj">🫀</span>
-              <div><div class="lbl">安静時心拍</div><div class="val" id="v-rhr">68<small>bpm</small></div><span class="band-tag">平常域は明日確立</span></div>
-              <div class="diff same" id="d-rhr"><b>昨日と同じ</b></div>
-              <div class="edit">タップで調整</div>
-            </div>
-            <div class="stat" data-key="weight" data-yday="83.2" data-today="83.4" data-unit="kg" data-min="40" data-max="200" data-step="0.1">
+            <div class="stat band" data-key="weight" data-yday="83.2" data-today="82.6" data-unit="kg" data-min="30" data-max="200" data-step="0.1">
               <span class="emj">⚖️</span>
-              <div><div class="lbl">体重</div><div class="val" id="v-weight">83.4<small>kg</small></div></div>
-              <div class="diff up" id="d-weight"><b>+0.2</b><br>昨日 83.2</div>
+              <div><div class="lbl">体重</div><div class="val" id="v-weight">82.6<small>kg</small></div><span class="band-tag">平常域は明日確立</span></div>
+              <div class="diff down" id="d-weight"><b>−0.6</b><br>昨日 83.2</div>
               <div class="edit">タップで調整</div>
             </div>
-            <div class="stat band" data-key="fat" data-yday="18.5" data-today="18.4" data-unit="%" data-min="5" data-max="50" data-step="0.1">
+            <div class="stat" data-key="bmi" data-yday="22.9" data-today="22.8" data-unit="" data-min="10" data-max="50" data-step="0.1">
+              <span class="emj">📏</span>
+              <div><div class="lbl">BMI</div><div class="val" id="v-bmi">22.8</div></div>
+              <div class="diff down" id="d-bmi"><b>−0.1</b><br>昨日 22.9</div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat band" data-key="fat" data-yday="18.5" data-today="17.6" data-unit="%" data-min="3" data-max="60" data-step="0.1">
               <span class="emj">📊</span>
-              <div><div class="lbl">体脂肪率</div><div class="val" id="v-fat">18.4<small>%</small></div><span class="band-tag">30代標準の下限側</span></div>
-              <div class="diff down" id="d-fat"><b>−0.1</b><br>昨日 18.5</div>
+              <div><div class="lbl">体脂肪率</div><div class="val" id="v-fat">17.6<small>%</small></div><span class="band-tag">30代標準の下限側</span></div>
+              <div class="diff down" id="d-fat"><b>−0.9</b><br>昨日 18.5</div>
               <div class="edit">タップで調整</div>
             </div>
-            <div class="stat warn" data-key="visceral" data-yday="9.5" data-today="9.5" data-unit="Lv" data-min="1" data-max="30" data-step="0.5">
-              <span class="emj">⚠️</span>
-              <div><div class="lbl">内臓脂肪</div><div class="val" id="v-visceral">9.5<small>Lv</small></div><span class="warn-tag">10.0までが標準・要監視</span></div>
-              <div class="diff same" id="d-visceral"><b>昨日と同じ</b></div>
+            <div class="stat" data-key="muscle" data-yday="64.3" data-today="64.5" data-unit="kg" data-min="20" data-max="120" data-step="0.1">
+              <span class="emj">💪</span>
+              <div><div class="lbl">筋肉量</div><div class="val" id="v-muscle">64.5<small>kg</small></div></div>
+              <div class="diff up" id="d-muscle"><b>+0.2</b><br>昨日 64.3</div>
               <div class="edit">タップで調整</div>
             </div>
-            <div class="stat" data-key="sleep" data-yday="7.15" data-today="7.05" data-unit="h" data-min="0" data-max="14" data-step="0.05">
-              <span class="emj">🌙</span>
-              <div><div class="lbl">睡眠</div><div class="val" id="v-sleep">7h05<small>・スコア81</small></div></div>
-              <div class="diff same" id="d-sleep"><b>昨日と同水準</b></div>
+            <div class="stat warn" data-key="visceral" data-yday="9.5" data-today="9" data-unit="Lv" data-min="1" data-max="30" data-step="0.5">
+              <span class="emj">🔥</span>
+              <div><div class="lbl">内臓脂肪</div><div class="val" id="v-visceral">9<small>Lv</small></div><span class="warn-tag">10.0までが標準・要監視</span></div>
+              <div class="diff down" id="d-visceral"><b>−0.5</b><br>昨日 9.5</div>
+              <div class="edit">タップで調整</div>
+            </div>
+            <div class="stat" data-key="bmr" data-yday="1929" data-today="1935" data-unit="kcal" data-min="800" data-max="4000" data-step="1">
+              <span class="emj">⚡</span>
+              <div><div class="lbl">基礎代謝</div><div class="val" id="v-bmr">1935<small>kcal</small></div></div>
+              <div class="diff up" id="d-bmr"><b>+6</b><br>昨日 1929</div>
               <div class="edit">タップで調整</div>
             </div>
           </div>
