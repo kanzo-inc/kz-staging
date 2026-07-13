@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#1F3864">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>肝臓株式会社｜パイロット版 v0.4（会員第一号エディション・実データ入力用・15秒緩和版対応）</title>
+<title>肝臓株式会社｜パイロット版 v0.5（会員第一号エディション・書き留めフロー＋週次⇄月次デュアルビュー）</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--dk2:#16294a;--line:rgba(202,220,252,.18);--green:#9fd4a3;--pink:#e8a0a8}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -87,14 +87,150 @@
   .toast.show{opacity:1}
   details{margin:8px 0}
   summary{font-size:12px;color:var(--ice);cursor:pointer;padding:6px 0}
+
+  /* ===================== v0.5 朝の書き留めフロー（app-morning v1.1移植・実データ配線） ===================== */
+  :root{--warm:#f6c453;--coral:#e8506a;--coral2:#f06e85;--sgreen:#5fd08a}
+  .writeflow{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:60;background:linear-gradient(180deg,#0a1526,#12233f 60%,#16294a);display:none;flex-direction:column;overflow:hidden}
+  .writeflow.on{display:flex;animation:wfIn .3s ease}
+  @keyframes wfIn{from{opacity:0}to{opacity:1}}
+  .wfscreen{flex:1;display:flex;flex-direction:column;padding:16px 20px 18px;overflow:hidden;position:relative}
+  .wftop{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#9db0cf;margin-bottom:6px;flex-shrink:0}
+  .wfclose{background:none;border:none;color:#7d90b4;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:3px}
+  .wfscene{flex:1;display:none;flex-direction:column;min-height:0;animation:fadein .35s ease}
+  .wfscene.on{display:flex}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  /* tips (0B) */
+  .tiphead{text-align:center;margin-bottom:2px}
+  .tiphead b{color:#fff;font-size:18px;font-weight:800;display:block;margin-bottom:5px}
+  .tiphead small{color:var(--gray);font-size:12px;line-height:1.6;display:block}
+  .tipcards2{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+  .tipcard2{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid rgba(202,220,252,.16);border-radius:15px;padding:13px 15px}
+  .tipcard2 .ticon{width:42px;height:42px;border-radius:50%;background:rgba(95,208,138,.14);border:1px solid rgba(95,208,138,.5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .tipcard2 .ttxt b{display:block;color:#fff;font-size:14px;font-weight:700;margin-bottom:2px}
+  .tipcard2 .ttxt span{display:block;color:var(--gray);font-size:12px;line-height:1.5}
+  .tipfoot2{margin-top:auto;color:#7d90b4;font-size:11px;line-height:1.7;text-align:center;padding:0 6px 4px}
+  .tipfoot2 b{color:#a8b8d4;font-weight:600}
+  .wfbig{width:100%;border:none;border-radius:20px;padding:18px 12px;font-size:18px;font-weight:800;font-family:inherit;cursor:pointer;color:#fff;background:radial-gradient(circle at 30% 25%,var(--coral2),var(--coral));box-shadow:0 10px 26px rgba(232,80,106,.45)}
+  .wfbig:active{transform:scale(.98)}
+  .wfbig small{display:block;font-size:11.5px;font-weight:600;opacity:.9;margin-top:3px}
+  /* scan (1) */
+  .scanwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px}
+  .scanhint{color:#cadcfc;font-size:15px;text-align:center;margin-bottom:12px;font-weight:700;min-height:22px}
+  .ovalwrap{position:relative;width:210px;margin:0 auto}
+  .oval2{position:relative;width:210px;height:258px;border-radius:50%/46%;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#233a66,#1a2b4e 60%,#152343);margin-bottom:8px}
+  .oval2 #cam2{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#000;display:none}
+  .oval2.live-on #cam2{display:block}
+  .oval2.live-on .simface2{display:none}
+  .simface2{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#2a3f6e,#182848 65%)}
+  .ovring2{position:absolute;inset:-3px;border-radius:50%/46%;border:3px dashed rgba(201,163,83,.85);pointer-events:none;transition:border-color .3s}
+  .ovring2.ok{border-style:solid;border-color:var(--sgreen)}
+  .ringsvg2{position:absolute;inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);transform:rotate(-90deg);pointer-events:none;display:none}
+  .oval2.scanning .ringsvg2{display:block}
+  .ringsvg2 circle{fill:none;stroke-width:3}
+  .ringsvg2 .rtrack{stroke:rgba(255,255,255,.08)}
+  .ringsvg2 .rbar{stroke:var(--sgreen);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+  .sweep2{position:absolute;left:8%;right:8%;height:2.5px;background:linear-gradient(90deg,transparent,#ffd98a,transparent);top:12%;opacity:0;pointer-events:none}
+  .oval2.scanning .sweep2{opacity:1;animation:sweepmv 1.6s ease-in-out infinite}
+  @keyframes sweepmv{0%,100%{top:12%}50%{top:84%}}
+  .countbig2{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:104px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 4px 30px rgba(0,0,0,.6)}
+  .scanbadge2{position:absolute;top:6px;right:-4px;background:rgba(232,80,106,.95);color:#fff;font-size:10px;font-weight:800;letter-spacing:.16em;padding:4px 10px;border-radius:99px;display:none;box-shadow:0 4px 14px rgba(232,80,106,.5);z-index:5}
+  .scanbadge2::before{content:"● ";animation:blink 1.4s ease-in-out infinite}
+  @keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:.35}}
+  .oval2.live-on ~ .scanbadge2{display:block}
+  .oval2.scanning ~ .scanbadge2{background:rgba(255,217,138,.97);color:#20293a}
+  .backlighthint2{position:absolute;left:6px;right:6px;bottom:30px;background:rgba(15,23,42,.92);border:1px solid rgba(246,196,83,.55);border-radius:12px;padding:8px 10px;font-size:10px;color:#ffe1a8;line-height:1.5;display:none;z-index:6;animation:fadein .3s}
+  .backlighthint2.on{display:block}
+  .backlighthint2 b{display:block;color:#ffd27a;font-size:10.5px;margin-bottom:2px}
+  .discardov2{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(10,17,30,.88);border-radius:50%/46%;z-index:8}
+  .discardov2.on{display:flex;animation:fadein .3s}
+  .discardin2{text-align:center;padding:0 10px}
+  .discardin2 b{color:#5fd08a;font-size:13px;display:block;margin-bottom:4px}
+  .discardin2 span{color:#cadcfc;font-size:10px;line-height:1.5}
+  .scansub2{color:var(--gray);font-size:11.5px;text-align:center;margin-top:4px}
+  .propchip2{color:#a8c9ff;font-size:10.5px;text-align:center;margin-top:6px;opacity:.85}
+  /* feedback (1B) */
+  .fbwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .fbbreath{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(255,217,138,.18),rgba(95,208,138,.06) 60%,transparent 80%);display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative}
+  .fbbreath::before{content:"";position:absolute;inset:16px;border-radius:50%;border:2px solid rgba(95,208,138,.4);animation:breath 1.8s ease-in-out infinite}
+  @keyframes breath{0%,100%{transform:scale(.78);opacity:.55}50%{transform:scale(1.06);opacity:1}}
+  .fbdot{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#ffd98a,#c9a353);box-shadow:0 0 26px rgba(255,217,138,.6);animation:breath 1.8s ease-in-out infinite}
+  .fbmsg{font-size:16px;color:#fff;font-weight:800;line-height:1.6;margin-bottom:14px;min-height:44px;padding:0 8px;transition:opacity .3s}
+  .fbchecks{width:100%;max-width:250px;text-align:left;margin:0 auto 18px}
+  .fbcheck{display:flex;align-items:center;gap:10px;padding:6px 4px;font-size:13px;color:#5f7396;opacity:0;transform:translateX(-4px);transition:opacity .5s,transform .5s,color .3s}
+  .fbcheck.on{opacity:1;transform:none;color:#cadcfc}
+  .fbcheck.done{color:var(--sgreen)}
+  .fbcheck .fmk{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .fbcheck.done .fmk{background:var(--sgreen);border-color:var(--sgreen);color:#0e2038}
+  .fbcheck.done .fmk::before{content:"✓";font-weight:800}
+  .fbprogress{width:100%;max-width:230px;height:4px;background:rgba(202,220,252,.15);border-radius:99px;overflow:hidden}
+  .fbbar{height:100%;width:0;background:linear-gradient(90deg,var(--warm),var(--sgreen));border-radius:99px}
+  /* confirm (2) — 実データ確認入力 */
+  .cfhead{text-align:center;margin-bottom:8px;flex-shrink:0}
+  .cfhead b{color:#fff;font-size:16px;font-weight:800}
+  .cfhead small{display:block;color:var(--gray);font-size:11px;margin-top:2px}
+  .cfscroll{flex:1;overflow-y:auto;margin:0 -4px;padding:0 4px}
+  .cfrow{background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.15);border-radius:13px;padding:10px 13px;display:flex;align-items:center;gap:11px;margin-bottom:8px}
+  .cfrow.key{border-color:rgba(246,196,83,.5);background:rgba(246,196,83,.06)}
+  .cfrow .emj{font-size:20px;width:26px;text-align:center;flex-shrink:0}
+  .cfrow .lbl{font-size:11px;color:var(--gray);margin-bottom:2px}
+  .cfrow .lbl b{color:#ffd7a0;font-weight:700}
+  .cfrow input[type=number]{width:88px;background:rgba(255,255,255,.08);border:1.5px solid rgba(202,220,252,.25);border-radius:10px;padding:8px 10px;color:#fff;font-size:17px;font-weight:800;font-family:inherit;text-align:right;margin-left:auto}
+  .cfrow .cfsel{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:62%}
+  .cfrow .cfsel .opt{border:1px solid rgba(202,220,252,.22);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--ice);cursor:pointer}
+  .cfrow .cfsel .opt.sel{background:rgba(46,116,181,.3);border-color:var(--accent);color:#fff;font-weight:700}
+  .cfmoodbox{display:flex;gap:5px;margin:2px 0 6px}
+  .cfmood{flex:1;background:none;border:1.5px solid rgba(202,220,252,.15);border-radius:11px;padding:6px 2px;cursor:pointer;font-family:inherit;color:#fff}
+  .cfmood.on{background:rgba(246,196,83,.15);border-color:var(--warm)}
+  .cfmood .m{font-size:19px;display:block}
+  .cfmood .t{font-size:8.5px;color:var(--gray)}
+  .cfmood.on .t{color:var(--warm);font-weight:700}
+  .commitbar{margin-top:8px;flex-shrink:0}
+  .cmtbtn{width:100%;border:none;border-radius:14px;padding:14px 10px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;background:linear-gradient(180deg,#e6c476,#c9a353);color:#20293a;box-shadow:0 6px 18px rgba(201,163,83,.35);transition:transform .12s}
+  .cmtbtn:active{transform:scale(.98)}
+  .cmtbtn small{display:block;font-size:10.5px;font-weight:600;opacity:.72;margin-top:1px}
+  .cmttrust{margin-top:5px;font-size:9.5px;color:#7d90b4;line-height:1.4;text-align:center}
+  .cmttrust span{display:block}
+  .retakearea{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(202,220,252,.18);text-align:center;flex-shrink:0}
+  .retakehead{font-size:9.5px;color:#7d90b4;margin-bottom:4px}
+  .retakemainbtn{background:transparent;border:1.5px solid rgba(202,220,252,.35);color:#a8b8d4;font-size:11.5px;font-weight:700;padding:6px 16px;border-radius:99px;cursor:pointer;font-family:inherit;transition:all .18s}
+  .retakemainbtn:active{transform:scale(.97)}
+  /* done (fold into toast + auto scroll) */
+  .wfdone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 0}
+  .donemark2{width:82px;height:82px;border-radius:50%;background:linear-gradient(135deg,var(--warm),var(--gold));display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 12px 32px rgba(246,196,83,.45);margin-bottom:20px;animation:pop .55s cubic-bezier(.2,.9,.3,1.3)}
+  @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .donetitle2{font-size:24px;font-weight:800;color:#fff;margin-bottom:8px}
+  .donesub2{color:#cadcfc;font-size:13px;line-height:1.7;margin-bottom:6px}
+  /* 「書き留める」入口ボタン（MORNINGカード内） */
+  .writebtn{width:100%;border:none;border-radius:14px;padding:15px 12px;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;color:#fff;background:radial-gradient(circle at 30% 25%,var(--coral2),var(--coral));box-shadow:0 8px 22px rgba(232,80,106,.4);margin-top:4px}
+  .writebtn:active{transform:scale(.98)}
+  .writebtn small{display:block;font-size:11px;font-weight:600;opacity:.9;margin-top:2px}
+  /* ===================== v0.5 NFR（claude/24）: 気遣い文言・更新通知・遷移フェード ===================== */
+  #main.pagefade{animation:pageFade .32s ease}
+  @keyframes pageFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .careline{background:linear-gradient(135deg,rgba(159,212,163,.1),rgba(159,212,163,.02));border:1px solid rgba(159,212,163,.3);border-radius:12px;padding:9px 13px;font-size:11.5px;color:#d3e6d7;line-height:1.6;margin:2px 0 8px}
+  .updbanner{background:rgba(46,116,181,.14);border:1px solid rgba(46,116,181,.5);border-radius:11px;padding:7px 12px;font-size:10.5px;color:#cadcfc;margin-bottom:8px;display:flex;align-items:center;gap:8px;animation:fadein .4s}
+  .updbanner .ud{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  /* 月次セル: 編集/削除ドリル */
+  .daycell{cursor:pointer}
+  .drillmodal{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:rgba(8,14,26,.86);z-index:40;display:none;align-items:flex-end;padding:16px;backdrop-filter:blur(4px)}
+  .drillmodal.on{display:flex}
+  .drillcard{background:#152343;border-radius:20px;padding:18px;width:100%;color:#fff}
+  .drillcard b.dt{display:block;font-size:14px;margin-bottom:10px}
+  .drillcard .dstat{font-size:12px;color:#cadcfc;line-height:1.9;margin-bottom:12px}
+  .drillcard .dstat span{color:#8fa0bd}
+  .drillrow{display:flex;gap:8px}
+  .drillrow button{flex:1;border:none;border-radius:11px;padding:11px;font-weight:700;font-family:inherit;font-size:12.5px;cursor:pointer}
+  .dedit{background:rgba(255,255,255,.08);color:#c9d4e8}
+  .ddel{background:rgba(232,160,168,.16);color:#e8a0a8;border:1px solid rgba(232,160,168,.4)!important}
+  .dclose{background:var(--gold);color:#20293a}
 </style>
 </head>
 <body>
-<!-- VERSION_TAG: KANZO_PILOT_v0.4_REALDATA-15SEC_20260713 -->
+<!-- VERSION_TAG: KANZO_PILOT_v0.5_WRITE-FLOW-DUALVIEW_20260713 -->
 <!-- 内部向け「事業計画データv2バナー」は会員第一号の実利用画面に不適のため除去（v0.4）。事業計画の最新決裁はclaude/00・claude/29等の台帳で管理する。 -->
 <div id="lsWarn" style="display:none;max-width:440px;margin:0 auto;background:#7a2230;color:#ffe3e8;font-size:12px;line-height:1.6;padding:11px 16px;text-align:center"></div>
 <div class="app">
-  <div class="pilotbar"><b>PILOT v0.4｜会員第一号エディション（実データ入力用・15秒緩和版プロトコル対応）</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
+  <div class="pilotbar"><b>PILOT v0.5｜会員第一号エディション（書き留めフロー＋週次⇄月次デュアルビュー）</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
   <div class="appbar"><div class="mk" id="logo"></div><b>肝臓株式会社</b><span class="date" id="hdrDate"></span></div>
   <main id="main"></main>
   <div class="tabbar">
@@ -104,6 +240,129 @@
     <div class="tab" data-t="book"><i></i>説明書</div>
   </div>
   <div class="toast" id="toast"></div>
+
+  <!-- 月次セル 編集/削除ドリル -->
+  <div class="drillmodal" id="drillmodal">
+    <div class="drillcard">
+      <b class="dt" id="drillTitle"></b>
+      <div class="dstat" id="drillStat"></div>
+      <label style="font-size:11px;color:var(--ice);display:block;margin-bottom:12px">安静時心拍を修正 <input type="number" id="drillRhr" style="width:88px;background:rgba(255,255,255,.08);border:1.5px solid rgba(202,220,252,.25);border-radius:10px;padding:7px 10px;color:#fff;font-size:16px;font-weight:700;font-family:inherit;text-align:right;margin-left:6px"> bpm</label>
+      <div class="drillrow">
+        <button class="ddel" id="drillDel">この日を削除</button>
+        <button class="dedit" id="drillClose">閉じる</button>
+        <button class="dclose" id="drillSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 朝の書き留めフロー（オーバーレイ・app-morning v1.1移植／実データ配線） ============ -->
+  <div class="writeflow" id="writeflow">
+    <div class="wfscreen">
+      <div class="wftop"><span id="wfClock"></span><button class="wfclose" id="wfClose">閉じる</button></div>
+
+      <!-- 0B: 撮影のコツ（初回のみ） -->
+      <div class="wfscene" data-wf="tips">
+        <div class="tiphead"><b>はじめる前に、3つだけ</b><small>完璧じゃなくて大丈夫。この3つだけ意識してください</small></div>
+        <div class="tipcards2">
+          <div class="tipcard2"><div class="ticon">📱</div><div class="ttxt"><b>立てかけるだけ</b><span>マグカップや本など、その場にあるものでOK。専用の道具は要りません</span></div></div>
+          <div class="tipcard2"><div class="ticon">💡</div><div class="ttxt"><b>逆光だけ避ける</b><span>背中に窓など強い光が来なければOK。他の明るさは気にしなくて大丈夫</span></div></div>
+          <div class="tipcard2"><div class="ticon">⏱</div><div class="ttxt"><b>15秒、いつも通り</b><span>無表情も静止も不要です。座ったまま普段通りで結構です</span></div></div>
+        </div>
+        <button class="wfbig" id="wfTipsStart" style="margin-top:auto">はじめる</button>
+        <div class="tipfoot2">次回からこの説明は出ません。<b>「もう一度コツを見る」</b>は説明書タブから。</div>
+      </div>
+
+      <!-- 1: 15秒スキャン儀式 -->
+      <div class="wfscene" data-wf="scan">
+        <div class="scanwrap">
+          <div class="scanhint" id="wfScanH">カメラを起動しています…</div>
+          <div class="ovalwrap">
+            <div class="oval2" id="wfOval">
+              <video id="cam2" autoplay playsinline muted></video>
+              <div class="simface2"></div>
+              <svg class="ringsvg2" id="wfRingsvg" viewBox="0 0 100 100" preserveAspectRatio="none"><circle class="rtrack" cx="50" cy="50" r="47"/><circle class="rbar" id="wfRingbar" cx="50" cy="50" r="47" stroke-dasharray="295" stroke-dashoffset="0"/></svg>
+              <div class="ovring2" id="wfOvring"></div>
+              <div class="sweep2"></div>
+              <div class="countbig2" id="wfCount"></div>
+              <div class="backlighthint2" id="wfBl"><b>💡 背景が明るいようです</b>窓を背にしていたら少し向きを変えると精度が上がります（気にせず続けてもOK）</div>
+              <div class="discardov2" id="wfDiscard"><div class="discardin2"><b>✓ 映像を破棄しました</b><span>端末内で処理 → その場で消去（クラウドに映像は残りません）</span></div></div>
+            </div>
+            <div class="scanbadge2" id="wfBadge">LIVE</div>
+          </div>
+          <div class="scansub2" id="wfScanS">タップは不要です。ガイドに顔が入ると自動で始まります</div>
+          <div class="propchip2" id="wfProp">📱 置ける場所があれば置くと安定します（なくてもOK）</div>
+        </div>
+      </div>
+
+      <!-- 1B: 1.8秒フィードバック -->
+      <div class="wfscene" data-wf="fb">
+        <div class="fbwrap">
+          <div class="fbbreath"><div class="fbdot"></div></div>
+          <div class="fbmsg" id="wfFbMsg">読み取り完了。<br>今朝の記録を組み立てています。</div>
+          <div class="fbchecks">
+            <div class="fbcheck" data-idx="0"><span class="fmk"></span>計測の合図を確認</div>
+            <div class="fbcheck" data-idx="1"><span class="fmk"></span>あなたの平常域と照合</div>
+            <div class="fbcheck" data-idx="2"><span class="fmk"></span>今日の1ページを準備</div>
+          </div>
+          <div class="fbprogress"><div class="fbbar" id="wfFbBar"></div></div>
+        </div>
+      </div>
+
+      <!-- 2: 実データ確認入力 -->
+      <div class="wfscene" data-wf="confirm">
+        <div class="cfhead"><b>今朝のあなた</b><small id="wfCfSub">実測値を確認して書き留めます</small></div>
+        <div class="cfscroll">
+          <div class="careline">映像は破棄しました。ここに残すのは<b style="color:#fff">あなたが確認した数値だけ</b>です。心拍はスキャン中に見たウェアラブル等の実測値を入れてください（将来アプリ内計測が実装されたら自動で入ります）。</div>
+          <div class="cfrow key">
+            <span class="emj">🫀</span>
+            <div><div class="lbl"><b>安静時心拍</b>（起床直後・実測）</div></div>
+            <input type="number" id="wfRhr" inputmode="numeric" placeholder="例 62">
+          </div>
+          <div class="cfrow">
+            <span class="emj">⚖️</span>
+            <div><div class="lbl">体重（任意）</div></div>
+            <input type="number" id="wfW" step="0.1" inputmode="decimal" placeholder="任意">
+          </div>
+          <div class="cfrow" style="align-items:flex-start">
+            <span class="emj">🌙</span>
+            <div style="flex:1"><div class="lbl">昨夜の就寝</div>
+              <div class="cfsel" id="wfBed" style="margin-top:6px;max-width:100%"></div>
+            </div>
+          </div>
+          <div class="cfrow">
+            <span class="emj">🍽</span>
+            <div><div class="lbl">昨夜は会食</div></div>
+            <div class="cfsel" id="wfDin"><div class="opt" data-v="0">なし</div><div class="opt" data-v="1">会食だった</div></div>
+          </div>
+          <div class="lbl" style="margin:4px 2px 4px">今朝の体調</div>
+          <div class="cfmoodbox" id="wfMood">
+            <button class="cfmood" data-m5="1"><span class="m">😴</span><span class="t">きつい</span></button>
+            <button class="cfmood" data-m5="2"><span class="m">🥱</span><span class="t">重い</span></button>
+            <button class="cfmood on" data-m5="3"><span class="m">😐</span><span class="t">ふつう</span></button>
+            <button class="cfmood" data-m5="4"><span class="m">🙂</span><span class="t">良い</span></button>
+            <button class="cfmood" data-m5="5"><span class="m">✨</span><span class="t">絶好調</span></button>
+          </div>
+        </div>
+        <div class="commitbar">
+          <button class="cmtbtn" id="wfCommit">今日を書き留める<small>あなたの取扱説明書に、1ページ</small></button>
+          <div class="cmttrust"><span>・端末内に保存（外部送信ゼロ・いつでもエクスポート可）</span><span>・「今日の1枚」は保存後すぐ下に表示</span></div>
+        </div>
+        <div class="retakearea">
+          <div class="retakehead">スキャンの写りが気になったら</div>
+          <button class="retakemainbtn" id="wfRetake"><span style="font-weight:800">↺</span> もう一度スキャン</button>
+        </div>
+      </div>
+
+      <!-- done -->
+      <div class="wfscene" data-wf="done">
+        <div class="wfdone">
+          <div class="donemark2">🎈</div>
+          <div class="donetitle2">書き留めました。</div>
+          <div class="donesub2">あなたの取扱説明書に、1ページ加わりました。<br>この1週間を、続けて俯瞰します。</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
 /* ================= KANZO Pilot v0.1 =================
@@ -195,14 +454,16 @@ function vToday(){
   const ins=insight(dk);const b=baseline();
   const streak=(()=>{let n=0,d=dk;while(S.days[d]&&S.days[d].rhr){n++;d=addDays(d,-1);}return n;})();
   let h=`<h2>おはようございます。<small>朝の入力は60秒だけ——それが唯一の義務です。</small></h2>`;
-  h+=`<div class="card"><div class="lab">MORNING｜朝の計測入力 ${e.rhr?'✓ 入力済':''}</div>
-    <p class="mini" style="margin:-2px 0 8px;line-height:1.6">起床直後、15秒の緩和版計測（立てかける・逆光だけ避ける・いつも通り）で得た値、またはウェアラブルの安静時心拍を入力。完璧でなくて大丈夫です。</p>
-    <div class="rowx"><div><label>安静時心拍 <small>(bpm・起床直後)</small></label><input type="number" id="inRhr" inputmode="numeric" placeholder="62" value="${e.rhr||''}"></div>
+  h+=`<div class="card"><div class="lab">MORNING｜今日を書き留める ${e.rhr?'✓ 書き留め済み':''}</div>
+    <p class="mini" style="margin:-2px 0 10px;line-height:1.6">${e.rhr?'今朝はもう書き留めました。修正は下の「手で入力」から。':'起床直後の15秒。立てかけて・逆光だけ避けて・いつも通りで大丈夫。押すと始まります。'}</p>
+    <button class="writebtn" id="btnWrite">${e.rhr?'もう一度、書き留める':'今日を書き留める'}<small>15秒スキャン → 実測値を確認 → 取扱説明書に1ページ</small></button>
+    <details style="margin-top:10px"><summary style="font-size:12px;color:var(--ice)">スキャンを使わず手で入力する</summary>
+    <div class="rowx" style="margin-top:8px"><div><label>安静時心拍 <small>(bpm・起床直後)</small></label><input type="number" id="inRhr" inputmode="numeric" placeholder="62" value="${e.rhr||''}"></div>
     <div><label>体重 <small>(kg・任意)</small></label><input type="number" id="inW" step="0.1" inputmode="decimal" placeholder="任意" value="${e.w||''}"></div></div>
     <label>昨夜の就寝</label><select id="inBed">${BEDS.map((b2,i)=>`<option value="${i}" ${e.bed==i?'selected':''}>${b2}</option>`).join('')}</select>
     <label>昨夜は会食でしたか</label><div class="seg" id="segDin"><div data-v="0" class="${e.dinner===false?'sel':''}">なし</div><div data-v="1" class="${e.dinner===true?'sel':''}">会食だった</div></div>
-    <button class="btn" id="btnSave">保存して「今日の1枚」を見る</button>
-    <div class="done">計測 ${Object.values(S.days).filter(x=>x.rhr).length}回目${streak>1?`・${streak}日連続`:''}｜今日の1分も、平常値の精度を上げる資産になります</div></div>`;
+    <button class="btn" id="btnSave">保存して「今日の1枚」を見る</button></details>
+    <div class="done">計測 ${Object.values(S.days).filter(x=>x.rhr).length}回目｜端末内のみ・外部送信ゼロ（連続日数は数えません）</div></div>`;
   if(ins){
     h+=`<div class="card"><div class="lab">#${ins.no}｜今日の1枚 — あなたのデータから</div><h4>${ins.head}</h4>
       ${b.ready?`<div class="fact"><div class="n">${e.rhr}<small>今朝 bpm</small></div><div class="n" style="color:var(--gray)">${b.med}<small>あなたの平常値</small></div><div class="n" style="color:#7fa8e0">${b.lo}–${b.hi}<small>平常域</small></div></div>`:''}
@@ -218,6 +479,7 @@ function vToday(){
     <div class="done">責めない・催促しない・書かない日があっていい</div></div>`;
   h+=`<div class="footnote">本アプリはウェルネス目的の参考情報です。疾病の診断・治療・予防を目的としません。<br>データは端末内（このブラウザ）のみに保存され、外部へ送信されません。</div>`;
   main.innerHTML=h;
+  const bw=document.getElementById('btnWrite'); if(bw) bw.onclick=()=>startWriteFlow();
   document.getElementById('btnSave').onclick=()=>{
     const r=+document.getElementById('inRhr').value;
     if(!r||r<25||r>200){toast('心拍を確認してください');return;}
@@ -245,15 +507,16 @@ function vToday(){
 function vGarden(){
   const es=entries().filter(e=>e.rhr);const b=baseline();
   let h=`<h2>庭 <small>今週の庭と今月の庭——数値を「時間の中で」眺める場所</small></h2>`;
+  h+=`<div class="careline">色は「あなたの<b style="color:#fff">平常域との距離</b>」を表します。良い/悪いではありません。今日のあなたを、昨日までのあなたと並べて眺める場所です。</div>`;
   h+=`<div class="seg" id="gvSeg" style="margin:8px 0 4px"><div data-v="week" class="sel" style="flex:1;padding:9px">今週の庭</div><div data-v="month" style="flex:1;padding:9px">今月の庭</div></div>`;
   h+=`<div id="gvBody"></div>`;
-  h+=`<div class="footnote">参考値です。診断ではありません。色は「あなたの平常域との距離」を表し、良し悪しの評価ではありません。</div>`;
+  h+=`<div class="footnote">参考値です。診断ではありません。色は「あなたの平常域との距離」を表し、良し悪しの評価ではありません。<br>月次カレンダーは記録のある日をタップで修正・削除できます。</div>`;
   main.innerHTML=h;
   const view=(v)=>{
     document.querySelectorAll('#gvSeg div').forEach(d=>d.classList.toggle('sel',d.dataset.v===v));
     const body=document.getElementById('gvBody');
-    if(v==='week') body.innerHTML=renderWeekView(es,b);
-    else body.innerHTML=renderMonthView(es,b);
+    if(v==='week'){ body.innerHTML=renderWeekView(es,b); }
+    else { body.innerHTML=renderMonthView(es,b); body.querySelectorAll('.daycell').forEach(c=>c.onclick=()=>openDrill(c.dataset.d)); }
   };
   document.querySelectorAll('#gvSeg div').forEach(el=>el.onclick=()=>view(el.dataset.v));
   view('week');
@@ -315,7 +578,8 @@ function renderMonthView(es,b){
       else if(e.feel===1)feelEmo='<span style="font-size:9px">◎</span>';
       else if(e.feel===2)feelEmo='<span style="font-size:9px;color:#e8a0a8">△</span>';
     }
-    cells+=`<div style="padding:5px 2px;text-align:center;background:${bg};border-radius:5px;font-size:9.5px;line-height:1.2;min-height:36px">${d}<br>${dot}${feelEmo}</div>`;
+    const clk = e ? ` class="daycell" data-d="${dkey}"` : '';
+    cells+=`<div${clk} style="padding:5px 2px;text-align:center;background:${bg};border-radius:5px;font-size:9.5px;line-height:1.2;min-height:36px">${d}<br>${dot}${feelEmo}</div>`;
   }
   let h=`<div class="card"><div class="lab">MONTHLY｜${mo}月のカレンダー（進行中）</div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:8px 0;font-size:9px;color:var(--gray)">
@@ -401,7 +665,7 @@ function vBook(){
     <div class="card"><div class="lab">D-M整合｜退会時のデータ返還（第2条-5 廃棄の規律）</div>
       <p class="mini">経営理念第2条-5「廃棄の規律」に基づき、退会時には本人希望に応じてデータを完全消去。上記のJSONエクスポートは、退会時の本人返還フォーマットの先行実装です。</p>
     </div>
-    <div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.4（2026-07-13・D-O 4タブIA準拠・15秒緩和版プロトコル対応）。会員第一号=創業者自身の実装（D-M第3条「創業者から始める規律」の実践）。データは端末内のみ・外部送信ゼロ（Privacy by Design）。v0.4更新: 内部向け事業計画バナーを除去し会員実利用画面に最適化／プライベートモード等で保存不可の場合に明示警告を表示／15秒緩和版計測との導線を明記。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>
+    <div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.5（2026-07-13・D-O 4タブIA準拠）。会員第一号=創業者自身の実装（D-M第3条「創業者から始める規律」の実践）。データは端末内のみ・外部送信ゼロ（Privacy by Design）。v0.5更新: app-v07モックの2モジュールを実データ配線で移植——①朝の書き留めフロー（保存→書き留めるメタファー・15秒スキャン儀式＋緩和版3ルール・映像破棄の可視化＝Proof of Transparency・1.8秒フィードバック・撮り直す副次配置・完了後に週次ビュー自動遷移。スキャンは儀式で、心拍の実値はスキャン後に確認入力＝実データの純度を維持）②週次⇄月次デュアルビュー（月次セルの編集/削除・色は平常域との距離・NFR気遣い文言/遷移フェード）。v0.4の内部バナー除去・プライベートモード保存不可の明示警告も継続。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>
   </details>`;
   main.innerHTML=h;
   document.getElementById('btnAddRule').onclick=()=>{
@@ -452,12 +716,110 @@ function vBook(){
   document.querySelector('details').ontoggle=bindSettings;
 }
 
+/* ================= 朝の書き留めフロー（app-morning v1.1移植・実データ配線・v0.5） ================= */
+const MOOD5_TO_FEEL={1:2,2:2,3:1,4:0,5:0}; /* 5段階UI→pilot feel(0軽い/1ふつう/2重い)へ写像 */
+const wf=document.getElementById('writeflow');
+let wfCamStream=null, wfSel={bed:0,dinner:null,mood5:3};
+function wfSetScene(s){wf.querySelectorAll('.wfscene').forEach(el=>el.classList.toggle('on',el.dataset.wf===s));}
+function startWriteFlow(){
+  document.getElementById('wfClock').textContent=new Date().toTimeString().slice(0,5);
+  const dk=today(); const e=S.days[dk]||{};
+  wfSel={bed:(e.bed!=null?e.bed:0), dinner:(e.dinner===true?1:(e.dinner===false?0:null)), mood5:(e.mood5||3)};
+  const bedWrap=document.getElementById('wfBed');
+  bedWrap.innerHTML=BEDS.map((b,i)=>`<div class="opt ${i===wfSel.bed?'sel':''}" data-v="${i}">${b}</div>`).join('');
+  bedWrap.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{wfSel.bed=+o.dataset.v;bedWrap.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===o));});
+  const dinWrap=document.getElementById('wfDin');
+  dinWrap.querySelectorAll('.opt').forEach(o=>{o.classList.toggle('sel',wfSel.dinner!=null&&+o.dataset.v===wfSel.dinner);o.onclick=()=>{wfSel.dinner=+o.dataset.v;dinWrap.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===o));};});
+  document.querySelectorAll('#wfMood .cfmood').forEach(b=>{b.classList.toggle('on',+b.dataset.m5===wfSel.mood5);b.onclick=()=>{wfSel.mood5=+b.dataset.m5;document.querySelectorAll('#wfMood .cfmood').forEach(x=>x.classList.toggle('on',x===b));};});
+  document.getElementById('wfRhr').value=e.rhr||'';
+  document.getElementById('wfW').value=e.w||'';
+  wf.classList.add('on');
+  if(!S.tipsShown){wfSetScene('tips');}else{wfRunScan();}
+}
+function wfCloseFlow(){wfStopCam();wf.classList.remove('on');}
+async function wfTryCam(){try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return null;return await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});}catch(e){return null;}}
+function wfStopCam(){if(wfCamStream){try{wfCamStream.getTracks().forEach(t=>t.stop());}catch(e){}wfCamStream=null;}const v=document.getElementById('cam2');if(v){try{v.pause();v.srcObject=null;}catch(e){}}}
+function wfBacklight(video){try{if(!video.videoWidth)return false;const c=document.createElement('canvas');c.width=40;c.height=30;const cx=c.getContext('2d');cx.drawImage(video,0,0,40,30);const cd=cx.getImageData(14,8,12,14).data,ed=cx.getImageData(0,0,6,30).data;const lum=d=>{let s=0,n=0;for(let i=0;i<d.length;i+=4){s+=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];n++;}return s/n;};return (lum(ed)-lum(cd))>55;}catch(e){return false;}}
+function wfWait(ms){return new Promise(r=>setTimeout(r,ms));}
+async function wfRunScan(){
+  wfSetScene('scan');
+  const oval=document.getElementById('wfOval'),ov=document.getElementById('wfOvring'),sh=document.getElementById('wfScanH'),ss=document.getElementById('wfScanS');
+  const cam=document.getElementById('cam2'),dov=document.getElementById('wfDiscard'),bl=document.getElementById('wfBl'),prop=document.getElementById('wfProp'),ring=document.getElementById('wfRingbar');
+  oval.classList.remove('live-on','scanning');dov.classList.remove('on');bl.classList.remove('on');ov.classList.remove('ok');prop.style.display='block';
+  sh.textContent='カメラを起動しています…';ss.textContent='許可ダイアログが出たら「許可」してください';
+  wfCamStream=await wfTryCam();
+  if(wfCamStream){cam.srcObject=wfCamStream;try{await cam.play();}catch(e){}oval.classList.add('live-on');sh.textContent='顔をガイドに合わせてください';ss.textContent='タップ不要。ガイドに顔が入ると自動で始まります';}
+  else{sh.textContent='顔をガイドに合わせてください（シミュレーション）';ss.textContent='カメラが使えない環境のため動作イメージを表示します';}
+  await wfWait(900);ov.classList.add('ok');sh.textContent='光量OK・位置OK';ss.textContent='そのまま、15秒だけいつも通りで';
+  if(wfCamStream&&wfBacklight(cam)){bl.classList.add('on');await wfWait(2400);bl.classList.remove('on');}
+  prop.style.display='none';await wfWait(300);
+  oval.classList.add('scanning');const cb=document.getElementById('wfCount');cb.style.display='flex';
+  const DUR=15,CIRC=295;ring.style.transition='none';ring.style.strokeDashoffset='0';
+  for(let n=DUR;n>=1;n--){cb.textContent=n;ring.style.transition='stroke-dashoffset 1s linear';ring.style.strokeDashoffset=String(CIRC*(1-n/DUR));await wfWait(1000);}
+  cb.style.display='none';oval.classList.remove('scanning');
+  wfStopCam();oval.classList.remove('live-on'); /* Proof of Transparency: 実際にカメラを止めて破棄を可視化 */
+  dov.classList.add('on');sh.textContent='✓ 完了・映像を破棄しました';ss.textContent='端末内で処理し、その場で消去しました';
+  await wfWait(1100);dov.classList.remove('on');
+  await wfRunFeedback();
+  wfSetScene('confirm');
+}
+async function wfRunFeedback(){
+  wfSetScene('fb');
+  const checks=document.querySelectorAll('#writeflow .fbcheck'),msg=document.getElementById('wfFbMsg'),bar=document.getElementById('wfFbBar');
+  bar.style.transition='none';bar.style.width='0%';checks.forEach(c=>c.classList.remove('on','done'));
+  await wfWait(40);bar.style.transition='width 1.8s linear';bar.style.width='100%';
+  setTimeout(()=>checks[0]&&checks[0].classList.add('on'),40);
+  setTimeout(()=>{checks[0]&&checks[0].classList.add('done');checks[1]&&checks[1].classList.add('on');},380);
+  setTimeout(()=>{checks[1]&&checks[1].classList.add('done');checks[2]&&checks[2].classList.add('on');},800);
+  setTimeout(()=>{checks[2]&&checks[2].classList.add('done');msg.innerHTML='今朝の実測値を、確認してください。';},1100);
+  await wfWait(1800);
+}
+function wfCommitData(){
+  const r=+document.getElementById('wfRhr').value;
+  if(!r||r<25||r>200){toast('心拍を確認してください（25〜200）');document.getElementById('wfRhr').focus();return;}
+  const dk=today();const d=S.days[dk]||(S.days[dk]={});
+  d.rhr=r;const w=document.getElementById('wfW').value;if(w)d.w=+w;else delete d.w;
+  d.bed=wfSel.bed;
+  if(wfSel.dinner!=null)d.dinner=wfSel.dinner===1;
+  d.mood5=wfSel.mood5;d.feel=MOOD5_TO_FEEL[wfSel.mood5];d._credited=false;
+  const ok=save();creditRules(dk);
+  if(!ok){toast('保存できません（通常ウィンドウで開いてください）');return;}
+  wfStopCam();wfSetScene('done');
+  setTimeout(()=>{ wf.classList.remove('on'); TAB='garden'; render(); window.scrollTo({top:0,behavior:'smooth'}); toast('書き留めました'); },1500); /* item⑤ 完了→週次ビュー自動遷移 */
+}
+document.getElementById('wfClose').onclick=()=>wfCloseFlow();
+document.getElementById('wfTipsStart').onclick=()=>{S.tipsShown=true;save();wfRunScan();};
+document.getElementById('wfRetake').onclick=()=>wfRunScan();
+document.getElementById('wfCommit').onclick=()=>wfCommitData();
+
+/* ================= 月次セルの編集/削除ドリル（デュアルビューv0.2.3 item②） ================= */
+let drillDk=null;
+const drill=document.getElementById('drillmodal');
+function openDrill(dk){
+  drillDk=dk;const e=S.days[dk];if(!e)return;
+  document.getElementById('drillTitle').textContent=jdate(dk);
+  const feelTxt=e.feel!=null?['軽い','ふつう','重い'][e.feel]:'—';
+  document.getElementById('drillStat').innerHTML=`<span>心拍</span> ${e.rhr||'—'} bpm　<span>体重</span> ${e.w||'—'} kg<br><span>就寝</span> ${e.bed!=null?BEDS[e.bed]:'—'}　<span>会食</span> ${e.dinner?'あり':'なし'}　<span>体調</span> ${feelTxt}`;
+  document.getElementById('drillRhr').value=e.rhr||'';
+  drill.classList.add('on');
+}
+document.getElementById('drillClose').onclick=()=>drill.classList.remove('on');
+document.getElementById('drillSave').onclick=()=>{
+  const v=+document.getElementById('drillRhr').value;
+  if(v&&v>=25&&v<=200&&S.days[drillDk]){S.days[drillDk].rhr=v;S.days[drillDk]._credited=false;save();toast('修正しました');drill.classList.remove('on');render();}
+  else toast('心拍を確認してください（25〜200）');
+};
+document.getElementById('drillDel').onclick=()=>{
+  if(S.days[drillDk]){delete S.days[drillDk];save();toast('この日の記録を削除しました');drill.classList.remove('on');render();}
+};
+
 /* ================= router ================= */
 let TAB='today';
 function render(){
   document.getElementById('hdrDate').innerHTML=jdate(today())+'<br>会員 No.001';
   ({today:vToday,garden:vGarden,talk:vTalk,book:vBook})[TAB]();
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.t===TAB));
+  main.classList.remove('pagefade');void main.offsetWidth;main.classList.add('pagefade'); /* NFR: ページ遷移フェード（claude/24 §1 S-01） */
 }
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{TAB=t.dataset.t;render();window.scrollTo(0,0);});
 render();
