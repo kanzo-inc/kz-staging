@@ -183,6 +183,15 @@
   @keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
   .donetitle{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px}
   .donesub{color:#cadcfc;font-size:13.5px;line-height:1.8;margin-bottom:24px}
+  .weeklink{background:linear-gradient(135deg,rgba(246,196,83,.14),rgba(246,196,83,.04));border:1.5px solid rgba(246,196,83,.55);color:#ffd27a;border-radius:16px;padding:15px 20px;margin:18px 0 8px;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:320px;transition:all .25s ease;animation:weeklinkGlow 2.6s ease-in-out infinite;box-shadow:0 4px 18px rgba(246,196,83,.12);font-family:inherit;position:relative;overflow:hidden}
+  .weeklink:hover{background:linear-gradient(135deg,rgba(246,196,83,.28),rgba(246,196,83,.08));transform:translateY(-2px);box-shadow:0 10px 28px rgba(246,196,83,.32);border-color:rgba(246,196,83,.9)}
+  .weeklink svg{width:22px;height:22px;flex-shrink:0;fill:#ffd27a;filter:drop-shadow(0 0 6px rgba(246,196,83,.4))}
+  .wl-text{font-size:14px;letter-spacing:.02em}
+  .wl-arrow{font-size:20px;transition:transform .25s;font-weight:800}
+  .weeklink:hover .wl-arrow{transform:translateX(6px)}
+  .weeklink::after{content:"";position:absolute;top:50%;left:-30%;width:30%;height:200%;background:linear-gradient(90deg,transparent,rgba(246,196,83,.15),transparent);transform:translateY(-50%) rotate(15deg);animation:weeklinkSweep 3.2s ease-in-out infinite;pointer-events:none}
+  @keyframes weeklinkGlow{0%,100%{box-shadow:0 4px 18px rgba(246,196,83,.12)}50%{box-shadow:0 8px 26px rgba(246,196,83,.32),0 0 0 3px rgba(246,196,83,.06)}}
+  @keyframes weeklinkSweep{0%{left:-30%}70%,100%{left:130%}}
   .doneprev{background:rgba(255,255,255,.06);border:1px solid rgba(202,220,252,.22);border-radius:16px;padding:14px 16px;font-size:12.5px;color:#c9d4e8;line-height:1.7;width:100%;text-align:left}
   .doneprev b{color:#ffd27a;display:block;margin-bottom:4px;font-size:10.5px;letter-spacing:.14em}
   .doneprev small{color:var(--gray);display:block;margin-top:6px;font-size:10.5px}
@@ -368,6 +377,11 @@
               ⚠️ 内臓脂肪 9.5 — 変化なし。10.0を越えたら夜の記録が主役です。<br>
               <small>根拠: 計測 #2 ／ 平常域は7件で確立（あと5件）</small>
             </div>
+            <button class="weeklink" id="weekBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm2 4h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 4h2v2H7v-2zm4 0h2v2h-2v-2z"/><circle cx="17" cy="17" r="4.5" fill="#0e2038" opacity=".9"/><circle cx="17" cy="17" r="3.6" fill="rgba(246,196,83,.95)"/><path d="M15.3 17.2l1.2 1.2 2.2-2.4" stroke="#0e2038" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="wl-text">この1週間を、俯瞰する</span>
+              <b class="wl-arrow">→</b>
+            </button>
             <button class="exit" id="exitBtn">↺ もう一度みる（デモ用）</button>
           </div>
         </div>
@@ -460,6 +474,7 @@ document.getElementById('passBtn').onclick = () => {
   document.querySelector('.donetitle').textContent = 'また明日。';
   document.querySelector('.donesub').innerHTML = '今日の記録はしませんでした——それでいいです。<br>連続日数は数えません。明日も同じ挨拶で迎えます。';
   document.querySelector('.doneprev').style.display = 'none';
+  var wb = document.getElementById('weekBtn'); if (wb) wb.style.display = 'none';
 };
 
 /* Scene 1: 5秒スキャン（実カメラ映像＋rPPG風UI） */
@@ -589,6 +604,13 @@ document.getElementById('mnSend').onclick = async () => { setScene(3); await wai
 
 /* Scene 4 exit */
 document.getElementById('exitBtn').onclick = () => setScene(0);
+// weekBtn: iframe内なら親に通知（自動遷移トリガー）、スタンドアロンなら週次画面に直接遷移
+document.getElementById('weekBtn').onclick = () => {
+  if (window.parent !== window) {
+    try { window.parent.postMessage({ type: 'kanzo:morning-complete', ts: Date.now() }, '*'); return; } catch(e) {}
+  }
+  window.location.href = 'app-week.html';
+};
 </script>
 </body>
 </html>
