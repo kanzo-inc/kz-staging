@@ -6,7 +6,8 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>【モック】朝の計測 UI/UX v0.1｜肝臓株式会社</title>
+<!-- VERSION_TAG: KANZO_APP-MORNING_v1.1_RELAXED-PROTOCOL_20260713 -->
+<title>【モック】朝の計測 UI/UX v1.1｜肝臓株式会社</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--coral:#e8506a;--coral2:#f06e85;--green:#5fd08a;--warm:#f6c453}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -57,7 +58,20 @@
   .subactions button:hover{background:rgba(202,220,252,.06)}
   .subactions .skip{border:none;color:#7d90b4;text-decoration:underline;text-underline-offset:3px;padding:8px;font-size:11.5px}
 
-  /* === SCENE 1: 5秒スキャン === */
+  /* === SCENE 0B: 撮影のコツ（初回のみ・claude/29 v0.4準拠） === */
+  .tipswrap{flex:1;display:flex;flex-direction:column;padding:4px 0}
+  .tiphead{text-align:center;margin-bottom:4px}
+  .tiphead b{color:#fff;font-size:17px;font-weight:800;display:block;margin-bottom:4px}
+  .tiphead small{color:var(--gray);font-size:11.5px;line-height:1.6;display:block}
+  .tipcards{display:flex;flex-direction:column;gap:9px;margin:16px 0}
+  .tipcard{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.045);border:1px solid rgba(202,220,252,.16);border-radius:14px;padding:11px 13px}
+  .tipcard .ticon{width:38px;height:38px;border-radius:50%;background:rgba(95,208,138,.14);border:1px solid rgba(95,208,138,.5);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .tipcard .ttxt b{display:block;color:#fff;font-size:13px;font-weight:700;margin-bottom:1px}
+  .tipcard .ttxt span{display:block;color:var(--gray);font-size:11px;line-height:1.5}
+  .tipfoot{margin-top:auto;color:#7d90b4;font-size:10.5px;line-height:1.7;text-align:center;padding:0 6px 6px}
+  .tipfoot b{color:#a8b8d4;font-weight:600}
+
+  /* === SCENE 1: 15秒スキャン（旧5秒・claude/29 v0.4で延長） === */
   .scanwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px}
   /* === カメラ実映像（oval内） === */
   .oval #cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#000}
@@ -108,6 +122,15 @@
   .countbig{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 4px 30px rgba(0,0,0,.6)}
   .scanhint{color:#cadcfc;font-size:15px;text-align:center;margin-bottom:12px;font-weight:700}
   .scansub{color:var(--gray);font-size:11.5px;text-align:center}
+  .propchip{color:#a8c9ff;font-size:10.5px;text-align:center;margin-top:6px;opacity:.85}
+  .ringsvg{position:absolute;inset:-3px;width:calc(100% + 6px);height:calc(100% + 6px);transform:rotate(-90deg);pointer-events:none;display:none}
+  .oval.scanning .ringsvg{display:block}
+  .ringsvg circle{fill:none;stroke-width:3}
+  .ringsvg .rtrack{stroke:rgba(255,255,255,.08)}
+  .ringsvg .rbar{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+  .backlighthint{position:absolute;left:6px;right:6px;bottom:34px;background:rgba(15,23,42,.92);border:1px solid rgba(246,196,83,.55);border-radius:12px;padding:8px 10px;font-size:10px;color:#ffe1a8;line-height:1.5;display:none;z-index:6;animation:fadein .3s}
+  .backlighthint.on{display:block}
+  .backlighthint b{display:block;color:#ffd27a;font-size:10.5px;margin-bottom:2px}
   .btstatus{margin-top:22px;background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.18);border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:11px;width:100%;font-size:12.5px}
   .btstatus .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
   .btstatus b{color:#fff}
@@ -230,15 +253,15 @@
 </style>
 </head>
 <body>
-<div class="mockbar"><b>MOCK 朝の計測 v0.1（レビュー用・実働）</b>｜1タップ完了・前日値プリセット・体調は絵文字ワンタップ｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+<div class="mockbar"><b>MOCK 朝の計測 v1.1（レビュー用・実働）</b>｜1タップ完了・前日値プリセット・体調は絵文字ワンタップ・rPPGスキャンは15秒（claude/29 v0.4 緩和版プロトコル反映）｜数値はダミー｜2026-07-13 肝臓株式会社</div>
 
 <div class="wrap">
   <div class="kicker">MORNING INPUT — 気分が乗らない朝のための設計</div>
   <h1>朝は、押すだけ。<br>数字は、自動で埋まる。</h1>
-  <p class="sub">朝は1日で最も意志力が低い時間帯。ここで「入力」を求めたら99%脱落する——だから<b>最短1タップで完了できる導線</b>を最上流に置き、手打ちは「例外」に降格する。前日値プリセット・スワイプ調整・体調絵文字ワンタップ・「今日はパス」も等価に扱う——ダークパターン禁止（連続日数の煽り・スコアの序列化なし）。<b>下のモックは実際に動きます</b>——「▶ はじめる」から60秒フローを試してください。</p>
-  <div class="kpis"><span class="kpichip hot">★確定KPI: 60秒以内で完了（実測=既定パスなら12秒）</span><span class="kpichip">タップ数 中央値 3（1タップ完了パスあり）</span><span class="kpichip">「今日はパス」も1級市民</span><span class="kpichip">褒めない・連続日数煽らない</span></div>
+  <p class="sub">朝は1日で最も意志力が低い時間帯。ここで「入力」を求めたら99%脱落する——だから<b>最短1タップで完了できる導線</b>を最上流に置き、手打ちは「例外」に降格する。前日値プリセット・スワイプ調整・体調絵文字ワンタップ・「今日はパス」も等価に扱う——ダークパターン禁止（連続日数の煽り・スコアの序列化なし）。rPPGスキャンは<b>精度確保のため15秒</b>に調整（claude/29 v0.4・当初5秒から延長）だが、<b>「立てかけるだけ・逆光回避・15秒」の3ルール</b>だけを守れば良い緩和版プロトコルとして設計——完璧な撮影条件を強いらない。<b>下のモックは実際に動きます</b>——「▶ はじめる」から試してください。</p>
+  <div class="kpis"><span class="kpichip hot">★確定KPI: 約25秒以内で完了（スキャン15秒＋確認・送信）</span><span class="kpichip">タップ数 中央値 3（1タップ完了パスあり）</span><span class="kpichip">「今日はパス」も1級市民</span><span class="kpichip">褒めない・連続日数煽らない</span></div>
 
-  <div class="divider">実働モック｜6:45起床直後シミュレーション<small>「▶ はじめる」で自動スキャン→前日値からの差分だけ確認→絵文字1タップ→完了。所要12秒</small></div>
+  <div class="divider">実働モック｜6:45起床直後シミュレーション<small>「▶ はじめる」で（初回のみ撮影のコツ）→15秒スキャン→前日値からの差分だけ確認→絵文字1タップ→完了</small></div>
 
   <div class="layout">
     <div class="phone" id="phone" data-scene="0">
@@ -251,14 +274,28 @@
           <span class="sun">🌤</span>
           <div class="greet">おはよう、<br>砂川さん。<small>今朝も5秒で。あとは全部、私が。</small></div>
           <div class="lead">通知を押すと <b>この画面が開くだけ</b>。<br>目を開いた瞬間に、赤いボタンだけがあります。</div>
-          <button class="bigbtn" id="startBtn">▶ はじめる<small>顔を向けるだけ・5秒</small></button>
+          <button class="bigbtn" id="startBtn">▶ はじめる<small>顔を向けるだけ・15秒</small></button>
           <div class="subactions">
             <button id="manualBtn">手で入力する</button>
             <button class="skip" id="passBtn">今日はパス（記録なし）</button>
           </div>
         </div>
 
-        <!-- ============ SCENE 1: 5秒スキャン ============ -->
+        <!-- ============ SCENE 0B: 撮影のコツ（初回のみ・claude/29 v0.4） ============ -->
+        <div class="scenebox" data-scene="0B">
+          <div class="tipswrap">
+            <div class="tiphead"><b>はじめる前に、3つだけ</b><small>完璧じゃなくて大丈夫。この3つだけ意識してください</small></div>
+            <div class="tipcards">
+              <div class="tipcard"><div class="ticon">📱</div><div class="ttxt"><b>立てかけるだけ</b><span>マグカップや本など、その場にあるものでOK。専用の道具は要りません</span></div></div>
+              <div class="tipcard"><div class="ticon">💡</div><div class="ttxt"><b>逆光だけ避ける</b><span>背中に窓など強い光が来なければOK。他の明るさは気にしなくて大丈夫</span></div></div>
+              <div class="tipcard"><div class="ticon">⏱</div><div class="ttxt"><b>15秒、いつも通り</b><span>無表情も静止も不要です。座ったまま普段通りで結構です</span></div></div>
+            </div>
+            <button class="bigbtn" id="tipsStartBtn" style="margin-top:auto">はじめる</button>
+            <div class="tipfoot">次回からはこの説明は出ません。<b>「もう一度、コツを見る」</b>はいつでも設定から。</div>
+          </div>
+        </div>
+
+        <!-- ============ SCENE 1: 15秒スキャン（旧5秒・claude/29 v0.4で延長） ============ -->
         <div class="scenebox" data-scene="1">
           <div class="scanwrap">
             <div class="scanhint" id="scanH">顔をガイドに合わせてください</div>
@@ -267,14 +304,17 @@
                 <video id="cam" autoplay playsinline muted style="display:none"></video>
                 <div class="simface" id="simface"></div>
                 <div class="camerr" id="camerr">📷 カメラが使えないためシミュレーション表示中</div>
+                <svg class="ringsvg" id="ringsvg" viewBox="0 0 100 100" preserveAspectRatio="none"><circle class="rtrack" cx="50" cy="50" r="47"/><circle class="rbar" id="ringbar" cx="50" cy="50" r="47" stroke-dasharray="295" stroke-dashoffset="0"/></svg>
                 <div class="ovring" id="ovring"></div>
                 <div class="sweep"></div>
                 <div class="countbig" id="countbig" style="display:none"></div>
+                <div class="backlighthint" id="backlighthint"><b>💡 背景が明るいようです</b>窓を背にしていたら少し向きを変えると精度が上がります（気にせず続けてもOK）</div>
                 <div class="discardov" id="discardov"><div class="discardin"><b>✓ 映像を破棄しました</b><span>端末内で数値化 → その場で消去</span></div></div>
               </div>
               <div class="scanbadge" id="scanbadge">LIVE</div>
             </div>
             <div class="scansub" id="scanS">タップは不要です。ガイドに顔が入ると自動で始まります</div>
+            <div class="propchip" id="propchip">📱 置ける場所があれば置くと安定します（なくてもOK）</div>
             <div class="btstatus"><div class="dot"></div><div><b>Tanita 体組成計 接続中</b><span>体重・体脂肪率・BMI・内臓脂肪Lvを自動読取り（乗るだけでOK）</span></div></div>
           </div>
         </div>
@@ -423,19 +463,20 @@
       <h3><small>DESIGN NOTES</small>「気分が乗らない朝」の5原則</h3>
       <ul>
         <li><b>①1タップで終わる導線を最上流に</b>：既定パスは「▶ はじめる」だけ。前日値をプリセットとして流し込み、変えるものだけタップして直す。既定で完了できる=脳を使わない。</li>
-        <li><b>②数字は打たせない</b>：Tanita体組成計はBluetoothで、心拍は5秒rPPGで、睡眠はGoogle Healthから。全部だめでも「昨日と同じ」がプリセット。手打ちは「例外」に降格。</li>
+        <li><b>②数字は打たせない</b>：Tanita体組成計はBluetoothで、心拍は15秒rPPGで、睡眠はGoogle Healthから。全部だめでも「昨日と同じ」がプリセット。手打ちは「例外」に降格。</li>
         <li><b>③選択肢を5個に絞る</b>：体調は絵文字ワンタップ・「ふつう」がデフォ。7段階も1-10も採点疲れを生む。<b>ワンタップで送信=最速12秒完了</b>。</li>
         <li><b>④「今日はパス」を1級市民に</b>：スキップは目立つ場所に。連続日数の煽り・「◯日で目標達成」は<b>実装しない</b>（ダークパターン禁止=D-Hおよびv0.7ゲーミフィケーション禁止則）。</li>
         <li><b>⑤朝の色は「静か」→「暖」へ</b>：起床画面は寒色（覚醒前）→スキャン→<b>フィードバック(5秒・呼吸)</b>→プレビューで暖色→完了で明るく。<b>視覚の光量で身体を起こす</b>。褒めない・鳴らない・振動控えめ。</li>
         <li><b>⑥5秒スキャン後の「呼吸5秒」</b>：スキャン直後は自律神経が最も静かな瞬間。ここで「深呼吸してもいい・しなくてもいい」という<b>強要しない誘導</b>を挟み、処理状況を3ステップで見せる。ダークパターン（勝手にカウントアップされる連続日数など）は表示しない。単純に「今、あなたのデータで計算しています」を伝える窓。</li>
         <li><b>⑦保存ボタンは「送る」ではなく「書き留める」</b>：「送信」「保存」はデータが会員から会社に移る受動的ニュアンス→プライバシー不安のトリガー。ここでは<b>会員が自分の取扱説明書に1ページ追加する能動行為</b>として設計（案A・v0.3の資産化戦略と直結）。ボタン直下に淡色3行で①追加先②Slackお届け時刻③エクスポート可を明記——<b>恐怖ではなく品格として透明性を組み込む</b>。</li>
         <li><b>⑧「撮り直す」の位置＝発見性×誤タップ防止のバランス設計</b>：主行動「書き留める」の直下ではなく、<b>点線セパレータ＋説明ヘッダー「スキャンの写りが気になったら」＋アウトライン形式の二次ボタン</b>で分離。①視覚的階層で誤タップ排除（金色フィル vs 灰色アウトライン） ②説明ヘッダーで意図確認（テキストを読む＝一瞬の熟考が入る） ③破線区切りで領域を心理的に隔てる。<b>心理的安全性の担保</b>——特にメイク前・寝起き直後の映りに敏感な会員（属性を問わず）が、<b>データを"我慢して受け入れる"のではなく"自分で選び直す"</b>ことができる。他の状態（体調選択・調整済み値）は保持。データ品質と会員自尊心の両立。</li>
+        <li><b>⑨【v1.1新設】rPPG精度と継続性のトレードオフ＝「緩和版プロトコル」（claude/29 v0.4）</b>：研究水準の撮影条件（専用スタンド固定・60-90cm厳守・無表情完全静止・安定照明・20-30秒）は精度は高いが、日常のアドヒアランスを破壊すると創業者自身の実地テストで判明（経営理念第3条＝会員に強いる前に創業者が検証）。<b>「立てかけるだけ・逆光だけ回避・15秒いつも通り」の3ルールに絞った緩和版</b>を採用し、想定精度は±3-5bpmから±8-10bpm程度に緩めた。本サービスは診断ではなく傾向・気づきの可視化という規制設計原則（測る・記録する・見せる・一般情報＝適法地帯）とも整合的——精度至上主義は「UXによる熱狂：やらされ感のなさ」という経営理念の優先順位と衝突しうるため、継続性を優先する意思決定。撮影のコツ（Scene 0B）は<b>初回のみ表示</b>し、以降は毎朝のフローに戻す（こだわりを強要しない）。逆光ヒューリスティックは実カメラの映像から中央(顔)と周辺(背景)の明るさを比較する簡易ロジックで、検知しても<b>強制修正はさせず「気にせず続ける」を許容</b>。</li>
       </ul>
 
       <h3><small>INTERACTION MAP</small>実装した4フロー</h3>
       <ul>
-        <li><span class="devchip">1タップ完了</span>▶はじめる→5秒スキャン→前日値プリセットで自動埋め→「これで送る」<b>（実測12秒・タップ3回）</b></li>
-        <li><span class="devchip">部分修正</span>プレビュー画面で修正したい行だけタップ→スライダー/数値入力→この値にする→送る<b>（実測20秒）</b></li>
+        <li><span class="devchip">1タップ完了</span>▶はじめる→15秒スキャン（初回のみ撮影のコツ）→前日値プリセットで自動埋め→「これで送る」<b>（実測約25秒・タップ3回）</b></li>
+        <li><span class="devchip">部分修正</span>プレビュー画面で修正したい行だけタップ→スライダー/数値入力→この値にする→送る<b>（実測約30秒）</b></li>
         <li><span class="devchip">手動フル入力</span>「手で入力する」→8項目を打ち込み→送る<b>（実測60秒・例外パス）</b></li>
         <li><span class="devchip">スキップ</span>「今日はパス」→ワンタップで終了。<b>減点ゼロ・翌朝も同じ挨拶で迎える</b>（責めない設計）</li>
       </ul>
@@ -466,8 +507,14 @@ function setScene(s){
 document.getElementById('clock').textContent = ((new Date().getHours()<7||new Date().getHours()>=22)?'6:45':new Date().toTimeString().slice(0,5));
 
 /* Scene 0 buttons */
-document.getElementById('startBtn').onclick = () => runScan();
-document.getElementById('retakeBtn').onclick = () => runScan(); /* 撮り直し: 同じフローを再実行 */
+/* 撮影のコツ（0B）は初回のみ表示。「こだわりすぎない」= 毎朝は出さない（claude/29 v0.4） */
+let tipsShown = false;
+function startFlow(){
+  if(!tipsShown){ setScene('0B'); } else { runScan(); }
+}
+document.getElementById('startBtn').onclick = () => startFlow();
+document.getElementById('tipsStartBtn').onclick = () => { tipsShown = true; runScan(); };
+document.getElementById('retakeBtn').onclick = () => runScan(); /* 撮り直し: コツは表示済みなので直接スキャンへ */
 document.getElementById('manualBtn').onclick = () => setScene('M');
 document.getElementById('passBtn').onclick = () => {
   setScene(4);
@@ -494,15 +541,37 @@ function stopCamera(){
   const v = document.getElementById('cam');
   if(v){ try{ v.pause(); v.srcObject = null; }catch(e){} }
 }
+/* 逆光ヒューリスティック（claude/29 v0.4）: 顔中央 vs 周辺(背景)の明るさを比較し、
+   背景が顔より大幅に明るい場合のみ「逆光かもしれません」を非ブロッキングで一度だけ提示する。
+   強制はしない＝気にせず続けられる（こだわりすぎない設計） */
+function checkBacklight(video){
+  try{
+    if(!video.videoWidth) return false;
+    const c = document.createElement('canvas');
+    c.width = 40; c.height = 30;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(video, 0, 0, 40, 30);
+    const centerData = ctx.getImageData(14, 8, 12, 14).data;
+    const edgeData = ctx.getImageData(0, 0, 6, 30).data;
+    const lum = d => { let s=0,n=0; for(let i=0;i<d.length;i+=4){ s += 0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]; n++; } return s/n; };
+    const centerLum = lum(centerData), edgeLum = lum(edgeData);
+    return (edgeLum - centerLum) > 55; /* 背景が顔より明らかに明るい=逆光の可能性 */
+  }catch(e){ return false; }
+}
+
 async function runScan(){
   setScene(1);
   const oval = document.getElementById('oval');
   const ov = document.getElementById('ovring'), sh = document.getElementById('scanH'), ss = document.getElementById('scanS');
   const cam = document.getElementById('cam');
   const dov = document.getElementById('discardov');
+  const blhint = document.getElementById('backlighthint');
+  const propchip = document.getElementById('propchip');
+  const ringbar = document.getElementById('ringbar');
   oval.classList.remove('live-on','simmode','scanning');
-  dov.classList.remove('on');
+  dov.classList.remove('on'); blhint.classList.remove('on');
   ov.classList.remove('ok');
+  propchip.style.display = 'block';
   sh.textContent = 'カメラを起動しています…'; ss.textContent = 'カメラの許可ダイアログが出たら「許可」してください';
   /* 実カメラ起動 */
   camStream = await tryCamera();
@@ -518,11 +587,26 @@ async function runScan(){
     ss.textContent = 'カメラが使えない環境のため、動作イメージだけ表示します';
   }
   await wait(900); ov.classList.add('ok');
-  sh.textContent = '光量OK・位置OK'; ss.textContent = 'そのまま、5秒だけ動かないでください';
-  await wait(500);
+  sh.textContent = '光量OK・位置OK'; ss.textContent = 'そのまま、15秒だけいつも通りでお願いします';
+  /* 逆光チェック（実カメラ時のみ・1回だけ非ブロッキングで提示） */
+  if(camStream && checkBacklight(cam)){
+    blhint.classList.add('on');
+    await wait(2400);
+    blhint.classList.remove('on');
+  }
+  propchip.style.display = 'none';
+  await wait(300);
   oval.classList.add('scanning');
   const cb = document.getElementById('countbig'); cb.style.display = 'flex';
-  for(let n=5;n>=1;n--){ cb.textContent = n; await wait(1000); }
+  const DURATION = 15;
+  const CIRC = 295; /* 2*PI*47 */
+  ringbar.style.transition = 'none'; ringbar.style.strokeDashoffset = '0';
+  for(let n=DURATION;n>=1;n--){
+    cb.textContent = n;
+    ringbar.style.transition = 'stroke-dashoffset 1s linear';
+    ringbar.style.strokeDashoffset = String(CIRC * (1 - n/DURATION));
+    await wait(1000);
+  }
   cb.style.display = 'none'; oval.classList.remove('scanning');
   /* Proof of Transparency: 実際にカメラを止めて映像を破棄したことを見せる */
   stopCamera();
