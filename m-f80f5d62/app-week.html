@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【モック】今週の庭／今月の庭（週次・月次カレンダー）v0.2.3｜NFR準拠｜肝臓株式会社</title>
+<style>
+  :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--coral:#e8506a;--green:#5fd08a;--warm:#f6c453}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Noto Sans JP",sans-serif;background:#0b1526;color:#e8eef8;line-height:1.7;-webkit-font-smoothing:antialiased}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center}
+  .mockbar b{color:#ffd27a}
+  .wrap{max-width:1400px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;color:#fff;margin-bottom:8px}
+  .sub{color:var(--gray);font-size:13.5px;max-width:960px}
+  .sub b{color:#fff}
+  .kicker{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+  .kpis{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .kpichip{border:1px solid rgba(201,163,83,.55);border-radius:99px;padding:4px 16px;font-size:12px;color:#e8dcc0}
+  .divider{max-width:1400px;margin:46px auto 0;color:var(--gold);font-weight:800;font-size:15px;letter-spacing:.1em;text-align:center}
+  .divider small{display:block;color:var(--gray);font-weight:400;font-size:12px;letter-spacing:.02em;margin-top:4px}
+  .layout{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:26px}
+
+  /* === PHONE MOCK === */
+  .phone{width:370px;height:790px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;color:#e8eef8;background:linear-gradient(180deg,#0e2038 0%,#152845 100%)}
+  .notch{width:120px;height:24px;background:#050a14;border-radius:0 0 16px 16px;margin:0 auto;flex-shrink:0}
+  .screen{flex:1;padding:12px 16px 0;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+  .status{display:flex;justify-content:space-between;font-size:11px;color:#9db0cf;margin-bottom:6px;flex-shrink:0}
+
+  /* === VIEW TOGGLE === */
+  .viewtoggle{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.15);border-radius:99px;padding:3px;margin-bottom:6px;flex-shrink:0}
+  .vtbtn{flex:1;background:transparent;border:0;color:#a8b8d4;font-size:11px;font-weight:700;padding:6px 0;border-radius:99px;cursor:pointer;font-family:inherit;letter-spacing:.05em;transition:all .18s}
+  .vtbtn.on{background:linear-gradient(135deg,#f6c453 0%,#c9a353 100%);color:#0e2038;box-shadow:0 2px 6px rgba(201,163,83,.3)}
+
+  /* === HEADER === */
+  .whead{text-align:center;margin-bottom:6px;flex-shrink:0;position:relative}
+  .whead b{color:#fff;font-size:15px;font-weight:800;letter-spacing:.04em}
+  .whead small{display:block;color:var(--gray);font-size:10px;margin-top:2px}
+  .wnav{position:absolute;top:0;display:flex;gap:0;align-items:center}
+  .wnav.left{left:0}
+  .wnav.right{right:0}
+  .wnavbtn{background:transparent;border:1px solid rgba(202,220,252,.25);color:#c9d4e8;font-size:9.5px;padding:4px 7px;border-radius:99px;cursor:pointer;font-family:inherit;line-height:1;letter-spacing:.02em}
+  .wnavbtn:hover{background:rgba(202,220,252,.08);color:#fff}
+  .wnavbtn:disabled{opacity:.35;cursor:default}
+
+  /* === WEEK GRID (7 tiles) === */
+  .weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:2px;flex-shrink:0}
+  .day{background:rgba(255,255,255,.05);border:1px solid rgba(202,220,252,.13);border-radius:10px;padding:6px 3px 5px;text-align:center;cursor:pointer;transition:all .18s;position:relative;min-height:96px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px}
+  .day:hover{background:rgba(255,255,255,.09);border-color:rgba(202,220,252,.3)}
+  .day.selected{background:linear-gradient(180deg,rgba(246,196,83,.16),rgba(201,163,83,.08));border-color:var(--warm);box-shadow:0 0 0 2px rgba(246,196,83,.15)}
+  .day.today .dnum{color:var(--warm)}
+  .day.today::after{content:"今日";position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--coral);color:#fff;font-size:8px;padding:1px 6px;border-radius:99px;letter-spacing:.05em;font-weight:800;line-height:1.4;box-shadow:0 3px 8px rgba(232,80,106,.4)}
+  .day.empty{background:rgba(255,255,255,.02);border-color:rgba(202,220,252,.08);cursor:default}
+  .day.empty:hover{background:rgba(255,255,255,.02);border-color:rgba(202,220,252,.08)}
+  .dow{font-size:9px;color:#7d90b4;letter-spacing:.04em;line-height:1}
+  .dow.sat{color:#8fb4e8}
+  .dow.sun{color:#e8879b}
+  .dnum{font-size:13px;color:#e8eef8;font-weight:800;line-height:1;margin-top:1px}
+  .demj{font-size:18px;line-height:1;margin-top:3px}
+  .dwt{font-size:9px;color:#a8b8d4;font-weight:600;line-height:1;margin-top:1px}
+  .ddots{display:flex;gap:2px;margin-top:2px;align-items:center;justify-content:center}
+  .ddot{width:5px;height:5px;border-radius:50%;background:rgba(202,220,252,.25)}
+  .ddot.g{background:var(--green)}
+  .ddot.w{background:var(--warm)}
+  .ddot.r{background:var(--coral);opacity:.85}
+  .day.empty .demj,.day.empty .dwt,.day.empty .ddots{display:none}
+  .day.empty::before{content:"—";color:#5f7396;font-size:14px;margin-top:auto;margin-bottom:auto}
+
+  /* === MONTH GRID === */
+  .monthgrid{display:flex;flex-direction:column;flex-shrink:0;margin-top:2px}
+  .mdowrow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+  .mdow{text-align:center;font-size:9px;color:#7d90b4;letter-spacing:.05em;font-weight:700;padding:2px 0}
+  .mdow.sat{color:#8fb4e8}
+  .mdow.sun{color:#e8879b}
+  .mcells{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .mcell{aspect-ratio:1/1.05;background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.12);border-radius:8px;padding:3px 2px 2px;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;overflow:hidden}
+  .mcell:hover{background:rgba(255,255,255,.09);border-color:rgba(202,220,252,.32)}
+  /* v0.2.1: 一目判別のためセル背景をバンド色で淡く染める */
+  .mcell.band-g{background:rgba(95,208,138,.13);border-color:rgba(95,208,138,.30)}
+  .mcell.band-g:hover{background:rgba(95,208,138,.20);border-color:rgba(95,208,138,.5)}
+  .mcell.band-w{background:rgba(246,196,83,.13);border-color:rgba(246,196,83,.30)}
+  .mcell.band-w:hover{background:rgba(246,196,83,.20);border-color:rgba(246,196,83,.5)}
+  .mcell.band-r{background:rgba(232,80,106,.11);border-color:rgba(232,80,106,.28)}
+  .mcell.band-r:hover{background:rgba(232,80,106,.18);border-color:rgba(232,80,106,.5)}
+  .mcell.selected{border-color:var(--warm) !important;box-shadow:0 0 0 2px rgba(246,196,83,.30)}
+  .mcell.other{opacity:.24;cursor:default;background:transparent !important;border-color:transparent !important}
+  .mcell.other:hover{background:transparent !important;border-color:transparent !important}
+  .mcell.today{border-width:1.5px}
+  .mcell.today:not(.selected){border-color:rgba(232,80,106,.6) !important}
+  .mcell.today .mnum{color:var(--coral);font-weight:900}
+  .mcell.empty{background:repeating-linear-gradient(-45deg,rgba(255,255,255,.02) 0px,rgba(255,255,255,.02) 3px,transparent 3px,transparent 6px);border-style:dashed;border-color:rgba(202,220,252,.10) !important}
+  .mcell.empty::after{content:"—";color:#5f7396;font-size:11px;line-height:1;position:absolute;bottom:5px;font-weight:700}
+  .mnum{font-size:10.5px;color:#e8eef8;font-weight:700;line-height:1}
+  .mcell.other .mnum{color:#516685;font-weight:500}
+  .mcell.sat .mnum{color:#8fb4e8}
+  .mcell.sun .mnum{color:#e8879b}
+  /* 気分絵文字（旧5pxドット→13px絵文字。バンドを一目で認知） */
+  .mmoji{font-size:13px;line-height:1;margin-top:2px;filter:saturate(1.1)}
+  .mcell.empty .mmoji{display:none}
+  .mwt{font-size:8px;color:#a8b8d4;line-height:1;margin-top:auto;margin-bottom:1px;font-weight:700;letter-spacing:-.02em}
+  .mcell.empty .mwt{display:none}
+  .mcell.other .mmoji,.mcell.other .mwt{display:none}
+
+  /* === WEEKLY / MONTHLY SUMMARY CARD === */
+  .wsummary{background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.13);border-radius:12px;padding:8px 12px;margin-top:8px;flex-shrink:0;font-size:11px;color:#c9d4e8;line-height:1.65}
+  .wsummary .whead2{font-size:9px;color:var(--gold);letter-spacing:.12em;font-weight:800;margin-bottom:3px}
+  .wsummary ul{list-style:none;padding:0;margin:0}
+  .wsummary li{display:flex;align-items:center;gap:6px}
+  .wsummary li .mk{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+  .wsummary li b{color:#fff;font-weight:700}
+
+  /* === DETAIL PANEL === */
+  .detailwrap{flex:1;overflow-y:auto;margin-top:8px;padding-right:2px;min-height:0}
+  .detailwrap::-webkit-scrollbar{width:3px}
+  .detailwrap::-webkit-scrollbar-thumb{background:rgba(202,220,252,.15);border-radius:2px}
+  .detailwrap.empty-day{display:flex;align-items:center;justify-content:center;color:#7d90b4;font-size:12px;text-align:center;padding:20px}
+  .dhead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .dheadleft{flex:1}
+  .dheadleft b{color:#fff;font-size:14.5px;font-weight:800}
+  .dheadleft small{display:block;color:var(--gray);font-size:10px;margin-top:1px}
+  .dheadmood{font-size:32px;line-height:1;flex-shrink:0}
+  .dheadmoodtxt{font-size:10px;color:var(--warm);text-align:center;margin-top:2px;font-weight:700}
+  .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
+  .dcell{background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.13);border-radius:10px;padding:6px 9px;position:relative}
+  .dcell.band{border-color:rgba(95,208,138,.4);background:rgba(95,208,138,.06)}
+  .dcell.warn{border-color:rgba(246,196,83,.4);background:rgba(246,196,83,.06)}
+  .dcell .lbl{font-size:9px;color:var(--gray);letter-spacing:.04em}
+  .dcell .val{font-size:15px;font-weight:800;color:#fff;line-height:1.15;margin-top:1px}
+  .dcell .val small{font-size:9px;color:var(--gray);font-weight:600;margin-left:2px}
+  .dcell .diff{font-size:9px;color:#a8b8d4;margin-top:1px}
+  .dcell .diff.up{color:var(--warm)}
+  .dcell .diff.down{color:var(--green)}
+  .dcell .tag{font-size:8px;color:var(--green);background:rgba(95,208,138,.15);border-radius:99px;padding:0 5px;margin-top:2px;display:inline-block}
+  .dcell.warn .tag{color:var(--warm);background:rgba(246,196,83,.15)}
+
+  .todaycard{background:linear-gradient(180deg,rgba(246,196,83,.06),transparent);border:1px solid rgba(246,196,83,.28);border-radius:12px;padding:9px 11px;margin-bottom:8px}
+  .todaycard .h{font-size:9px;color:var(--warm);letter-spacing:.12em;font-weight:800;margin-bottom:4px}
+  .todaycard p{font-size:11px;color:#e8eef8;line-height:1.65;margin:2px 0}
+  .todaycard p .ic{margin-right:5px}
+
+  .rulescard{background:rgba(255,255,255,.03);border:1px solid rgba(202,220,252,.13);border-radius:12px;padding:9px 11px;margin-bottom:8px}
+  .rulescard .h{font-size:9px;color:#a8b8d4;letter-spacing:.12em;font-weight:800;margin-bottom:4px}
+  .rulescard .rrow{display:flex;align-items:center;gap:8px;font-size:11px;color:#c9d4e8;padding:2px 0}
+  .rulescard .rrow .rmk{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(202,220,252,.3);flex-shrink:0;font-size:10px;display:flex;align-items:center;justify-content:center;color:#7d90b4}
+  .rulescard .rrow.done .rmk{background:var(--green);border-color:var(--green);color:#0e2038;font-weight:800}
+  .rulescard .rrow.done .rmk::before{content:"✓"}
+  .rulescard .rrow .rid{color:#7d90b4;font-size:9px;font-weight:700;letter-spacing:.03em}
+  .rulescard .rrow .rtxt{flex:1}
+  .rulescard .rrow.miss{color:#7d90b4}
+
+  .nightcard{background:rgba(255,255,255,.03);border:1px solid rgba(202,220,252,.13);border-radius:12px;padding:9px 11px;margin-bottom:10px;font-size:11px;color:#c9d4e8}
+  .nightcard .h{font-size:9px;color:#a8b8d4;letter-spacing:.12em;font-weight:800;margin-bottom:4px}
+  .nightcard span{display:inline-block;margin-right:12px}
+  .nightcard span b{color:#e8eef8;font-weight:700}
+
+  .actions{display:flex;gap:6px;margin-bottom:10px}
+  .actbtn{flex:1;background:transparent;border:1px solid rgba(202,220,252,.25);color:#c9d4e8;font-size:11px;font-weight:700;padding:8px;border-radius:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+  .actbtn:hover{background:rgba(202,220,252,.06);border-color:rgba(202,220,252,.5)}
+  .actbtn.danger{color:#e8879b;border-color:rgba(232,135,155,.3)}
+  .actbtn.danger:hover{background:rgba(232,135,155,.08);color:#f0a5b6}
+
+  /* month趨勢 mini stats */
+  .mstats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:5px}
+  .mstat{background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.13);border-radius:8px;padding:4px 3px;text-align:center}
+  .mstat .msnum{font-size:13.5px;font-weight:800;color:#fff;line-height:1.1}
+  .mstat .mslbl{font-size:8px;color:var(--gray);margin-top:1px;letter-spacing:.03em}
+  .mstat .msnum small{font-size:8.5px;color:var(--gray);font-weight:600;margin-left:1px}
+
+  /* === MONTHLY DETAIL — Compact single-screen (no scroll) === */
+  .mdetail{padding:0}
+  .mdhead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .mdhleft{flex:1;min-width:0}
+  .mdhleft b{color:#fff;font-size:13px;font-weight:800;line-height:1.15}
+  .mdhleft small{display:block;color:var(--gray);font-size:9px;margin-top:1px}
+  .mdhmood{font-size:22px;line-height:1;flex-shrink:0}
+  .mdhmoodtxt{font-size:8.5px;color:var(--warm);text-align:center;margin-top:0;font-weight:700}
+  .mvitals3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:4px}
+  .mvital{background:rgba(255,255,255,.04);border:1px solid rgba(202,220,252,.13);border-radius:8px;padding:4px 5px;text-align:center}
+  .mvital.band{border-color:rgba(95,208,138,.4);background:rgba(95,208,138,.06)}
+  .mvital.warn{border-color:rgba(246,196,83,.4);background:rgba(246,196,83,.06)}
+  .mvital .mvlbl{font-size:8px;color:var(--gray);letter-spacing:.04em;line-height:1}
+  .mvital .mvval{font-size:13.5px;font-weight:800;color:#fff;line-height:1.1;margin-top:1px}
+  .mvital .mvval small{font-size:8px;color:var(--gray);font-weight:600;margin-left:1px}
+  /* msubvitals as inline text (no card) — saves ~20px vertically */
+  .msubvitals{background:transparent;border:0;padding:1px 2px 4px;margin-bottom:4px;font-size:9.5px;color:#a8b8d4;text-align:center;line-height:1.5;letter-spacing:-.01em}
+  .msubvitals span{display:inline-block;margin:0 4px;white-space:nowrap}
+  .msubvitals span b{color:#e8eef8;font-weight:700}
+  .msubvitals .sep{color:#4a5b7d;margin:0 3px}
+  .mdrilldown{background:linear-gradient(90deg,rgba(246,196,83,.10),rgba(46,116,181,.10));border:1px solid rgba(246,196,83,.28);border-radius:8px;padding:6px 10px;margin-bottom:5px;font-size:10.5px;color:#ffd98a;font-weight:700;cursor:pointer;text-align:center;letter-spacing:.02em;transition:all .15s;line-height:1.2}
+  .mdrilldown:hover{background:linear-gradient(90deg,rgba(246,196,83,.18),rgba(46,116,181,.18));color:#fff}
+  .mactions{display:flex;gap:5px}
+  .mactbtn{flex:1;background:transparent;border:1px solid rgba(202,220,252,.22);color:#c9d4e8;font-size:10px;font-weight:700;padding:5px 4px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;line-height:1.2}
+  .mactbtn:hover{background:rgba(202,220,252,.06);border-color:rgba(202,220,252,.5)}
+  .mactbtn.danger{color:#e8879b;border-color:rgba(232,135,155,.28)}
+  .mactbtn.danger:hover{background:rgba(232,135,155,.08);color:#f0a5b6}
+
+  /* === SCROLL AFFORDANCE (for weekly view detail overflow) === */
+  .detailwrap.scroll-fade{position:relative}
+  .detailwrap.scroll-fade::after{content:"";position:sticky;bottom:0;left:0;right:0;height:20px;background:linear-gradient(180deg,transparent,#0e2038);pointer-events:none;display:block;margin-top:-20px;z-index:2}
+
+  /* === TRANSITION & LOADING STATES (v0.2.3・NFR claude/24 準拠) === */
+  /* ページ遷移フェード：S-01 SLO 200ms内目標に沿ったスムーズ切替 */
+  .screen{transition:opacity .18s ease}
+  .screen.transitioning{opacity:.55}
+  /* ドリルダウン等 L2-L3 の気遣い文言オーバーレイ */
+  .loadoverlay{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(11,21,38,.92);backdrop-filter:blur(3px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;text-align:center;padding:20px}
+  .loadoverlay.on{display:flex;animation:fadein .15s ease}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  .loadspin{width:32px;height:32px;border:2.5px solid rgba(202,220,252,.15);border-top-color:var(--warm);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loadmsg{color:#e8eef8;font-size:12px;line-height:1.6;max-width:220px}
+  .loadmsg b{color:var(--warm);font-weight:700}
+  .loadmsg small{display:block;color:#a8b8d4;font-size:10px;margin-top:3px}
+  /* リリース通知バナー（T-24h／T+24h スタイル・claude/24 §3-4準拠） */
+  .relbanner{position:absolute;top:10px;left:10px;right:10px;background:linear-gradient(90deg,rgba(46,116,181,.85),rgba(31,56,100,.85));border:1px solid rgba(202,220,252,.35);border-radius:10px;padding:7px 10px;font-size:10px;color:#e8eef8;z-index:40;display:flex;align-items:flex-start;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.35);animation:bannerdown .35s ease}
+  @keyframes bannerdown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+  .relbanner .rbico{font-size:16px;line-height:1;flex-shrink:0;margin-top:1px}
+  .relbanner .rbmain{flex:1;line-height:1.4}
+  .relbanner .rbmain b{color:#ffd98a;font-weight:700}
+  .relbanner .rbmain small{color:#c9d4e8;display:block;font-size:9.5px;margin-top:1px}
+  .relbanner .rbclose{background:transparent;border:0;color:#c9d4e8;font-size:16px;line-height:1;cursor:pointer;padding:0 2px;font-family:inherit;flex-shrink:0;opacity:.6}
+  .relbanner .rbclose:hover{opacity:1}
+
+  /* Scroll hint (below detail, above tabbar) — animates when scrollable content is hidden */
+  .scrollhint{display:none;text-align:center;font-size:9.5px;color:rgba(246,196,83,.75);padding:3px 0 1px;font-weight:700;letter-spacing:.08em;flex-shrink:0;background:linear-gradient(180deg,transparent,rgba(246,196,83,.06));border-top:1px dashed rgba(246,196,83,.2);animation:hintbob 1.4s ease-in-out infinite}
+  .scrollhint.on{display:block}
+  @keyframes hintbob{0%,100%{transform:translateY(0);opacity:.75}50%{transform:translateY(2px);opacity:1}}
+
+  .tabbar{display:flex;border-top:1px solid rgba(202,220,252,.15);padding:8px 0 14px;flex-shrink:0}
+  .tab{flex:1;text-align:center;font-size:9.5px;color:#7d90b4}
+  .tab.on{color:#ffd98a;font-weight:700}
+  .tab i{display:block;width:18px;height:18px;margin:0 auto 3px;border-radius:5px;background:currentColor;opacity:.3}
+
+  /* === NOTES SIDEBAR === */
+  .notes{width:440px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13px;color:#c9d4e8}
+  .notes h3{color:#fff;font-size:15px;margin-bottom:8px}
+  .notes h3 small{color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px}
+  .notes p{margin-bottom:14px;line-height:1.75}
+  .notes b{color:#fff}
+  .notes ul{margin:6px 0 14px 20px}
+  .notes ul li{margin-bottom:6px;font-size:12.5px;line-height:1.75}
+  .devchip{display:inline-block;background:rgba(46,116,181,.15);border:1px solid rgba(46,116,181,.5);color:#cadcfc;border-radius:99px;padding:2px 10px;font-size:10.5px;letter-spacing:.06em;margin-right:6px}
+
+  @media(max-width:820px){.notes{width:auto}}
+</style>
+</head>
+<body>
+<div class="mockbar"><b>MOCK 週次／月次カレンダー v0.2.3</b>｜1目で振り返り＋1タップで詳細＋NFR準拠（気遣い文言・トランジション・更新通知）｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+
+<div class="wrap">
+  <div class="kicker">CALENDAR REVIEW — 今週の庭・今月の庭</div>
+  <h1>1目で今週。<br>1画面で今月。タップして深く。</h1>
+  <p class="sub">v0.4「にわ」メタファーを週次・月次UIに継承。<b>週次＝7日を大きく／月次＝31日を一望</b>——切替は上部トグル1タップ。「褒めない・断定しない・引き延ばさない」原則を守り、連続日数の煽りや他人比較は一切なし。データは会員自身の資産として、編集・削除の権限も明示。<b>下のモックは実際に動きます</b>——上部トグルでビュー切替、各日タイルをタップすると詳細に切り替わります。</p>
+  <div class="kpis"><span class="kpichip">★週次⇄月次 1タップ切替</span><span class="kpichip">7日 or 31日 一目俯瞰</span><span class="kpichip">1タップで詳細ドリル</span><span class="kpichip">連続日数の煽りなし</span><span class="kpichip">エクスポート可・編集/削除可</span></div>
+
+  <div class="divider">実働モック｜週次／月次カレンダー<small>デフォルトは週次。上部の「週次 / 月次」トグルで切替、各日タップで詳細切替。</small></div>
+
+  <div class="layout">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="relbanner" id="relbanner">
+        <div class="rbico">🌱</div>
+        <div class="rbmain">
+          <b>v0.2.3 に更新しました</b>
+          <small>月次のセル背景・詳細レイアウトを一目わかりやすく改善。詳細は「説明書」タブへ。</small>
+        </div>
+        <button class="rbclose" onclick="document.getElementById('relbanner').style.display='none'" title="閉じる">×</button>
+      </div>
+      <div class="loadoverlay" id="loadoverlay">
+        <div class="loadspin"></div>
+        <div class="loadmsg"><b>この日を週次で開いています</b><small>残り約0.5秒</small></div>
+      </div>
+      <div class="screen">
+        <div class="status"><span>6:52</span><span>◀ ▲ ▮</span></div>
+
+        <div class="viewtoggle">
+          <button class="vtbtn on" id="btnWeek" onclick="setView('week')">週次</button>
+          <button class="vtbtn" id="btnMonth" onclick="setView('month')">月次</button>
+        </div>
+
+        <div class="whead" id="whead">
+          <div class="wnav left"><button class="wnavbtn" id="prevBtn">← 前へ</button></div>
+          <b id="periodTitle">今週の庭</b>
+          <div class="wnav right"><button class="wnavbtn" id="nextBtn" disabled>次へ →</button></div>
+          <small id="periodRange">7/8（月）〜 7/14（日）・計測 6/7日</small>
+        </div>
+
+        <div id="gridArea"></div>
+
+        <div class="wsummary" id="summary">
+          <div class="whead2">TODAY IN THE WEEK</div>
+          <ul>
+            <li><span class="mk"></span>計測 <b>6/7日</b>（休みも1日ぶん）</li>
+            <li><span class="mk"></span>平常域内 <b>5/6日</b>（水曜のみ逸脱）</li>
+            <li><span class="mk"></span>R-01（22時就寝）<b>4/6日 成立</b></li>
+          </ul>
+        </div>
+
+        <div class="detailwrap" id="detail"></div>
+        <div class="scrollhint" id="scrollhint">▼ もっと見る</div>
+
+        <div class="tabbar">
+          <div class="tab"><i></i>今日</div>
+          <div class="tab on"><i></i>庭</div>
+          <div class="tab"><i></i>はなす</div>
+          <div class="tab"><i></i>説明書</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <h3><small>DESIGN NOTES</small>週次⇄月次 デュアルビュー設計</h3>
+      <ul>
+        <li><b>①1タップで期間切替</b>：上部トグルで「週次（7日をリッチに）」「月次（31日を一望）」を切替。認知コスト最小の1タップ、詳細パネルは共通で使いまわし。</li>
+        <li><b>②週次＝詳細型／月次＝俯瞰型</b>：週次は絵文字＋体重＋3ドット（心拍/体重/睡眠）で豊かに、月次は日付＋1ドット＋体重下2桁のミニマル表示——見たい粒度を会員が選ぶ。</li>
+        <li><b>③選択と詳細の同一画面</b>：週次・月次いずれもタップで下部詳細が切替。別画面遷移なし・戻る操作なし。</li>
+        <li><b>④空の日は責めない</b>：計測なし日は「—」or「·」だけ。<b>連続日数の煽り・「◯日抜けています」の警告は実装しない</b>（ダークパターン禁止則D-H維持）。</li>
+        <li><b>⑤色は状態、色は評価ではない</b>：緑=平常域内・金=注意・薄赤=逸脱。「良い/悪い」ではなく「あなたの平常域との距離」（v0.3「褒めない・断定しない」）。</li>
+        <li><b>⑥会員データの所有権を明示</b>：詳細画面末尾に「編集」「削除」ボタン常設。<b>データは会員のもの・いつでも書き換え可・エクスポート可</b>（v0.3三層＋Proof of Transparency）。</li>
+      </ul>
+
+      <h3><small>WEEKLY VIEW</small>週次で見せる情報</h3>
+      <ul>
+        <li><b>曜日</b>（土=青・日=赤・平日=グレー）</li>
+        <li><b>日付</b>（今日=金色ハイライト＋「今日」バッジ）</li>
+        <li><b>体調絵文字</b>（😴🥱😐🙂✨）——一目で気分の質</li>
+        <li><b>体重</b>（下2桁）——数値のトレンドが見える</li>
+        <li><b>3ドット</b>：心拍・体重・睡眠がそれぞれ平常域内か（🟢/🟡/🔴）</li>
+        <li><b>週サマリー</b>：計測日数・平常域内日数・R-01成立数</li>
+      </ul>
+
+      <h3><small>MONTHLY VIEW v0.2.1</small>月次で見せる情報</h3>
+      <ul>
+        <li><b>7×5〜6行の伝統的カレンダー</b>——スマホで31日一望</li>
+        <li><b>日付</b>（今日=赤枠・土日=色分け・当月外=薄色）</li>
+        <li><b>★セル背景を淡色で染める</b>（緑=平常域内／金=注意／薄赤=逸脱・不透明度11-13%）——GitHub貢献グラフ型の走査体験。「あなたの平常域との距離」を色で表現。</li>
+        <li><b>★気分絵文字（🙂😐🥱）</b>——旧5pxドット→13px絵文字。会員が「セマンティックに一瞬で認識できる」情報。</li>
+        <li><b>体重下2桁</b>——月内トレンドを見渡せる</li>
+        <li><b>未計測日は斜線ハッチ＋ダッシュ</b>——「今週は計測してない日だな」も一目で認識可能。責めずに事実だけ。</li>
+        <li><b>月サマリー</b>：計測日／平常域内／平均体重／R-01成立の4項目ミニ表示</li>
+        <li><b>タップで週次と同じ詳細</b>——ビューを超えて同じ体験</li>
+      </ul>
+
+      <h3><small>WHY EMOJI ≒ COLOR</small>「traffic light化」を避けた設計</h3>
+      <ul>
+        <li><b>色は状態、色は評価ではない</b>：赤色は「あなたの平常域から遠い」であり「悪い日」ではない。文言も「逸脱」であり「失敗」ではない。</li>
+        <li><b>絵文字を選んだ理由</b>：緑ドットより🙂の方が「あなたの体はこういう朝だった」の温かい表現になる。会員は「評価される」ではなく「観察される」体験を得る。</li>
+        <li><b>彩度を意図的に下げた</b>：不透明度11-13%（Github型より薄い）。目立ちすぎない「ambient information」——ちらっと見て把握、視線を留めさせない。</li>
+      </ul>
+
+      <h3><small>v0.2.3 NFR実装</small>非機能要件の3つの適用</h3>
+      <ul>
+        <li><b>①ページ遷移フェード</b>（S-01・200ms）：週次⇄月次切替時、画面全体を軽くフェード。「今何が変わったか」の視認性UP。</li>
+        <li><b>②ドリルダウン気遣い文言</b>（L2階層・500ms）：月次から週次への深掘り時、「この日を週次で開いています／残り約0.5秒」のオーバーレイ。本番でも週次データフェッチが400-800ms想定なので、待たせる時間を「気配り」に変換。</li>
+        <li><b>③更新通知バナー</b>（T+24hスタイル）：起動時に「v0.2.3に更新しました」を表示。手動で×閉じ可能。本番では変更影響大の場合T-24hに事前通知＋T+24h事後通知の2段構え。</li>
+      </ul>
+      <p>詳細な設計原則は <b>claude/24_非機能要件</b> に体系化。TTFR基準（claude/06）を核に、7階層気遣い文言・5段階通知プロトコル・SLO/SLA階層化まで含む。</p>
+
+      <h3><small>v0.2.2 SCROLL-LESS MONTHLY DETAIL</small>スクロールを消した理由</h3>
+      <p>月次モードの詳細エリアは物理的に約193px（週次441pxの半分以下）——同じUIを詰めるとスクロールが発生し、「操作を最小限に」原則に反する。<br>解決策として <b>月次専用の圧縮詳細レイアウト</b> を追加：</p>
+      <ul>
+        <li><b>3項目カード（体重・心拍・睡眠）＋4項目インラインテキスト</b>——1画面完結、6メトリクスを見せる</li>
+        <li><b>「週次で詳しく見る →」ワンタップ導線</b>——TODAY/RULES/NIGHTの深掘りは週次ビューへ委譲。認知は2段階（月次=俯瞰、週次=深掘り）に階層化</li>
+        <li><b>スクロールヒント「▼ もっと見る」</b>——万一詳細が溢れた場合のみ表示（週次側でTODAY/RULES/NIGHTが多い日など）。位置：詳細末尾直下、タブバー直上、ボブアニメーションで気づかせる</li>
+      </ul>
+      <p><b>階層化の意図</b>：月次=気づく／週次=振り返る／今日=書き留める——ビューごとに「認知の粒度」を分ける。「1画面ですべて見せる」より「役割に応じて情報密度を切替」が、朝の低エネルギー会員には優しい。</p>
+
+      <h3><small>INTERACTION</small>実装した4フロー</h3>
+      <ul>
+        <li><span class="devchip">週次⇄月次</span>上部トグル1タップでビュー切替（選択日は維持）</li>
+        <li><span class="devchip">俯瞰→深掘り</span>グリッドで気になる日を発見→<b>1タップで詳細</b>（同一画面で下に展開）</li>
+        <li><span class="devchip">期間跨ぎ</span>ヘッダー「← 前へ」で先週/先月・「次へ」は未来につき非活性化</li>
+        <li><span class="devchip">計測空日</span>タップしても詳細は「この日は計測がありませんでした」——責めずに事実だけ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ Weekly data (7/8-7/14) ============ */
+const WEEK = [
+  {date:'7/8', dow:'月', dowc:'', filled:true, mood:3, moodEmj:'😐', moodTxt:'ふつう', weight:83.5, weightDiff:0, fat:18.7, bmi:22.9, hr:65, hrBand:'ok', sleep:6.2, sleepScore:74, viceral:9.5, muscle:64.3, rules:[{id:'R-01',t:'22時就寝',done:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:false,dim:true}], today1:['🫀 心拍65、平常域の中。','⚖️ 体重83.5kg — 変動0.','🌙 睡眠6.2h — 短めの朝。'], night:{sleep:'22:15',dinner:'19:40',meeting:'なし'}},
+  {date:'7/9', dow:'火', dowc:'', filled:true, mood:4, moodEmj:'🙂', moodTxt:'良い', weight:83.4, weightDiff:-0.1, fat:18.5, bmi:22.9, hr:62, hrBand:'ok', sleep:7.5, sleepScore:82, viceral:9.4, muscle:64.4, rules:[{id:'R-01',t:'22時就寝',done:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:true}], today1:['🫀 心拍62、平常域の中央。','⚖️ 体重83.4kg — 昨日の炭水化物半量が効いた可能性。','🌙 睡眠7.5h — 質もスコア82と良好。'], night:{sleep:'22:00',dinner:'19:20',meeting:'なし'}},
+  {date:'7/10', dow:'水', dowc:'', filled:true, mood:2, moodEmj:'🥱', moodTxt:'重い', weight:83.8, weightDiff:0.4, fat:18.9, bmi:23.0, hr:70, hrBand:'warn', sleep:5.5, sleepScore:65, viceral:9.7, muscle:64.2, rules:[{id:'R-01',t:'22時就寝',done:false,dim:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:false,dim:true}], today1:['🫀 心拍70、平常域(60-64)を超過。','⚖️ 体重+0.4kg — 昨夜の会食の影響と読めます。','🌙 睡眠5.5h — 短さと会食が重なった1日。'], night:{sleep:'24:30',dinner:'22:10',meeting:'あり（接待）'}, note:'会食翌朝の典型パターン。R-03/R-08を提示するには次の会食機会で。'},
+  {date:'7/11', dow:'木', dowc:'', filled:true, mood:4, moodEmj:'🙂', moodTxt:'良い', weight:83.3, weightDiff:-0.5, fat:18.6, bmi:22.9, hr:63, hrBand:'ok', sleep:8.0, sleepScore:88, viceral:9.5, muscle:64.3, rules:[{id:'R-01',t:'22時就寝',done:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:false,dim:true}], today1:['🫀 心拍63、平常域内に回復。','⚖️ 体重-0.5kg — 昨日から1日でリセット。','🌙 睡眠8.0h ⭐88 — 回復力の証拠。'], night:{sleep:'21:50',dinner:'19:15',meeting:'なし'}},
+  {date:'7/12', dow:'金', dowc:'', filled:true, mood:5, moodEmj:'✨', moodTxt:'絶好調', weight:83.1, weightDiff:-0.2, fat:18.3, bmi:22.8, hr:62, hrBand:'ok', sleep:7.5, sleepScore:85, viceral:9.4, muscle:64.5, rules:[{id:'R-01',t:'22時就寝',done:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:false,dim:true}], today1:['🫀 心拍62、平常域下限側=いい静けさ。','⚖️ 体重83.1kg — 今週の下限を更新。','🌙 睡眠7.5h ⭐85 — 3日連続の良い睡眠。'], night:{sleep:'21:50',dinner:'19:00',meeting:'なし'}},
+  {date:'7/13', dow:'土', dowc:'sat', filled:false, empty:true},
+  {date:'7/14', dow:'日', dowc:'sun', filled:true, today:true, mood:4, moodEmj:'🙂', moodTxt:'良い', weight:83.4, weightDiff:+0.3, fat:18.4, bmi:22.9, hr:64, hrBand:'ok', sleep:7.1, sleepScore:81, viceral:9.5, muscle:64.3, rules:[{id:'R-01',t:'22時就寝',done:true},{id:'R-03',t:'炭酸水',done:false,dim:true},{id:'R-08',t:'〆半量',done:false,dim:true}], today1:['🫀 心拍64、平常域の上限側で落ち着く。','⚖️ 体重83.4kg — 土曜の休みぶん、微増。','🌙 睡眠7h05 ⭐81 — 週末リズムに戻せた。'], night:{sleep:'22:30',dinner:'19:30',meeting:'なし'}}
+];
+
+/* ============ Monthly data (July 2026) — 31日ぶんの合成データ ============
+   dayNum: 1-31, empty: 未計測, band: 'g'|'w'|'r'|null,  weight: number
+*/
+function seedRand(i){ return Math.sin(i*777.3)*10000; }
+function rand01(i){ const x=seedRand(i); return x-Math.floor(x); }
+
+function makeMonthDay(dayNum, todayDay){
+  // 未計測日：14日目・22日目ぶんの2日 + 未来日は今日以降
+  if(dayNum > todayDay) return {dayNum, future:true, empty:true, band:null};
+  if(dayNum===14 || dayNum===22) return {dayNum, empty:true, band:null};
+  // Map 7/8-7/14 のリアルデータを7/8-7/14に流し込み（WEEK[0..6]）
+  const weekMap = {8:0, 9:1, 10:2, 11:3, 12:4, 13:5, 14:6};
+  if(weekMap[dayNum]!==undefined){
+    const w = WEEK[weekMap[dayNum]];
+    if(w.empty) return {dayNum, empty:true, band:null};
+    const hrDot = w.hrBand==='ok'?'g':(w.hrBand==='warn'?'w':'r');
+    const wDot = Math.abs(w.weightDiff)<=0.3?'g':(Math.abs(w.weightDiff)<=0.5?'w':'r');
+    const sDot = w.sleep>=7?'g':(w.sleep>=6?'w':'r');
+    const scores = [hrDot,wDot,sDot];
+    const gCount = scores.filter(x=>x==='g').length;
+    const band = gCount>=2?'g':(scores.includes('r')?'r':'w');
+    return {dayNum, empty:false, band, weight:w.weight, weekIdx:weekMap[dayNum]};
+  }
+  // 生成データ 1-7 と 15-30
+  const r = rand01(dayNum);
+  const baseWt = 83.5 + (r-0.5)*1.1;
+  const wt = Math.round(baseWt*10)/10;
+  const bandR = rand01(dayNum+100);
+  const band = bandR<0.65?'g':(bandR<0.88?'w':'r');
+  return {dayNum, empty:false, band, weight:wt};
+}
+const MONTH = [];
+const TODAY_DAY = 14;
+for(let d=1; d<=31; d++) MONTH.push(makeMonthDay(d, TODAY_DAY));
+
+/* ============ VIEW STATE ============ */
+let currentView = 'week';
+let selectedWeekIdx = 6; // default today in WEEK
+let selectedMonthDay = 14; // default today in MONTH
+
+function bandDot(band){ if(band==='ok')return 'g'; if(band==='warn')return 'w'; return 'r'; }
+
+/* ============ RENDER: WEEK GRID ============ */
+function renderWeekGrid(){
+  const gridArea = document.getElementById('gridArea');
+  gridArea.innerHTML = '<div class="weekgrid" id="weekgrid"></div>';
+  const grid = document.getElementById('weekgrid');
+  WEEK.forEach((d,i)=>{
+    const el = document.createElement('div');
+    el.className = 'day';
+    if(d.empty) el.classList.add('empty');
+    if(d.today) el.classList.add('today');
+    if(i===selectedWeekIdx) el.classList.add('selected');
+    el.dataset.i = i;
+    if(d.empty){
+      el.innerHTML = `<div class="dow ${d.dowc}">${d.dow}</div><div class="dnum">${d.date.split('/')[1]}</div>`;
+    }else{
+      const hrDot = bandDot(d.hrBand);
+      const wDot = Math.abs(d.weightDiff)<=0.3?'g':(Math.abs(d.weightDiff)<=0.5?'w':'r');
+      const sDot = d.sleep>=7?'g':(d.sleep>=6?'w':'r');
+      el.innerHTML = `
+        <div class="dow ${d.dowc}">${d.dow}</div>
+        <div class="dnum">${d.date.split('/')[1]}</div>
+        <div class="demj">${d.moodEmj}</div>
+        <div class="dwt">${d.weight}</div>
+        <div class="ddots"><span class="ddot ${hrDot}" title="心拍"></span><span class="ddot ${wDot}" title="体重"></span><span class="ddot ${sDot}" title="睡眠"></span></div>
+      `;
+    }
+    el.onclick = ()=>{ selectedWeekIdx = i; renderWeekGrid(); renderDetail(); };
+    grid.appendChild(el);
+  });
+}
+
+/* ============ RENDER: MONTH GRID ============ */
+function renderMonthGrid(){
+  const gridArea = document.getElementById('gridArea');
+  // July 2026: 7/1 is Wednesday. Fill Mon/Tue as prev-month greys.
+  const firstDow = 2; // 0=Mon...6=Sun, July 1 2026 = Wed = index 2
+  gridArea.innerHTML = `
+    <div class="monthgrid">
+      <div class="mdowrow">
+        <div class="mdow">月</div><div class="mdow">火</div><div class="mdow">水</div><div class="mdow">木</div><div class="mdow">金</div>
+        <div class="mdow sat">土</div><div class="mdow sun">日</div>
+      </div>
+      <div class="mcells" id="mcells"></div>
+    </div>
+  `;
+  const cells = document.getElementById('mcells');
+  // Previous month grey days (6/29, 6/30 etc)
+  const prevDays = [29, 30]; // just placeholders for leading Mon/Tue
+  prevDays.forEach(n=>{
+    const el = document.createElement('div');
+    el.className = 'mcell other';
+    el.innerHTML = `<div class="mnum">${n}</div>`;
+    cells.appendChild(el);
+  });
+  // July 1-31
+  const BAND_EMOJI = {g:'🙂', w:'😐', r:'🥱'};
+  MONTH.forEach((m,idx)=>{
+    const el = document.createElement('div');
+    el.className = 'mcell';
+    // dow calc: firstDow=Wed(2), so dayNum=1 → 2, dayNum=2 → 3, etc
+    const dowIdx = (firstDow + (m.dayNum-1)) % 7;
+    if(dowIdx===5) el.classList.add('sat');
+    if(dowIdx===6) el.classList.add('sun');
+    if(m.dayNum===TODAY_DAY) el.classList.add('today');
+    if(m.dayNum===selectedMonthDay) el.classList.add('selected');
+    if(m.empty && !m.future) el.classList.add('empty');
+    if(m.future) el.classList.add('other');
+    // v0.2.1: バンド色をセル背景に反映（一目認識用）
+    if(!m.empty && m.band) el.classList.add('band-'+m.band);
+    let html = `<div class="mnum">${m.dayNum}</div>`;
+    if(!m.empty){
+      // ドットの代わりに気分絵文字（13px）で一目わかる
+      const emj = BAND_EMOJI[m.band] || '😐';
+      html += `<div class="mmoji" title="${m.band==='g'?'平常域内':(m.band==='w'?'注意':'逸脱')}">${emj}</div>`;
+      html += `<div class="mwt">${m.weight.toFixed(1).slice(-3)}</div>`;
+    }
+    el.innerHTML = html;
+    if(!m.future) el.onclick = ()=>{ selectedMonthDay = m.dayNum; renderMonthGrid(); renderDetail(); };
+    cells.appendChild(el);
+  });
+  // Trailing next-month cells to complete 5 rows (35 cells total minimum)
+  const totalCells = 2 + 31; // 33
+  const trailingNeeded = (7 - (totalCells % 7)) % 7;
+  const nextDays = Array.from({length:trailingNeeded}, (_,i)=>i+1);
+  nextDays.forEach(n=>{
+    const el = document.createElement('div');
+    el.className = 'mcell other';
+    el.innerHTML = `<div class="mnum">${n}</div>`;
+    cells.appendChild(el);
+  });
+}
+
+/* ============ RENDER: SUMMARY (week vs month) ============ */
+function renderSummary(){
+  const s = document.getElementById('summary');
+  if(currentView==='week'){
+    s.innerHTML = `
+      <div class="whead2">TODAY IN THE WEEK</div>
+      <ul>
+        <li><span class="mk"></span>計測 <b>6/7日</b>（休みも1日ぶん）</li>
+        <li><span class="mk"></span>平常域内 <b>5/6日</b>（水曜のみ逸脱）</li>
+        <li><span class="mk"></span>R-01（22時就寝）<b>4/6日 成立</b></li>
+      </ul>
+    `;
+  }else{
+    // Compute month stats (up to today)
+    const cutoff = MONTH.filter(m=>m.dayNum<=TODAY_DAY);
+    const measured = cutoff.filter(m=>!m.empty).length;
+    const inBand = cutoff.filter(m=>m.band==='g').length;
+    const measuredList = cutoff.filter(m=>!m.empty);
+    const avgWt = (measuredList.reduce((a,m)=>a+m.weight,0)/measuredList.length).toFixed(1);
+    s.innerHTML = `
+      <div class="whead2">TODAY IN THE MONTH — 7月（14日時点）</div>
+      <div class="mstats">
+        <div class="mstat"><div class="msnum">${measured}<small>/${TODAY_DAY}</small></div><div class="mslbl">計測日</div></div>
+        <div class="mstat"><div class="msnum">${inBand}<small>/${measured}</small></div><div class="mslbl">平常域内</div></div>
+        <div class="mstat"><div class="msnum">${avgWt}<small>kg</small></div><div class="mslbl">平均体重</div></div>
+        <div class="mstat"><div class="msnum">9<small>/14</small></div><div class="mslbl">R-01成立</div></div>
+      </div>
+    `;
+  }
+}
+
+/* Switch view to weekly with the given weekIdx selected
+   claude/24 §2「気遣い文言プロトコル」L2 準拠：処理時間 500ms相当のオーバーレイ */
+function drillToWeek(weekIdx){
+  const overlay = document.getElementById('loadoverlay');
+  const screen = document.querySelector('.screen');
+  overlay.classList.add('on');
+  screen.classList.add('transitioning');
+  // シミュレート：本番でも週次データフェッチが 400-800ms 想定なので気遣い文言を出す
+  setTimeout(()=>{
+    selectedWeekIdx = weekIdx;
+    setView('week');
+    overlay.classList.remove('on');
+    screen.classList.remove('transitioning');
+  }, 520);
+}
+
+/* ビュー切替時のフェード遷移 claude/24 §1 S-01 準拠 */
+function transitionScreen(){
+  const screen = document.querySelector('.screen');
+  screen.classList.add('transitioning');
+  setTimeout(()=>screen.classList.remove('transitioning'), 200);
+}
+
+/* ============ RENDER: MONTHLY COMPACT DETAIL (no-scroll) ============ */
+function renderMonthlyCompactDetail(d, m){
+  // d: WEEK entry (has full data); m: MONTH entry (has weekIdx for drill-down)
+  const detail = document.getElementById('detail');
+  detail.className = 'detailwrap';
+  const hrCellCls = d.hrBand==='ok'?'band':(d.hrBand==='warn'?'warn':'');
+  const sleepH = Math.floor(d.sleep);
+  const sleepM = String(Math.round((d.sleep-sleepH)*60)).padStart(2,'0');
+  detail.innerHTML = `
+    <div class="mdetail">
+      <div class="mdhead">
+        <div class="mdhleft">
+          <b>${d.date}（${d.dow}）${d.today?'・今日':''}</b>
+          <small>${d.filled?'計測 #'+(m.weekIdx+37)+'／書き留め済み':''}</small>
+        </div>
+        <div style="text-align:center">
+          <div class="mdhmood">${d.moodEmj}</div>
+          <div class="mdhmoodtxt">${d.moodTxt}</div>
+        </div>
+      </div>
+      <div class="mvitals3">
+        <div class="mvital">
+          <div class="mvlbl">体重</div>
+          <div class="mvval">${d.weight}<small>kg</small></div>
+        </div>
+        <div class="mvital ${hrCellCls}">
+          <div class="mvlbl">心拍</div>
+          <div class="mvval">${d.hr}<small>bpm</small></div>
+        </div>
+        <div class="mvital">
+          <div class="mvlbl">睡眠</div>
+          <div class="mvval">${sleepH}h${sleepM}<small>⭐${d.sleepScore}</small></div>
+        </div>
+      </div>
+      <div class="msubvitals">
+        <span>体脂肪 <b>${d.fat}%</b></span><span class="sep">·</span><span>内臓脂肪 <b>${d.viceral}Lv</b></span><span class="sep">·</span><span>BMI <b>${d.bmi}</b></span><span class="sep">·</span><span>筋肉量 <b>${d.muscle}kg</b></span>
+      </div>
+      <div class="mdrilldown" onclick="drillToWeek(${m.weekIdx})">週次で詳しく見る（1枚・ルール・夜）→</div>
+      <div class="mactions">
+        <button class="mactbtn" onclick="alert('モックのため未実装：この日の計測値を編集する画面へ')">編集</button>
+        <button class="mactbtn danger" onclick="if(confirm('この日の書き留めを削除しますか？（データはご自身のものです）'))alert('モックのため未実装：削除フロー');">削除</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============ RENDER: DETAIL PANEL (共通) ============ */
+function renderDetail(){
+  let d, isEmpty;
+  if(currentView==='week'){
+    d = WEEK[selectedWeekIdx];
+    isEmpty = d.empty;
+  }else{
+    const m = MONTH[selectedMonthDay-1];
+    if(m.empty){
+      const detail = document.getElementById('detail');
+      detail.className = 'detailwrap empty-day';
+      const label = m.future ?
+        `7/${m.dayNum}はまだ来ていません` :
+        `7/${m.dayNum} は計測がありませんでした`;
+      const sub = m.future ?
+        `未来の日はまだ書き留められません。<br>その日が来たら計測してみましょう。` :
+        `お休みも1日ぶんです。<br>連続日数はここではカウントしません。`;
+      detail.innerHTML = `<div><b style="color:#c9d4e8;font-size:13px">${label}</b><br><span style="font-size:10.5px;line-height:1.7;display:inline-block;margin-top:6px">${sub}</span></div>`;
+      return;
+    }
+    // For monthly view with data:
+    if(m.weekIdx!==undefined){
+      // Full-data day (in WEEK range) → use compact monthly detail (no scroll)
+      renderMonthlyCompactDetail(WEEK[m.weekIdx], m);
+      return;
+    }else{
+      // Synthesized day (no WEEK data) → compact detail with limited info
+      const detail = document.getElementById('detail');
+      detail.className = 'detailwrap';
+      const bandTxt = m.band==='g'?'平常域内':(m.band==='w'?'注意':'逸脱');
+      const bandCls = m.band==='g'?'band':(m.band==='w'?'warn':'');
+      const bandEmj = m.band==='g'?'🙂':(m.band==='w'?'😐':'🥱');
+      // Compute dow for synth day (July 2026: 7/1 is Wednesday)
+      const DOW_JP = ['月','火','水','木','金','土','日'];
+      const synthDow = DOW_JP[(2 + (m.dayNum-1)) % 7];
+      detail.innerHTML = `
+        <div class="mdetail">
+          <div class="mdhead">
+            <div class="mdhleft">
+              <b>7/${m.dayNum}（${synthDow}）</b>
+              <small>簡易記録のみ（体重・総合バンド）</small>
+            </div>
+            <div style="text-align:center">
+              <div class="mdhmood">${bandEmj}</div>
+              <div class="mdhmoodtxt">${bandTxt}</div>
+            </div>
+          </div>
+          <div class="mvitals3" style="grid-template-columns:1fr 1fr">
+            <div class="mvital">
+              <div class="mvlbl">体重</div>
+              <div class="mvval">${m.weight}<small>kg</small></div>
+            </div>
+            <div class="mvital ${bandCls}">
+              <div class="mvlbl">総合バンド</div>
+              <div class="mvval" style="font-size:12px">${bandTxt}</div>
+            </div>
+          </div>
+          <div class="msubvitals" style="justify-content:center;color:#a8b8d4;text-align:center;font-size:10px;line-height:1.5">
+            <span>この日の詳細（心拍・睡眠・ルール検証・夜の記録）は<br>週次ビューの「先週/先々週」ボタンから遡って閲覧できます</span>
+          </div>
+          <div class="mactions">
+            <button class="mactbtn" onclick="alert('モックのため未実装：この日の計測値を編集する画面へ')">編集</button>
+            <button class="mactbtn danger" onclick="if(confirm('この日の書き留めを削除しますか？'))alert('モックのため未実装：削除フロー');">削除</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+  }
+
+  const detail = document.getElementById('detail');
+  if(isEmpty){
+    detail.className = 'detailwrap empty-day';
+    detail.innerHTML = `<div><b style="color:#c9d4e8;font-size:13px">${d.date}（${d.dow}）は計測がありませんでした</b><br><span style="font-size:10.5px;line-height:1.7;display:inline-block;margin-top:6px">お休みも1日ぶんです。<br>連続日数はここではカウントしません。</span></div>`;
+    return;
+  }
+  detail.className = 'detailwrap';
+  const diffCls = d.weightDiff>0?'up':(d.weightDiff<0?'down':'');
+  const diffTxt = d.weightDiff===0?'変動なし':(d.weightDiff>0?`+${d.weightDiff}`:`${d.weightDiff}`);
+  const hrCellCls = d.hrBand==='ok'?'band':(d.hrBand==='warn'?'warn':'');
+  const hrTag = d.hrBand==='ok'?'平常域60-64内':(d.hrBand==='warn'?'平常域を超過':'逸脱');
+  const viceralCls = d.viceral>=10?'warn':'';
+  const viceralTag = d.viceral>=10?'標準を超過':'標準上限近い・要監視';
+  detail.innerHTML = `
+    <div class="dhead">
+      <div class="dheadleft">
+        <b>${d.date}（${d.dow}）${d.today?'・今日':''}</b>
+        <small>${d.filled?'計測 #'+(selectedWeekIdx+37)+'／書き留め済み':''}</small>
+      </div>
+      <div style="text-align:center">
+        <div class="dheadmood">${d.moodEmj}</div>
+        <div class="dheadmoodtxt">${d.moodTxt}</div>
+      </div>
+    </div>
+
+    <div class="dgrid">
+      <div class="dcell">
+        <div class="lbl">体重</div>
+        <div class="val">${d.weight}<small>kg</small></div>
+        <div class="diff ${diffCls}">${diffTxt}${d.weightDiff!==0?' kg':''}</div>
+      </div>
+      <div class="dcell ${hrCellCls}">
+        <div class="lbl">安静時心拍</div>
+        <div class="val">${d.hr}<small>bpm</small></div>
+        <div class="tag">${hrTag}</div>
+      </div>
+      <div class="dcell">
+        <div class="lbl">体脂肪率</div>
+        <div class="val">${d.fat}<small>%</small></div>
+        <div class="diff">BMI ${d.bmi}</div>
+      </div>
+      <div class="dcell ${viceralCls}">
+        <div class="lbl">内臓脂肪</div>
+        <div class="val">${d.viceral}<small>Lv</small></div>
+        <div class="tag">${viceralTag}</div>
+      </div>
+      <div class="dcell">
+        <div class="lbl">睡眠</div>
+        <div class="val">${Math.floor(d.sleep)}h${String(Math.round((d.sleep-Math.floor(d.sleep))*60)).padStart(2,'0')}<small>⭐${d.sleepScore}</small></div>
+      </div>
+      <div class="dcell">
+        <div class="lbl">筋肉量</div>
+        <div class="val">${d.muscle}<small>kg</small></div>
+      </div>
+    </div>
+
+    <div class="todaycard">
+      <div class="h">TODAY — この日の1枚（7:00配信）</div>
+      ${d.today1.map(t=>`<p>${t}</p>`).join('')}
+      ${d.note?`<p style="color:#7d90b4;font-size:10px;margin-top:4px;line-height:1.55">note: ${d.note}</p>`:''}
+    </div>
+
+    <div class="rulescard">
+      <div class="h">RULES — あなたの取扱説明書</div>
+      ${d.rules.map(r=>`<div class="rrow ${r.done?'done':(r.dim?'miss':'')}"><span class="rmk"></span><span class="rid">${r.id}</span><span class="rtxt">${r.t}</span></div>`).join('')}
+    </div>
+
+    <div class="nightcard">
+      <div class="h">NIGHT — 夜の記録（21:50入力）</div>
+      <span>就寝: <b>${d.night.sleep}</b></span>
+      <span>夕食: <b>${d.night.dinner}</b></span>
+      <span>会食: <b>${d.night.meeting}</b></span>
+    </div>
+
+    <div class="actions">
+      <button class="actbtn" onclick="alert('モックのため未実装：この日の計測値を編集する画面へ')">この日を編集</button>
+      <button class="actbtn danger" onclick="if(confirm('この日の書き留めを削除しますか？（データはご自身のものです・いつでも操作できます）'))alert('モックのため未実装：削除フロー');">書き留めを削除</button>
+    </div>
+  `;
+}
+
+/* ============ RENDER: Header title ============ */
+function renderHeader(){
+  const t = document.getElementById('periodTitle');
+  const r = document.getElementById('periodRange');
+  if(currentView==='week'){
+    t.textContent = '今週の庭';
+    r.textContent = '7/8（月）〜 7/14（日）・計測 6/7日';
+  }else{
+    t.textContent = '今月の庭';
+    r.textContent = '2026年7月・14日時点 計測 12/14日';
+  }
+}
+
+/* ============ SCROLL AFFORDANCE ============ */
+function updateScrollHint(){
+  const el = document.getElementById('detail');
+  const hint = document.getElementById('scrollhint');
+  if(!hint) return;
+  const canScroll = el.scrollHeight > el.clientHeight + 5;
+  const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 5;
+  hint.classList.toggle('on', canScroll && !atBottom);
+}
+
+/* ============ VIEW SWITCHER ============ */
+function setView(v){
+  const changing = currentView !== v;
+  if(changing) transitionScreen(); // フェード効果 (claude/24 §1 S-01)
+  currentView = v;
+  document.getElementById('btnWeek').classList.toggle('on', v==='week');
+  document.getElementById('btnMonth').classList.toggle('on', v==='month');
+  renderHeader();
+  if(v==='week'){ renderWeekGrid(); }
+  else{ renderMonthGrid(); }
+  renderSummary();
+  renderDetail();
+  // Scroll to top of detail on view change and update hint
+  const detail = document.getElementById('detail');
+  detail.scrollTop = 0;
+  setTimeout(updateScrollHint, 30);
+}
+
+/* ============ INIT ============ */
+renderHeader();
+renderWeekGrid();
+renderSummary();
+renderDetail();
+// Wire up scroll hint
+setTimeout(()=>{
+  const detail = document.getElementById('detail');
+  if(detail){
+    detail.addEventListener('scroll', updateScrollHint);
+    updateScrollHint();
+  }
+}, 50);
+// Update hint whenever detail changes (via mutation observer)
+new MutationObserver(()=>setTimeout(updateScrollHint, 30)).observe(document.getElementById('detail'), {childList:true, subtree:true});
+</script>
+</body>
+</html>
