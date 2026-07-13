@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#1F3864">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>肝臓株式会社｜パイロット版 v0.3（会員第一号エディション・D-O 4タブIA準拠）</title>
+<title>肝臓株式会社｜パイロット版 v0.4（会員第一号エディション・実データ入力用・15秒緩和版対応）</title>
 <style>
   :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--dk2:#16294a;--line:rgba(202,220,252,.18);--green:#9fd4a3;--pink:#e8a0a8}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -90,27 +90,11 @@
 </style>
 </head>
 <body>
-<!-- 事業計画データv2バナー: 2026-07-13時点の最新決裁事項を反映 -->
-<div style="max-width:1560px;margin:0 auto 24px;padding:14px 22px;background:linear-gradient(135deg,rgba(232,80,106,.08),rgba(201,163,83,.06));border:1.5px solid rgba(232,80,106,.35);border-radius:14px;font-size:12px;color:#c9d4e8;line-height:1.7;font-family:'Hiragino Sans','Noto Sans JP',sans-serif">
-  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:8px">
-    <b style="color:#ffb0c0;font-size:11.5px;letter-spacing:.1em">★事業計画データ v2（2026-07-13時点）反映済</b>
-    <span style="font-size:10.5px;color:#9db0cc">D-M経営理念・D-O UI情報アーキテクチャ・D-026設立日変更を反映</span>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 16px;font-size:11.5px;color:#e8eef8">
-    <div>📅 <b>設立予定</b>: 2026年11月2日（月）</div>
-    <div>💰 <b>資本金</b>: 100万円＋公庫融資900万円</div>
-    <div>🎯 <b>North Star</b>: 2030年NASDAQ</div>
-    <div>⚖️ <b>経営理念</b>: D-M第1〜7条（8月決裁待ち）</div>
-    <div>📱 <b>UI IA</b>: D-O 4タブ（今日/庭/はなす/説明書）</div>
-    <div>⭐ <b>Moat</b>: 会員の"取扱説明書"（G1稼働）</div>
-    <div>🏢 <b>Position</b>: 経営インフラ（BtoC×高単価）</div>
-    <div>🌐 <b>長期</b>: フィジカルAI連携（Phase 5・2030+）</div>
-  </div>
-</div>
-
-
+<!-- VERSION_TAG: KANZO_PILOT_v0.4_REALDATA-15SEC_20260713 -->
+<!-- 内部向け「事業計画データv2バナー」は会員第一号の実利用画面に不適のため除去（v0.4）。事業計画の最新決裁はclaude/00・claude/29等の台帳で管理する。 -->
+<div id="lsWarn" style="display:none;max-width:440px;margin:0 auto;background:#7a2230;color:#ffe3e8;font-size:12px;line-height:1.6;padding:11px 16px;text-align:center"></div>
 <div class="app">
-  <div class="pilotbar"><b>PILOT v0.3｜会員第一号エディション（D-O 4タブIA準拠）</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
+  <div class="pilotbar"><b>PILOT v0.4｜会員第一号エディション（実データ入力用・15秒緩和版プロトコル対応）</b>｜データは端末内のみ・外部送信ゼロ｜数値は参考値であり診断ではありません</div>
   <div class="appbar"><div class="mk" id="logo"></div><b>肝臓株式会社</b><span class="date" id="hdrDate"></span></div>
   <main id="main"></main>
   <div class="tabbar">
@@ -133,12 +117,17 @@ const seedRules=[
  {id:'R-03',cat:'会食',title:'最初の1杯は30分かけて',n:0,ok:0,active:true},
  {id:'R-08',cat:'会食',title:'〆の炭水化物は半分にする',n:0,ok:0,active:true}
 ];
+let LS_OK=true;
+function lsAvailable(){try{const k='__kanzo_t__';localStorage.setItem(k,'1');localStorage.removeItem(k);return true;}catch(e){return false;}}
+function showLsWarn(){const w=document.getElementById('lsWarn');if(w){w.style.display='block';w.innerHTML='⚠ このブラウザではデータを保存できません（プライベート/シークレットモードの可能性）。データを残すには<b>通常のウィンドウ</b>で開いてください。';}}
 let S=load();
 function load(){
+  LS_OK=lsAvailable();
+  if(!LS_OK)showLsWarn();
   try{const d=JSON.parse(localStorage.getItem(LS));if(d&&d.days)return d;}catch(e){}
   return {days:{},rules:JSON.parse(JSON.stringify(seedRules)),started:today()};
 }
-function save(){localStorage.setItem(LS,JSON.stringify(S));}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));LS_OK=true;return true;}catch(e){LS_OK=false;showLsWarn();return false;}}
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function addDays(iso,n){const d=new Date(iso+'T00:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function jdate(iso){const d=new Date(iso+'T00:00:00');return (d.getMonth()+1)+'月'+d.getDate()+'日（'+'日月火水木金土'[d.getDay()]+'）';}
@@ -207,6 +196,7 @@ function vToday(){
   const streak=(()=>{let n=0,d=dk;while(S.days[d]&&S.days[d].rhr){n++;d=addDays(d,-1);}return n;})();
   let h=`<h2>おはようございます。<small>朝の入力は60秒だけ——それが唯一の義務です。</small></h2>`;
   h+=`<div class="card"><div class="lab">MORNING｜朝の計測入力 ${e.rhr?'✓ 入力済':''}</div>
+    <p class="mini" style="margin:-2px 0 8px;line-height:1.6">起床直後、15秒の緩和版計測（立てかける・逆光だけ避ける・いつも通り）で得た値、またはウェアラブルの安静時心拍を入力。完璧でなくて大丈夫です。</p>
     <div class="rowx"><div><label>安静時心拍 <small>(bpm・起床直後)</small></label><input type="number" id="inRhr" inputmode="numeric" placeholder="62" value="${e.rhr||''}"></div>
     <div><label>体重 <small>(kg・任意)</small></label><input type="number" id="inW" step="0.1" inputmode="decimal" placeholder="任意" value="${e.w||''}"></div></div>
     <label>昨夜の就寝</label><select id="inBed">${BEDS.map((b2,i)=>`<option value="${i}" ${e.bed==i?'selected':''}>${b2}</option>`).join('')}</select>
@@ -234,7 +224,7 @@ function vToday(){
     const d=S.days[dk]||(S.days[dk]={});
     d.rhr=r;const w=document.getElementById('inW').value;if(w)d.w=+w;
     d.bed=+document.getElementById('inBed').value;
-    save();creditRules(dk);toast('保存しました');render();
+    const ok=save();creditRules(dk);toast(ok?'保存しました':'保存できません（通常ウィンドウで開いてください）');render();
   };
   document.querySelectorAll('#segDin div').forEach(el=>el.onclick=()=>{
     const d=S.days[dk]||(S.days[dk]={});d.dinner=el.dataset.v==='1';save();render();
@@ -411,7 +401,7 @@ function vBook(){
     <div class="card"><div class="lab">D-M整合｜退会時のデータ返還（第2条-5 廃棄の規律）</div>
       <p class="mini">経営理念第2条-5「廃棄の規律」に基づき、退会時には本人希望に応じてデータを完全消去。上記のJSONエクスポートは、退会時の本人返還フォーマットの先行実装です。</p>
     </div>
-    <div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.3（2026-07-13・D-O 4タブIA準拠）。会員第一号=創業者自身の実装（D-M第3条「創業者から始める規律」の実践）。データは端末内のみ・外部送信ゼロ（Privacy by Design）。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>
+    <div class="card"><div class="lab">ABOUT</div><p class="mini">肝臓株式会社 パイロット版 v0.4（2026-07-13・D-O 4タブIA準拠・15秒緩和版プロトコル対応）。会員第一号=創業者自身の実装（D-M第3条「創業者から始める規律」の実践）。データは端末内のみ・外部送信ゼロ（Privacy by Design）。v0.4更新: 内部向け事業計画バナーを除去し会員実利用画面に最適化／プライベートモード等で保存不可の場合に明示警告を表示／15秒緩和版計測との導線を明記。本アプリはウェルネス目的の参考情報を提供するものであり、疾病の診断・治療・予防を目的としません。</p></div>
   </details>`;
   main.innerHTML=h;
   document.getElementById('btnAddRule').onclick=()=>{
