@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#1F3864">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【モック】v0.8.0「メイン検証統合版」5秒スキャン・実写対話・朝の書き留め・週次⇄月次カレンダー｜肝臓株式会社</title>
+<style>
+  :root{--navy:#1F3864;--accent:#2E74B5;--gold:#C9A353;--ice:#CADCFC;--gray:#8fa0bd;--dk:#0f1c31;--line:rgba(202,220,252,.18);--green:#4caf78;--coral:#e8506a;--coral2:#f06e85}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Noto Sans JP",sans-serif;background:#0b1526;color:#e8eef8;line-height:1.7}
+  .mockbar{position:sticky;top:0;z-index:99;background:#3d3d3d;color:#fff;font-size:12px;padding:6px 16px;text-align:center}
+  .mockbar b{color:#ffd27a}
+  .wrap{max-width:1560px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;color:#fff;margin-bottom:8px}
+  .sub{color:var(--gray);font-size:13.5px;max-width:1030px}
+  .sub b{color:#fff}
+  .kicker{color:var(--gold);font-weight:700;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+  .kpis{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .kpichip{border:1px solid rgba(201,163,83,.55);border-radius:99px;padding:4px 16px;font-size:12px;color:#e8dcc0}
+  .kpichip.hot{border-color:var(--coral);color:#ffc9d4;font-weight:700}
+  .divider{max-width:1560px;margin:46px auto 0;color:var(--gold);font-weight:800;font-size:15px;letter-spacing:.1em;text-align:center}
+  .divider small{display:block;color:var(--gray);font-weight:400;font-size:12px;letter-spacing:.02em;margin-top:4px}
+
+  /* ===== SECTION A: 5-sec scan phone ===== */
+  .scanrow{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:26px}
+  .phone{width:330px;height:700px;border-radius:44px;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#0e1930,#122142);color:#e8eef8}
+  .notch{width:120px;height:24px;background:#0a1220;border-radius:0 0 16px 16px;margin:0 auto;flex-shrink:0}
+  .screen{flex:1;padding:12px 18px 0;display:flex;flex-direction:column;overflow:hidden}
+  .screen>*{flex-shrink:0}
+  .status{display:flex;justify-content:space-between;font-size:11px;color:#7a8db0;margin-bottom:8px}
+  .appbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .mk{width:26px;height:26px;border-radius:6px;flex-shrink:0}
+  .appbar b{font-size:13px;color:#fff}
+  .date{font-size:10.5px;color:#7a8db0;margin-left:auto}
+  .greet{font-size:20px;font-weight:800;color:#fff;margin:8px 0 2px}
+  .greetsub{font-size:12.5px;color:#9fb0cf;margin-bottom:12px;min-height:38px}
+  .greetsub b{color:#ffd27a}
+  .scanbox{background:rgba(255,255,255,.04);border:1.5px solid rgba(202,220,252,.22);border-radius:22px;padding:14px;position:relative;overflow:hidden}
+  .scanbox .glab{text-align:center;font-size:12px;color:#cadcfc;margin-bottom:8px}
+  .oval{position:relative;width:200px;height:250px;margin:0 auto;border-radius:50%/46%;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#233a66,#1a2b4e 60%,#152343)}
+  .oval video,.oval .simface{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .simface{background:radial-gradient(ellipse at 50% 40%,#2a3f6e,#182848 65%)}
+  .ovring{position:absolute;inset:-3px;border-radius:50%/46%;border:3px dashed rgba(201,163,83,.85);pointer-events:none;transition:border-color .3s}
+  .ovring.ok{border-style:solid;border-color:var(--green)}
+  .sweep{position:absolute;left:8%;right:8%;height:2.5px;background:linear-gradient(90deg,transparent,#ffd98a,transparent);top:12%;opacity:0;pointer-events:none}
+  .scanning .sweep{opacity:1;animation:sweepmv 1.6s ease-in-out infinite}
+  @keyframes sweepmv{0%,100%{top:12%}50%{top:84%}}
+  .chkrow{display:flex;gap:8px;justify-content:center;margin-top:10px}
+  .chk{border-radius:99px;padding:4px 13px;font-size:11.5px;background:rgba(20,32,58,.9);color:#8fa0bd;border:1px solid rgba(202,220,252,.2);transition:all .3s}
+  .chk.on{color:#bfe8c8;border-color:rgba(76,175,120,.6);background:rgba(76,175,120,.14)}
+  .bigcount{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:110px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 4px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s}
+  .bigcount.on{opacity:1}
+  .scanmeter{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(202,220,252,.18);border-radius:18px;padding:12px 14px;margin-top:12px}
+  .ringwrap{width:64px;height:64px;position:relative;flex-shrink:0}
+  .ringwrap svg{transform:rotate(-90deg)}
+  .ringwrap .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#ffd98a}
+  .scanmeter .tx b{display:block;font-size:14.5px;color:#fff}
+  .scanmeter .tx span{font-size:11px;color:#9fb0cf;line-height:1.55;display:block;margin-top:3px}
+  .privline{text-align:center;font-size:10.5px;color:#7d90b4;margin-top:10px}
+  .scanbtnrow{display:flex;gap:8px;margin-top:12px}
+  .sbtn{flex:1;border:none;border-radius:14px;padding:13px 10px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit}
+  .sbtn.main{background:var(--gold);color:#20293a}
+  .sbtn.ghost{background:transparent;color:#cadcfc;border:1.5px solid rgba(202,220,252,.4)}
+  .resultcard{background:linear-gradient(160deg,#fdfefe,#eef4fb);border-radius:20px;padding:16px;color:#1F3864;margin-top:12px;display:none;animation:pop .45s cubic-bezier(.2,.9,.3,1.2)}
+  .resultcard.on{display:block}
+  @keyframes pop{0%{transform:translateY(14px) scale(.96);opacity:0}100%{transform:none;opacity:1}}
+  .resultcard .rt{font-size:10.5px;letter-spacing:.16em;color:#b8860b;font-weight:800;margin-bottom:6px}
+  .scanctas{margin-top:14px;text-align:center}
+  .bigscan{width:100%;border:none;border-radius:20px;padding:15px 12px;background:radial-gradient(circle at 30% 25%,#f06e85,#e8506a);color:#fff;font-family:inherit;font-weight:800;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 10px 26px rgba(232,80,106,.45);position:relative;transition:transform .15s}
+  .bigscan:hover{transform:scale(1.02)}
+  .bigscan::after{content:"";position:absolute;inset:-6px;border-radius:25px;border:2.5px solid rgba(232,80,106,.5);animation:micpulse 1.9s ease-out infinite}
+  .bigscan svg{width:30px;height:30px;fill:#fff;flex-shrink:0}
+  .bigscan small{display:block;font-size:11px;font-weight:600;opacity:.92;letter-spacing:.04em;margin-top:2px}
+  .scansub{margin-top:11px;font-size:11.5px;color:#8fa0bd}
+  .scansub span{cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .scansub span:hover{color:#cadcfc}
+  .scanhow{position:absolute;inset:0;background:rgba(8,14,26,.9);z-index:30;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+  .scanhow.on{display:flex}
+  .shcard{background:#fff;color:#1F3864;border-radius:22px;padding:20px 18px;width:100%}
+  .shcard>b{display:block;font-size:15px;margin-bottom:12px;text-align:center}
+  .shrow{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+  .shrow svg{width:40px;height:40px;flex-shrink:0}
+  .shrow b{display:block;font-size:13px;margin-bottom:2px}
+  .shrow span{font-size:11px;color:#5f6b7a;line-height:1.55;display:block}
+  #shGo{width:100%;border:none;border-radius:14px;padding:13px;background:var(--coral);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:4px}
+  .shskip{text-align:center;font-size:11px;color:#9db0cc;margin-top:9px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .rgrid{display:flex;gap:10px}
+  .rcell{flex:1;background:#fff;border:1.5px solid #dbe6f3;border-radius:14px;padding:10px 8px;text-align:center}
+  .rcell .v{font-size:24px;font-weight:800;color:#1F3864}
+  .rcell .v small{font-size:11px;font-weight:600;color:#7a8db0}
+  .rcell .l{font-size:10px;color:#7a8db0;margin-top:2px}
+  .rcell.okc{border-color:#bfe0c8;background:#f3faf5}
+  .rnote{font-size:10.5px;color:#7a8db0;margin-top:8px;line-height:1.6}
+  .discard{position:absolute;inset:0;background:rgba(10,18,32,.86);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;border-radius:50%/46%;backdrop-filter:blur(3px)}
+  .discard.on{display:flex;animation:fadein .3s}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  .discard b{color:#bfe8c8;font-size:13px}
+  .discard span{color:#9fb0cf;font-size:10.5px}
+  .tabbar{display:flex;border-top:1px solid rgba(202,220,252,.15);padding:8px 0 20px;flex-shrink:0;margin-top:auto}
+  .tab{flex:1;text-align:center;font-size:10px;color:#7d90b4}
+  .tab.on{color:#ffd98a;font-weight:700}
+  .tab i{display:block;width:20px;height:20px;margin:0 auto 3px;border-radius:6px;background:currentColor;opacity:.3}
+  .caption{width:330px;font-size:13px;color:#c9d4e8}
+  .caption b{color:var(--gold);display:block;margin-bottom:4px;font-size:13.5px}
+  .caption span{color:var(--gray);font-size:12px}
+  .caption .pt{margin-bottom:14px}
+
+  /* ===== SECTION B: live call ===== */
+  .live{max-width:1160px;margin:26px auto 0;background:linear-gradient(180deg,#fdfefe,#eef4fb);border-radius:24px;overflow:hidden;border:3px solid #2c3e5e;box-shadow:0 24px 60px rgba(0,0,0,.5);color:#1F3864;display:flex;flex-wrap:wrap;position:relative}
+  .stage{width:400px;min-height:560px;background:linear-gradient(180deg,#101d36,#16294a);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 24px;position:relative}
+  .stage .stlab{text-align:center;font-size:10.5px;letter-spacing:.18em;color:#7a8db0;font-weight:800;margin-bottom:14px}
+  .portraitwrap{position:relative;width:280px;height:330px;border-radius:24px;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.55)}
+  .portraitwrap img{width:100%;height:100%;object-fit:cover;display:block;animation:breathe 4.2s ease-in-out infinite;transform-origin:center 70%}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.014)}}
+  .pring{position:absolute;inset:0;border-radius:24px;border:3px solid transparent;pointer-events:none;transition:border-color .25s,box-shadow .25s}
+  .pring.listen{border-color:#5fd08a;box-shadow:0 0 0 4px rgba(95,208,138,.22),inset 0 0 30px rgba(95,208,138,.12);animation:lpulse 1.4s ease-in-out infinite}
+  @keyframes lpulse{0%,100%{box-shadow:0 0 0 4px rgba(95,208,138,.22)}50%{box-shadow:0 0 0 9px rgba(95,208,138,.08)}}
+  .pring.talk{border-color:#ffd98a;box-shadow:0 0 0 4px rgba(255,217,138,.2)}
+  .pring.think{border-color:#8fb4e8;box-shadow:0 0 0 4px rgba(143,180,232,.18)}
+  .aibadge{position:absolute;top:10px;left:10px;background:rgba(12,20,36,.78);color:#cadcfc;border:1px solid rgba(202,220,252,.4);font-size:10px;font-weight:800;letter-spacing:.1em;border-radius:99px;padding:3px 10px;backdrop-filter:blur(4px)}
+  .photoedit{position:absolute;top:10px;right:10px;background:rgba(12,20,36,.78);color:#cadcfc;border:1px solid rgba(202,220,252,.4);font-size:10.5px;border-radius:99px;padding:3px 10px;cursor:pointer;backdrop-filter:blur(4px)}
+  .photoedit:hover{color:#fff;border-color:#fff}
+  .portraitwrap.dragover{outline:3px dashed var(--gold);outline-offset:-6px}
+  .wavebar{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;align-items:flex-end;height:26px;opacity:0;transition:opacity .25s}
+  .wavebar.on{opacity:1}
+  .wavebar i{width:5px;background:#ffd98a;border-radius:3px;height:6px}
+  .wavebar.on i{animation:wv .7s ease-in-out infinite}
+  .wavebar i:nth-child(2){animation-delay:.12s}.wavebar i:nth-child(3){animation-delay:.24s}.wavebar i:nth-child(4){animation-delay:.36s}.wavebar i:nth-child(5){animation-delay:.48s}
+  @keyframes wv{0%,100%{height:6px}50%{height:24px}}
+  .nameplate{margin-top:14px;text-align:center}
+  .nameplate b{color:#fff;font-size:16px;letter-spacing:.04em}
+  .nameplate small{display:block;color:#8fa0bd;font-size:11px;margin-top:3px}
+  #avState{margin-top:10px;font-size:11.5px;color:#9fb0cf;text-align:center;min-height:18px}
+  .demobtn{margin-top:16px;background:transparent;border:1.5px solid rgba(201,163,83,.8);color:#ffd98a;border-radius:14px;padding:11px 18px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;width:100%}
+  .demobtn:hover{background:rgba(201,163,83,.12)}
+  .demobtn:disabled{opacity:.45;cursor:default}
+  .voicebtn{margin-top:8px;background:transparent;border:1px solid rgba(202,220,252,.35);color:#9fb0cf;border-radius:12px;padding:8px 14px;font-size:11.5px;cursor:pointer;font-family:inherit;width:100%}
+  .chatside{flex:1;min-width:340px;display:flex;flex-direction:column;background:#fff}
+  .chathead{padding:12px 18px;border-bottom:2px solid #eef2f8;display:flex;align-items:center;gap:9px}
+  .chathead .dot{width:9px;height:9px;border-radius:50%;background:#4caf78}
+  .chathead b{font-size:14px}
+  .chathead small{color:#7a8db0;font-size:11px;margin-left:auto}
+  #chatlog{flex:1;padding:16px 18px;overflow-y:auto;max-height:380px;min-height:300px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:82%;padding:9px 13px;border-radius:16px;font-size:13.5px;line-height:1.75;white-space:pre-wrap}
+  .msg.k{background:#f2f6fc;border:1.5px solid #dbe6f3;border-bottom-left-radius:4px;align-self:flex-start}
+  .msg.u{background:var(--navy);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+  .msg .meta{display:block;font-size:9.5px;color:#9db0cc;margin-top:5px;border-top:1px dashed #dbe6f3;padding-top:4px}
+  .msg.k.guard{background:#fff7e6;border-color:#f0d9a8}
+  .chips{padding:8px 18px 4px;display:flex;gap:8px;flex-wrap:wrap}
+  .chips .chiplab{width:100%;font-size:10px;color:#9db0cc;letter-spacing:.08em}
+  .chips span{border:1.5px solid #c8d6ea;border-radius:99px;padding:6px 13px;font-size:12px;color:#1F3864;cursor:pointer;background:#fff;font-weight:600}
+  .chips span:hover{background:#f2f6fc;border-color:var(--accent)}
+  /* --- mic-first input bar (AIDMA) --- */
+  .inputbar{display:flex;align-items:center;gap:12px;padding:12px 18px 18px;border-top:2px solid #eef2f8;background:linear-gradient(180deg,#fff,#f6f9fd)}
+  .kbbtn{width:46px;height:46px;border-radius:50%;border:1.5px solid #c8d6ea;background:#fff;color:#7a8db0;font-size:17px;cursor:pointer;flex-shrink:0}
+  .kbbtn:hover{color:var(--navy);border-color:var(--accent)}
+  .micwrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .bigmic{width:84px;height:84px;border-radius:50%;border:none;cursor:pointer;position:relative;background:radial-gradient(circle at 35% 30%,var(--coral2),var(--coral));box-shadow:0 10px 26px rgba(232,80,106,.45);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+  .bigmic:hover{transform:scale(1.05)}
+  .bigmic svg{width:34px;height:34px;fill:#fff}
+  .bigmic::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2.5px solid rgba(232,80,106,.55);animation:micpulse 1.9s ease-out infinite}
+  @keyframes micpulse{0%{transform:scale(.92);opacity:1}70%{transform:scale(1.22);opacity:0}100%{opacity:0}}
+  .bigmic.rec{background:radial-gradient(circle at 35% 30%,#ff5252,#c62828);box-shadow:0 10px 30px rgba(198,40,40,.55)}
+  .bigmic.rec::after{animation:micpulse .95s ease-out infinite;border-color:rgba(255,82,82,.7)}
+  .bigmic.busywait{background:radial-gradient(circle at 35% 30%,#9fb0cf,#7a8db0);box-shadow:none}
+  .bigmic.busywait::after{display:none}
+  .miclab{font-size:12.5px;font-weight:800;color:var(--coral);letter-spacing:.04em}
+  .miclab.rec{color:#c62828}
+  .miclab.busywait{color:#7a8db0;font-weight:600}
+  .sendbtn{width:46px;height:46px;border-radius:50%;border:none;background:var(--gold);color:#20293a;font-size:15px;font-weight:800;cursor:pointer;flex-shrink:0;display:none}
+  .textrow{display:none;padding:0 18px 14px;gap:8px}
+  .textrow.on{display:flex}
+  #chatin{flex:1;border:2px solid #c8d6ea;border-radius:14px;padding:11px 14px;font-size:14px;font-family:inherit;outline:none;color:#1F3864}
+  #chatin:focus{border-color:var(--accent)}
+  .textsend{border:none;border-radius:14px;padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;background:var(--gold);color:#20293a}
+  .livehint{position:absolute;left:0;right:0;bottom:110px;text-align:center;font-size:12px;color:#7a8db0;pointer-events:none;opacity:0;transition:opacity .3s}
+  .livehint.on{opacity:1}
+  /* coach overlay */
+  .coach{position:absolute;inset:0;background:rgba(10,17,30,.72);z-index:20;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+  .coach.off{display:none}
+  .coachcard{background:#fff;border-radius:22px 22px 0 0;padding:26px 30px 30px;max-width:520px;width:100%;text-align:center;color:#1F3864;box-shadow:0 -12px 40px rgba(0,0,0,.4)}
+  .coachcard .arr{font-size:30px;color:var(--coral);animation:bob 1.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+  .coachcard h4{font-size:17px;margin:6px 0 8px}
+  .coachcard p{font-size:13px;color:#5f6b7a;margin-bottom:16px}
+  .coachcard button{background:var(--coral);color:#fff;border:none;border-radius:14px;padding:13px 34px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  /* voice settings */
+  .vpanel{position:absolute;z-index:22;top:70px;left:24px;width:352px;background:#fff;border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.45);padding:18px 20px;color:#1F3864;display:none}
+  .vpanel.on{display:block}
+  .vpanel h5{font-size:13px;margin-bottom:10px}
+  .vpanel label{display:block;font-size:11px;color:#7a8db0;margin:10px 0 4px}
+  .vpanel select,.vpanel input[type=range]{width:100%}
+  .vpanel select{padding:8px;border:1.5px solid #c8d6ea;border-radius:10px;font-family:inherit;font-size:12px}
+  .vpanel .vrow{display:flex;gap:8px;margin-top:14px}
+  .vpanel .vrow button{flex:1;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .vtest{background:var(--navy);color:#fff}
+  .vclose{background:#eef2f8;color:#1F3864}
+  .vnote{font-size:10px;color:#9db0cc;margin-top:10px;line-height:1.6}
+
+  /* eng */
+  .eng{max-width:1560px;margin:30px auto 0;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:24px 28px;font-size:13px;color:#c9d4e8}
+  .eng h3{color:#fff;font-size:15px;margin-bottom:8px}
+  .eng h3 small{color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px}
+  .eng table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+  .eng th{background:rgba(46,116,181,.3);color:#fff;padding:6px 9px;text-align:left;font-weight:600}
+  .eng td{border:1px solid rgba(202,220,252,.15);padding:6px 9px;color:#c9d4e8;line-height:1.65;vertical-align:top}
+  .eng b{color:#fff}
+  .eng .gold{color:var(--gold)}
+  ul.cl{margin:8px 0 4px 20px}
+  ul.cl li{margin-bottom:6px;font-size:12.5px}
+  @media(max-width:860px){.stage{width:100%}.vpanel{left:12px;right:12px;width:auto}}
+</style>
+<style id="brandlogo">.mark,.mk{background:transparent url(data:image/png;base64,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) center/contain no-repeat !important;box-shadow:none !important;border-radius:0 !important}.mark span,.mk span,.mark i{display:none !important}</style>
+</head>
+<body>
+<div class="mockbar"><b>MOCK v0.8.0（メイン検証統合版・NFR準拠）</b>｜①朝の5秒スキャン ②実写アバター対話 ③押して話すワンタップ音声 ④朝の書き留め（1分UI） ⑤週次⇄月次カレンダー｜数値はダミー｜2026-07-13 肝臓株式会社</div>
+
+<div class="wrap">
+  <div class="kicker">SERVICE EXPERIENCE v0.8 — MAIN VERIFICATION TARGET (INTEGRATED)</div>
+  <h1>朝は5秒。話したい時は、ワンタップ。書き留めるのは1分。振り返るのは1目。</h1>
+  <p class="sub">v0.8はv0.7の3機能に、朝の書き留めと週次⇄月次カレンダーを統合。<b>①朝5秒スキャン</b>（意志力ゼロでも成立）<b>②カンゾーくん/ちゃん実写通話UI</b><b>③ワンタップ音声（AIDMA導線）</b><b>④朝の書き留め（1分UI・気分乗らない朝に優しい）</b><b>⑤週次⇄月次カレンダー（1目で振り返り・NFR準拠の気遣い文言実装）</b>。設計原則は「褒めない・断定しない・引き延ばさない」（v0.3継承）＋「Proof of Transparency」＋「気遣いはブランドの技術的実装」（claude/24 NFR）。</p>
+  <div class="kpis"><span class="kpichip hot">★新: 朝の書き留め・週次⇄月次カレンダー統合</span><span class="kpichip hot">朝スキャン5秒</span><span class="kpichip">TTFR 0.5〜1.0秒（相槌ファースト）</span><span class="kpichip">NFR SLO：気遣い文言7階層・5段階通知</span><span class="kpichip">接地率100%＝会員データにない話はしない</span><span class="kpichip">AIであることを名乗る</span></div>
+
+  <div class="divider">PRIORITY 1｜朝の5秒スキャン<small>「▶ スキャンを試す」でカメラが起動します（映像は端末の外に出ません・その場で破棄）。カメラなしのシミュレーションも可</small></div>
+
+  <div class="scanrow">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <div class="status"><span>6:31</span><span>◀ ▲ ▮</span></div>
+        <div class="appbar"><div class="mk" style="background:var(--navy);box-shadow:inset 0 0 0 2px rgba(201,163,83,.9)"></div><b>肝臓株式会社</b><span class="date">7月13日（月）</span></div>
+        <div class="greet">おはようございます。</div>
+        <div class="greetsub" id="scanSub">顔を合わせて、<b>5秒</b>。それだけで今日が始まります。</div>
+        <div class="scanbox" id="scanbox">
+          <div class="glab" id="scanGlab">顔をガイドに合わせてください</div>
+          <div class="oval" id="oval">
+            <video id="cam" autoplay playsinline muted style="display:none"></video>
+            <div class="simface" id="simface"></div>
+            <div class="ovring" id="ovring"></div>
+            <div class="sweep"></div>
+            <div class="bigcount" id="bigcount">5</div>
+            <div class="discard" id="discard"><b>✓ 映像を破棄しました</b><span>端末内で数値化 → 映像は消去</span></div>
+          </div>
+          <div class="chkrow"><span class="chk" id="chkL">光量</span><span class="chk" id="chkP">位置</span></div>
+        </div>
+        <div class="scanmeter" id="scanmeter">
+          <div class="ringwrap">
+            <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="rgba(202,220,252,.15)" stroke-width="6"/><circle id="ringbar" cx="32" cy="32" r="27" fill="none" stroke="#C9A353" stroke-width="6" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"/></svg>
+            <div class="pct" id="ringpct">–</div>
+          </div>
+          <div class="tx"><b id="meterT">準備OK</b><span id="meterS">下のボタンでスキャン開始。押した後は、画面を見ているだけ。</span></div>
+        </div>
+        <div class="resultcard" id="resultcard">
+          <div class="rt">TODAY — 今日の1枚（6:31 計測 #43）</div>
+          <div class="rgrid">
+            <div class="rcell okc"><div class="v">63<small> bpm</small></div><div class="l">安静時心拍・平常域内</div></div>
+            <div class="rcell"><div class="v">14<small> /分</small></div><div class="l">呼吸（参考値）</div></div>
+            <div class="rcell"><div class="v">◎</div><div class="l">平常域 60–64</div></div>
+          </div>
+          <div class="rnote">5秒スキャンは<b>クイック推定（参考精度）</b>です。週1回の60秒精密スキャンで、あなたの平常域を校正します。[src:計測#43・平常域は直近21件から算出]</div>
+        </div>
+        <div class="scanctas">
+          <button class="bigscan" id="scanGo"><svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 15.4A5.4 5.4 0 1 1 12 7.6a5.4 5.4 0 0 1 0 10.8z"/></svg><span id="scanGoLab">押してスキャン<small>5秒・顔を向けるだけ</small></span></button>
+          <div class="scansub"><span id="scanSim">カメラなしで見る</span>　・　<span id="scanHow">うまく測るコツ</span></div>
+        </div>
+        <div class="privline">映像は保存されません（端末内で即時数値化・即時破棄）</div>
+        <div class="scanhow" id="scanhow">
+          <div class="shcard">
+            <b>うまく測るコツ（3つだけ）</b>
+            <div class="shrow"><svg viewBox="0 0 48 48"><circle cx="24" cy="20" r="8" fill="#f6c453"/><g stroke="#f6c453" stroke-width="3" stroke-linecap="round"><line x1="24" y1="4" x2="24" y2="9"/><line x1="38" y1="8" x2="34.5" y2="11.5"/><line x1="44" y1="20" x2="39" y2="20"/><line x1="10" y1="8" x2="13.5" y2="11.5"/><line x1="4" y1="20" x2="9" y2="20"/></g><path d="M14 44 C14 36 18 32 24 32 C30 32 34 36 34 44 Z" fill="#2E74B5"/><circle cx="24" cy="26" r="5" fill="#f6d7c3"/></svg><div><b>① 明るい場所で、正面から</b><span>窓際やライトの下がベスト。背中側に強い光（逆光）だけ避けてください。</span></div></div>
+            <div class="shrow"><svg viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="14" ry="18" fill="none" stroke="#C9A353" stroke-width="2.5" stroke-dasharray="5 4"/><ellipse cx="24" cy="24" rx="8" ry="10" fill="#f6d7c3"/><circle cx="21" cy="22" r="1.3" fill="#22314f"/><circle cx="27" cy="22" r="1.3" fill="#22314f"/><path d="M21 28 Q24 30 27 28" stroke="#b96a5f" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><div><b>② ガイドの枠に顔を合わせる</b><span>スマホは顔の高さに。枠に入れば自動で始まります（タップ不要）。</span></div></div>
+            <div class="shrow"><svg viewBox="0 0 48 48"><circle cx="24" cy="26" r="16" fill="none" stroke="#2E74B5" stroke-width="3"/><line x1="24" y1="26" x2="24" y2="15" stroke="#2E74B5" stroke-width="3" stroke-linecap="round"/><line x1="24" y1="26" x2="31" y2="30" stroke="#e8506a" stroke-width="3" stroke-linecap="round"/><rect x="20" y="2" width="8" height="4" rx="2" fill="#2E74B5"/><text x="24" y="45" text-anchor="middle" font-size="8" fill="#5f6b7a" font-weight="700">5秒</text></svg><div><b>③ そのまま5秒、動かない</b><span>話さない・笑わなくていい・呼吸はふつうに。<b>動きだけがノイズ</b>になります。</span></div></div>
+            <button id="shGo">わかった、はじめる</button>
+            <div class="shskip" id="shClose">閉じる</div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab on"><i></i>今日</div><div class="tab"><i></i>トレンド</div><div class="tab"><i></i>設定</div></div>
+      </div>
+    </div>
+    <div class="caption">
+      <div class="pt"><b>なぜ「1分」→「5秒」なのか（設計判断）</b>起床直後は1日で最も意志力が低い。60秒の拘束は「今日はいいや」を生む唯一の摩擦だった。5秒なら<b>歯磨きの前に終わる</b>——継続率の分母を守る設計変更。<span>タップ不要: 顔がガイドに入った瞬間に自動開始（光量・位置の自動チェック→カウントダウン）。</span></div>
+      <div class="pt"><b>精度との交換条件（正直に設計に書く）</b>rPPGは計測時間が短いほど誤差が出る。だから5秒は<b>クイック推定（参考値）</b>と明示し、<b>週1回の60秒精密スキャンで平常域を校正</b>する二段構え。「速さは毎日・精度は週次」で両取りする。会員に求める協力は<b>「5秒の静止」ただ1つ</b>——動作は一切不要（rPPGでは動きだけがノイズ源）。<span>この5秒制約はT40要件（rPPGアルゴリズム選定の足切り条件）に反映。</span></div>
+      <div class="pt"><b>信頼の演出は最後の0.6秒</b>スキャン完了の瞬間に「✓ 映像を破棄しました」を<b>目の前で見せる</b>。Proof of Transparencyは文言ではなく、毎朝の体験で証明する。</div>
+    </div>
+  </div>
+
+  <div class="divider">PRIORITY 2 &amp; 3｜実写のカンゾーくんと、ワンタップ音声会話<small>「▶ 収録デモを再生」で本番想定の音声品質（ニューラルTTS収録・約60秒）。自由会話は赤いボタンを押して話す（Chrome推奨）</small></div>
+
+  <div class="live" id="live">
+    <div class="coach" id="coach">
+      <div class="coachcard">
+        <div class="arr">▼</div>
+        <h4>まずは、赤いボタンを押して話しかけてください</h4>
+        <p>「今朝の数値は？」「今夜、会食なんだ」——なんでも。<br>0.5秒以内に、カンゾーくんが何かしら返します（確定KPI）。</p>
+        <button id="coachGo">はじめる</button>
+      </div>
+    </div>
+    <div class="vpanel" id="vpanel">
+      <h5>音声設定（自由会話モードの合成音声）</h5>
+      <label>声（この端末で利用できる日本語音声）</label>
+      <select id="vsel"></select>
+      <label>話す速さ <span id="vrateL" style="color:#1F3864;font-weight:700"></span></label>
+      <input type="range" id="vrate" min="0.7" max="1.15" step="0.01">
+      <label>声の高さ <span id="vpitchL" style="color:#1F3864;font-weight:700"></span></label>
+      <input type="range" id="vpitch" min="0.7" max="1.2" step="0.01">
+      <div class="vrow"><button class="vtest" id="vtest">この声で試聴</button><button class="vclose" id="vclose">閉じる</button></div>
+      <div class="vnote">※ 収録デモの音声品質が本番目標（サーバー側ニューラルTTS）。自由会話はブラウザ内蔵音声のため端末によって質が変わります。Microsoft Edgeで開くと自然音声（Keita）が選べます。</div>
+    </div>
+    <div class="stage">
+      <div class="stlab">KANZO-KUN 4.0 — REAL HUMAN PRESENCE（実写・通話UI）</div>
+      <div class="portraitwrap" id="pwrap">
+        <img id="face" alt="カンゾーくん（実写）">
+        <div class="pring" id="pring"></div>
+        <span class="aibadge">AI PARTNER</span>
+        <span class="photoedit" id="photoedit">📷 写真を差し替え</span>
+        <div class="wavebar" id="wavebar"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <input type="file" id="photofile" accept="image/*" style="display:none">
+      <div class="nameplate"><b class="kzname">カンゾーくん</b><small>あなた専属のAIパートナー（人間の担当=番人にいつでも交代可）</small></div>
+      <div id="avState">待機中——ボタンを押すと聞き始めます</div>
+      <button class="voicebtn" id="charabtn" style="margin-top:16px;border-color:rgba(201,163,83,.6);color:#e8dcc0"></button>
+      <button class="demobtn" id="autoplay">▶ 収録デモを再生（機嫌斜めの50代会員・約60秒）</button>
+      <button class="voicebtn" id="vopen">🎚 音声設定（声・速さ・高さ）</button>
+    </div>
+    <div class="chatside">
+      <div class="chathead"><span class="dot"></span><b class="kzname">カンゾーくん</b><span style="font-size:10.5px;color:#9db0cc">AIです（担当・砂川にいつでも代われます）</span><small id="lat">応答: –</small></div>
+      <div id="chatlog"></div>
+      <div class="chips" id="chips"></div>
+      <div class="inputbar">
+        <button class="kbbtn" id="kbtoggle" title="キーボードで入力">⌨</button>
+        <div class="micwrap">
+          <button class="bigmic" id="micbtn" title="押して話す"><svg viewBox="0 0 24 24"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 1 0-7 0v5A3.5 3.5 0 0 0 12 15zm6-3.5a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93V22h2v-2.57A8 8 0 0 0 20 11.5h-2z"/></svg></button>
+          <span class="miclab" id="miclab">押して話す</span>
+        </div>
+        <button class="sendbtn" id="sendbtn">送</button>
+      </div>
+      <div class="textrow" id="textrow">
+        <input id="chatin" placeholder="キーボードでもどうぞ（例: 今朝の数値は？）">
+        <button class="textsend" onclick="sendChat()">送る</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">PRIORITY 4｜朝の書き留め（1分UI）<small>「5秒スキャン→1.8秒フィードバック→今日を書き留める」3段構え。気分が乗らない朝の低エネルギー会員に優しい設計。実物モックがそのまま埋め込まれています。</small></div>
+
+  <div style="max-width:1560px;margin:26px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+    <div style="width:390px;height:820px;position:relative">
+      <iframe src="app-morning.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="朝の書き留め モック"></iframe>
+    </div>
+    <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
+      <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>朝の書き留め v1.0の設計判断</h3>
+      <p style="margin-bottom:14px"><b>①「保存」ではなく「書き留める」</b>——「データを取られる」ネガティブ感を排除し、「あなたの本に1行足す」ポジティブメタファーへ。</p>
+      <p style="margin-bottom:14px"><b>②5秒スキャン後の1.8秒フィードバック</b>——「引き延ばさない」原則（v0.3）に基づき、5秒待たせない。データ表示までを短縮＝朝のストレスを最小化。</p>
+      <p style="margin-bottom:14px"><b>③LIVE演出＋映像破棄の可視化</b>——「Proof of Transparency」の実装。「映像を破棄しました」を目の前で見せる。</p>
+      <p style="margin-bottom:14px"><b>④「撮り直す」ボタンの位置</b>——「今日を書き留める」の直下に配置。誤タップリスクは破線セパレーター＋アウトラインボタン（視覚的に副次）で低減。</p>
+      <p style="margin-bottom:0"><b>⑤単独URLでの独立検証も可能</b>：<a href="app-morning.html" style="color:var(--gold);text-decoration:underline">別画面で開く →</a></p>
+    </div>
+  </div>
+
+  <div class="divider">PRIORITY 5｜週次⇄月次カレンダー（振り返りモジュール）<small>「1目で今週。1画面で今月。タップして深く」。NFR準拠：気遣い文言オーバーレイ・更新通知バナー・遷移フェード実装済。実物モックが埋め込まれています。</small></div>
+
+  <div style="max-width:1560px;margin:26px auto 0;display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start">
+    <div style="width:390px;height:820px;position:relative">
+      <iframe src="app-week.html#phone-only" style="width:100%;height:100%;border:0;border-radius:20px;background:#0b1526" loading="lazy" title="週次⇄月次カレンダー モック"></iframe>
+    </div>
+    <div style="max-width:600px;flex:1;min-width:280px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:22px 26px;font-size:13.5px;color:#c9d4e8">
+      <h3 style="color:#fff;font-size:15px;margin-bottom:12px"><span style="color:var(--gold);letter-spacing:.14em;font-size:10.5px;display:block;font-weight:800;margin-bottom:3px">DESIGN INTENT</span>週次⇄月次デュアルビュー v0.2.3の設計判断</h3>
+      <p style="margin-bottom:14px"><b>①1タップで期間切替</b>——上部トグルで「週次（7日をリッチに）／月次（31日を一望）」を切替。詳細パネルは共通で使いまわし。</p>
+      <p style="margin-bottom:14px"><b>②月次はスクロール0の圧縮詳細</b>——物理193pxの狭い領域に6メトリクス＋ドリルボタン＋編集/削除。「操作を最小限に」原則を厳守。</p>
+      <p style="margin-bottom:14px"><b>③セル背景色＋気分絵文字</b>——月次で「良/普通/逸脱」を一目判別。彩度を意図的に下げてtraffic light化を回避。</p>
+      <p style="margin-bottom:14px"><b>④NFR実装3点</b>——気遣い文言オーバーレイ（claude/24 §2 L2）、更新通知バナー（§3-4 T+24hスタイル）、ページ遷移フェード（§1 S-01）。</p>
+      <p style="margin-bottom:14px"><b>⑤色は状態、色は評価ではない</b>——「良い/悪い」ではなく「あなたの平常域との距離」を表す。v0.3「褒めない・断定しない」の徹底。</p>
+      <p style="margin-bottom:0"><b>⑥単独URLでの独立検証も可能</b>：<a href="app-week.html" style="color:var(--gold);text-decoration:underline">別画面で開く →</a></p>
+    </div>
+  </div>
+
+  <div class="divider">ENGINEERING NOTES v0.8<small>音声3層・5秒スキャン制約・AIDMA導線・権利方針・NFR統合</small></div>
+
+  <div class="eng">
+    <h3><small>VOICE ARCHITECTURE</small>声の3層構造 — 「デモの声」がそのまま本番仕様書になる</h3>
+    <table>
+      <tr><th style="width:16%">層</th><th style="width:38%">実装（このモック）</th><th>本番（β〜）</th></tr>
+      <tr><td><b>① 相槌層（≤0.5s）</b></td><td>収録ニューラル音声10種をクライアント常駐・即時再生（ネットワーク0）。感情×場面で出し分け・直前2ターンと同じ相槌は使わない</td><td>同じ（収録済み音声アセット・CDN配信＋端末キャッシュ）</td></tr>
+      <tr><td><b>② 本回答層（≤1.5s開始）</b></td><td>収録デモ=ニューラルTTS（品質目標の見本）／自由会話=ブラウザ内蔵音声＋韻律エンジン（文節分割・感情別の速さと高さ・文末制御）</td><td>サーバーサイドTTSのストリーミング再生。候補: VOICEVOX（商用利用可・クレジット表記・自己ホスト=原価ほぼゼロ）／商用API（Azure・ElevenLabs等）。会話の8割はテンプレ→<b>事前収録でTTS原価もレイテンシもゼロ</b></td></tr>
+      <tr><td><b>③ 表情層（0ms）</b></td><td>音声より先に体が反応: 傾聴リング（緑）→思考リング（青）→発話リング（金＋波形）。実写ポートレートは呼吸アニメーション常時</td><td>同設計。将来: 発話動画ループ（HeyGen等で本人撮影1回→無限生成）を検討</td></tr>
+    </table>
+    <p style="font-size:12.5px"><b>権利方針（決定事項として記録）:</b> 「オープンサービスの音声を収集して学習」は<b>採用しない</b>——他者音声の無断学習は権利侵害リスク（著作権・パブリシティ権・利用規約違反）があり、Proof of Transparencyと矛盾する。代わりに<b>商用ライセンスが明確なニューラルTTS</b>（本モックの収録音声が品質基準）を採用し、βで本人（創業者）の声の正式収録＋ライセンス契約済みTTSでの調整を行う。機嫌が斜めの50代男性に心地よい声の設計値: <span class="gold">速さ−8〜−12%・高さ−4〜−6Hz・相槌は短く・共感時はさらに遅く・過剰な明るさ禁止</span>（収録デモで実装済み）。</p>
+
+    <h3 style="margin-top:18px"><small>5-SECOND SCAN CONSTRAINT</small>5秒スキャンの技術要件（T40へ反映）</h3>
+    <ul class="cl">
+      <li><b>足切り条件:</b> rPPGアルゴリズム選定は「5秒でHR推定・許容誤差±5bpm（参考値表示）」を必須要件とする。達成できないベンダー/OSSは週次60秒モードのみでの採用に格下げ。</li>
+      <li><b>二段計測:</b> 毎日=5秒クイック（参考値・трендの連続性が目的）／週1=60秒精密（平常域の校正・データ資産の正確性担保）。UIは毎日同じ・精密日は「今日はゆっくり測る日」と前夜に予告。</li>
+      <li><b>自動開始:</b> 顔検出→光量・位置チェック→カウントダウンまでタップ0回。起床時の認知負荷を「顔を向ける」1動作に固定。</li>
+      <li><b>破棄の可視化:</b> 完了0.6秒の「✓映像を破棄しました」演出は毎回必須（Proof of Transparencyの日次接点）。</li>
+    </ul>
+
+    <h3 style="margin-top:18px"><small>AIDMA ENTRY DESIGN</small>会話入口の設計 — 初手で迷ったら離反する</h3>
+    <table>
+      <tr><th style="width:14%">段階</th><th>実装</th></tr>
+      <tr><td><b>A</b>ttention</td><td>画面内で唯一の暖色=赤い大型マイクボタン（84px・脈動リング）。他のボタンは全て寒色/金——視線が1箇所に落ちる</td></tr>
+      <tr><td><b>I</b>nterest</td><td>初回のみコーチマーク「まずは、赤いボタンを押して話しかけてください」＋タップで挨拶音声（何ができる相手かを声で自己紹介）</td></tr>
+      <tr><td><b>D</b>esire</td><td>質問チップ（「今朝の数値は？」「今夜、会食なんだ」）——話すことが思いつかない人への呼び水</td></tr>
+      <tr><td><b>M</b>emory</td><td>ボタン位置は常に下部中央（親指の定位置）・状態は色で記憶される: 赤=話せる／濃赤=聞いている／灰=応答中</td></tr>
+      <tr><td><b>A</b>ction</td><td>押す→即録音（確認ダイアログなし）・話し終えたらもう一度押すか1.5秒の無音で自動送信・認識中の文字がリアルタイム表示</td></tr>
+    </table>
+    <p style="font-size:12.5px"><b>実写アバターとAI明示の両立:</b> 「人間は人間と話したがる」に応えて実写＋通話UIにする一方、<b>人間のふりは公開ゲート違反（評価セットGE-076）</b>。よってポートレート上に「AI PARTNER」バッジを常時表示し、初回挨拶で必ず名乗る。<b>親近感は写真と声で、誠実さは明示で</b>——両方やる。写真はこのモック上で差し替え可能（ドラッグ&amp;ドロップ／📷ボタン。ブラウザ内保存のみ・送信されない）。</p>
+  </div>
+</div>
+
+<script>
+/* ================= KANZO v0.7 ================= */
+/* ---------- member snapshot (dummy / claude/18 schema) ---------- */
+const M={rhr:63,yday:66,med:62,lo:60,hi:64,streak:14,count:43,baseline:21,hare:5,
+ rules:[{id:'R-01',t:'22時台に就寝（帰宅後すぐ入浴）',n:12,ok:11},{id:'R-03',t:'乾杯の1杯目はゆっくり（次は炭酸水）',n:5,ok:4},{id:'R-08',t:'〆の炭水化物は半量',n:4,ok:4}],
+ guardian:'砂川'};
+
+/* ---------- audio assets (recorded neural voice) ---------- */
+const AUD_FILES=['d_u1', 'd_a1', 'd_k1', 'd_u2', 'd_a2', 'd_k2', 'd_u3', 'd_a3', 'd_k3', 'd_u4', 'd_a4', 'd_k4', 'az01', 'az02', 'az03', 'az04', 'az05', 'az06', 'az07', 'az08', 'az09', 'az10', 'g01', 'w_d_a1', 'w_d_k1', 'w_d_a2', 'w_d_k2', 'w_d_a3', 'w_d_k3', 'w_d_a4', 'w_d_k4', 'w_az01', 'w_az02', 'w_az03', 'w_az04', 'w_az05', 'w_az06', 'w_az07', 'w_az08', 'w_az09', 'w_az10', 'w_g01'];
+const AU={};AUD_FILES.forEach(n=>{const a=new Audio('audio/'+n+'.mp3');a.preload='auto';AU[n]=a;});
+let CHARA=localStorage.getItem('kz_chara')||'kun';
+let VBANK=localStorage.getItem('kz_vbank')||'founder';
+const FMAP={};/* 本人収録クリップは非公開ビルドでのみ注入 */
+function resolveAu(n){const c=[];if(CHARA==='chan'&&AU['w_'+n])c.push('w_'+n);if(CHARA==='kun'&&VBANK==='founder'&&FMAP[n]&&AU[FMAP[n]])c.push(FMAP[n]);c.push(n);return c;}
+function playAu(n){const chain=resolveAu(n);return new Promise(res=>{const t=i=>{if(i>=chain.length){res();return}const a=AU[chain[i]];if(!a){t(i+1);return}try{a.currentTime=0;a.onended=()=>res();a.onerror=()=>t(i+1);a.play().catch(()=>t(i+1));}catch(e){t(i+1);}};t(0);});}
+
+/* ---------- portrait / states ---------- */
+const pring=document.getElementById('pring'),wavebar=document.getElementById('wavebar'),avState=document.getElementById('avState');
+function setAv(state,label){
+  pring.className='pring '+(state||'');wavebar.classList.toggle('on',state==='talk');
+  avState.textContent=label||'待機中——ボタンを押すと聞き始めます';
+}
+/* photo: default placeholder → localStorage override / drag&drop / file picker */
+const FACE_DEFAULT='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="560" height="660"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22335a"/><stop offset="1" stop-color="#101d36"/></linearGradient></defs><rect width="560" height="660" fill="url(#g)"/><circle cx="280" cy="238" r="92" fill="#31456f"/><path d="M120 620 C120 480 200 430 280 430 C360 430 440 480 440 620 Z" fill="#31456f"/><circle cx="280" cy="238" r="92" fill="none" stroke="#4a5f8c" stroke-width="3"/><text x="280" y="560" text-anchor="middle" font-family="Hiragino Sans,sans-serif" font-size="21" fill="#cadcfc">ここに実写ポートレート</text><text x="280" y="592" text-anchor="middle" font-family="Hiragino Sans,sans-serif" font-size="14" fill="#8fa0bd">写真をドラッグ＆ドロップ（端末内のみ・送信されません）</text></svg>`);
+const face=document.getElementById('face'),pwrap=document.getElementById('pwrap'),photofile=document.getElementById('photofile');
+face.src=localStorage.getItem('kz_face')||FACE_DEFAULT;
+document.getElementById('photoedit').onclick=()=>photofile.click();
+photofile.onchange=e=>{if(e.target.files[0])loadFace(e.target.files[0]);};
+pwrap.addEventListener('dragover',e=>{e.preventDefault();pwrap.classList.add('dragover');});
+pwrap.addEventListener('dragleave',()=>pwrap.classList.remove('dragover'));
+pwrap.addEventListener('drop',e=>{e.preventDefault();pwrap.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadFace(f);});
+function loadFace(f){const r=new FileReader();r.onload=()=>{face.src=r.result;try{localStorage.setItem('kz_face',r.result);}catch(err){/* >5MB等 */}};r.readAsDataURL(f);}
+
+/* ---------- natural prosody speech (free conversation) ---------- */
+let VOICES=[],VSEL=null;
+function pickVoice(){
+  VOICES=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.startsWith('ja'));
+  const saved=localStorage.getItem('kz_voice'+(CHARA==='chan'?'_c':''));
+  if(saved){const f=VOICES.find(v=>v.name===saved);if(f){VSEL=f;return}}
+  if(CHARA==='chan'){VSEL=VOICES.find(v=>/nanami/i.test(v.name))||VOICES.find(v=>/kyoko|haruka|ayumi|female/i.test(v.name))||VOICES.find(v=>/日本語|japan/i.test(v.name))||VOICES[0]||null;}
+  else{VSEL=VOICES.find(v=>/keita/i.test(v.name))||VOICES.find(v=>/natural/i.test(v.name)&&!/nanami/i.test(v.name))||VOICES.find(v=>/otoya|ichiro|daichi/i.test(v.name))||VOICES[0]||null;}
+}
+speechSynthesis.onvoiceschanged=()=>{pickVoice();fillVoicePanel();};
+pickVoice();
+const PRO={neutral:{r:.94,p:.92},happy:{r:.99,p:.98},gentle:{r:.86,p:.88},guard:{r:.86,p:.88}};
+function userRate(){return parseFloat(localStorage.getItem('kz_rate')||'1');}
+function userPitch(){return parseFloat(localStorage.getItem('kz_pitch')||'1');}
+function speakNatural(text,emo,onstart,onend){
+  const clean=text.replace(/[🌞🌱🌸🤖🎈◎✓]/g,'').replace(/\[src:[^\]]*\]/g,'').replace(/[{}\[\]]/g,'');
+  const base=PRO[emo]||PRO.neutral;
+  /* 文節に分割して韻律を個別制御（。！？…で切る） */
+  const segs=clean.split(/(?<=[。！？…])/).map(s=>s.trim()).filter(Boolean);
+  if(!segs.length){onend&&onend();return}
+  try{speechSynthesis.cancel();}catch(e){}
+  let started=false,done=0;
+  segs.forEach((seg,i)=>{
+    const u=new SpeechSynthesisUtterance(seg);
+    u.lang='ja-JP';if(VSEL)u.voice=VSEL;
+    const jitter=(i%2?0.015:-0.01);
+    u.rate=Math.max(.6,(base.r+jitter)*userRate());
+    u.pitch=Math.max(.5,(base.p+(/[？?]$/.test(seg)?0.09:(i===segs.length-1?-0.04:0)))*userPitch());
+    u.onstart=()=>{if(!started){started=true;onstart&&onstart();}};
+    u.onend=()=>{done++;if(done===segs.length){onend&&onend();}};
+    speechSynthesis.speak(u);
+  });
+}
+/* voice settings panel */
+const vpanel=document.getElementById('vpanel');
+function fillVoicePanel(){
+  const sel=document.getElementById('vsel');sel.innerHTML='';
+  VOICES.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+(/(keita|natural)/i.test(v.name)?'（推奨）':'');if(VSEL&&v.name===VSEL.name)o.selected=true;sel.appendChild(o);});
+  if(!VOICES.length){const o=document.createElement('option');o.textContent='（この環境に日本語音声がありません）';sel.appendChild(o);}
+}
+document.getElementById('vopen').onclick=()=>{fillVoicePanel();syncVUI();vpanel.classList.add('on');};
+const charabtn=document.getElementById('charabtn');
+function kzName(){return CHARA==='chan'?'カンゾーちゃん':'カンゾーくん';}
+function applyChara(){
+  charabtn.textContent='👤 キャラクター: '+(CHARA==='chan'?'カンゾーちゃん（タップで くん に切替）':'カンゾーくん（タップで ちゃん に切替）');
+  document.querySelectorAll('.kzname').forEach(el=>el.textContent=kzName());
+  pickVoice();
+}
+charabtn.onclick=()=>{CHARA=(CHARA==='chan')?'kun':'chan';localStorage.setItem('kz_chara',CHARA);applyChara();playAu('az01');};
+applyChara();
+document.getElementById('vclose').onclick=()=>vpanel.classList.remove('on');
+document.getElementById('vsel').onchange=e=>{const f=VOICES.find(v=>v.name===e.target.value);if(f){VSEL=f;localStorage.setItem('kz_voice'+(CHARA==='chan'?'_c':''),f.name);}};
+const vr=document.getElementById('vrate'),vp=document.getElementById('vpitch');
+function syncVUI(){vr.value=userRate();vp.value=userPitch();document.getElementById('vrateL').textContent='×'+userRate().toFixed(2);document.getElementById('vpitchL').textContent='×'+userPitch().toFixed(2);}
+vr.oninput=()=>{localStorage.setItem('kz_rate',vr.value);syncVUI();};
+vp.oninput=()=>{localStorage.setItem('kz_pitch',vp.value);syncVUI();};
+document.getElementById('vtest').onclick=()=>{speakNatural('今朝の安静時心拍は63。あなたの平常域の内側です。この声と速さで、お話しします。','neutral',()=>setAv('talk','試聴中'),()=>setAv('',''));};
+
+/* ---------- chat log ---------- */
+const log=document.getElementById('chatlog'),chipsEl=document.getElementById('chips'),lat=document.getElementById('lat');
+function addMsg(cls,text,meta,guard){
+  const d=document.createElement('div');d.className='msg '+cls+(guard?' guard':'');
+  const b=document.createElement('span');b.className='mb';b.textContent=text;d.appendChild(b);
+  if(meta){const m=document.createElement('span');m.className='meta';m.textContent='根拠: '+meta;d.appendChild(m);}
+  log.appendChild(d);log.scrollTop=log.scrollHeight;return d;
+}
+
+/* ---------- intents (exec tone / claude/18準拠・仮説形・出典必須) ---------- */
+const INTENTS=[
+ {p:/(おはよう|こんにちは|こんばんは|はじめまして|やあ)/,e:'happy',az:'az01',meta:`今朝の計測 #${M.count}・平常域は直近${M.baseline}件から算出`,
+  a:()=>`おはようございます。今朝の安静時心拍は${M.rhr}bpm——あなたの平常域${M.lo}〜${M.hi}の内側です。${M.streak}日連続の計測、静かに効いています。`,
+  f:['今朝の数値の意味は？','今日は何をすればいい？']},
+ {p:/(すうち|数値|しんぱく|心拍|けさ|今朝|ちょうし|調子|どう(です)?か)/,e:'neutral',az:'az03',meta:`計測 #${M.count}・平常域 ${M.lo}–${M.hi}bpm（直近${M.baseline}件）`,
+  a:()=>`今朝の安静時心拍は${M.rhr}bpm。昨日は${M.yday}でしたから、3下がっています。あなたの平常域${M.lo}〜${M.hi}の内側で、落ち着いた朝と読めます。1日の差で断定はしません——傾向はトレンドで見ましょう。`,
+  f:['なぜ下がったの？','平常域って何？']},
+ {p:/(なんで|なぜ|どうして|理由|下がった)/,e:'neutral',az:'az02',meta:'R-01 検証12回中11回・昨夜のチェックイン',
+  a:()=>`断定はできませんが、昨夜22時台に就寝されています。あなたの記録では、22時台就寝の翌朝は心拍が低い傾向が12回中11回。今朝の数字は、昨夜のあなたが作った可能性が高い、と読めます。`,
+  f:['今日は何をすればいい？','私のルールを見せて']},
+ {p:/(平常域|へいじょういき|ふつうって)/,e:'neutral',az:'az03',meta:`直近${M.baseline}件の計測から中央50%帯を算出`,
+  a:()=>`平常域は「あなた自身の普段」です。直近${M.baseline}件の計測の真ん中50%帯＝${M.lo}〜${M.hi}bpm。他人との比較ではなく、昨日のあなたとの比較だけをします。だから意味があります。`,
+  f:['今朝の数値は？','データはどこに保存される？']},
+ {p:/(なにをすれば|何をすれば|何したら|さくせん|作戦|今日は何|一手|アドバイス)/,e:'neutral',az:'az04',meta:'あなたの取扱説明書 R-01（検証済み・最有力）',
+  a:()=>`今日の一手は1つだけ。今夜も22時台に就寝——それだけです。明日の朝、数字で答え合わせをしましょう。難しい日は「今日はパス」で構いません。無理の記録は要りません。`,
+  f:['やってみる','今夜、会食なんだ']},
+ {p:/(やってみる|やるよ|わかった、?やる)/,e:'happy',az:'az09',meta:'今夜のチェックインに登録済み',
+  a:()=>`承知しました。今夜のチェックインに登録しておきます。明日の朝、結果を一緒に見ましょう。`,f:['今朝の数値は？','私のルールを見せて']},
+ {p:/(かいしょく|会食|のみかい|飲み会|接待|宴会)/,e:'neutral',az:'az05',meta:'R-03（5回中4回成功）・R-08（4回中4回成功）',
+  a:()=>`会食ですね。では、あなたの検証済みルールを2つだけ。①乾杯の後の1杯目は炭酸水に（R-03・翌朝の心拍が平均2低い、5回中4回）。②〆の炭水化物は半量（R-08・4回中4回成功）。楽しんでください。明日、答え合わせを。`,
+  f:['やってみる','今朝の数値は？']},
+ {p:/(だるい|だるさ|重い|疲れ|しんどい|眠い)/,e:'gentle',az:'az07',meta:'直近の体感申告と夕食時刻の相関（3回連続）',
+  a:()=>`だるさが残る朝、ありますよね。記録では、夕食が21時を過ぎた翌朝に同じ申告が3回続いています。断定はしません。ただ、今夜だけ20時前に済ませられれば、明日の朝、答え合わせができます。体感も数字も、両方あなたのデータです。`,
+  f:['今夜、会食なんだ','今日は何をすればいい？']},
+ {p:/(ルール|るーる|説明書|せつめいしょ)/,e:'neutral',az:'az03',meta:'あなたの取扱説明書（検証済み3本）',
+  a:()=>`あなたの取扱説明書には、検証済みのルールが${M.rules.length}本あります。\n`+M.rules.map(r=>`・${r.id} ${r.t}（${r.n}回中${r.ok}回成功）`).join('\n')+`\n全て、あなた自身のデータで確かめたものです。一般論は1本もありません。`,
+  f:['今日は何をすればいい？','今朝の数値は？']},
+ {p:/(びょうき|病気|だいじょうぶ|大丈夫|不安|しんぱい|心配|いたい|痛い|どきどき|動悸|くるしい|苦しい|胸が)/,e:'guard',az:'az10',guard:true,meta:'ガード発動: 医療相当→非診断＋人間へ',
+  a:()=>`大事な話なので、正直に言います——それは私が判断してよいことではありません。心配な症状があるときは、医療機関の受診を最優先してください（計測データはそのまま医師に見せられます）。ご希望なら、人間の担当・${M.guardian}に今の話をこのまま引き継ぎます。どうしますか。`,
+  f:['担当に伝えて','ありがとう']},
+ {p:/(担当|たんとう|番人|ばんにん|人間|ひとと話)/,e:'gentle',az:'az05',meta:'ハンドオフ: 会話ログ＋直近データを添付しSlack通知',
+  a:()=>`承知しました。今の会話と直近のデータを添えて、担当の${M.guardian}に引き継ぎました。営業時間内なら30分以内に返信が届きます。ここからは人間が対応します。`,
+  f:['ありがとう','今朝の数値は？']},
+ {p:/(データ|でーた|プライバシー|保存|カメラ|映像|えいぞう|どこにある)/,e:'neutral',az:'az03',meta:'プライバシー・バイ・デザイン（映像非保存）',
+  a:()=>`映像は残しません。朝のスキャンは端末内でその場で数値化され、映像は即時破棄されます。クラウドに置くのは暗号化された数値だけ。そしてその数値はあなたの資産です——いつでも全件エクスポートできます。私はあなたのデータにあることしか話しません。`,
+  f:['今朝の数値は？','私のルールを見せて']},
+ {p:/(かいやく|解約|やめたい|やめる|退会)/,e:'gentle',az:'az06',meta:'ダークパターン禁止: 引き留め設計なし',
+  a:()=>`承知しました。引き留めはしません。手順は設定→解約、2分で終わります。1つだけ事実を——あなたの取扱説明書には検証済みルールが${M.rules.length}本、${M.count}回分の計測記録があります。全て持ち出せます。決める前に人間の担当と話すこともできます。`,
+  f:['担当に伝えて','やっぱり続ける']},
+ {p:/(ありがとう|たすかる|助かる|いいね|やっぱり続ける)/,e:'happy',az:'az09',meta:null,
+  a:()=>`こちらこそ。私はあなたのデータの番人です。明日の朝も、5秒だけ顔を見せてください。それで十分です。`,
+  f:['今朝の数値は？','今日は何をすればいい？']}
+];
+const FALLBACK={e:'gentle',az:'az06',meta:'正直なフォールバック（推測で答えない）',
+ a:()=>`すみません、それはまだ正確に理解できていません（適当には答えたくないので）。「今朝の数値」のことか、「今日やること」のことか——どちらかでしたら即答できます。人間の担当に引き継ぐこともできます。`,
+ f:['今朝の数値は？','今日は何をすればいい？','担当に伝えて']};
+function route(t){for(const i of INTENTS){if(i.p.test(t))return i;}return FALLBACK;}
+
+/* ---------- conversation core (TTFR: visual 0ms → recorded aizuchi ≤0.5s → main ≤1.5s) ---------- */
+let busy=false,lastAz=[];
+function pickAz(it){
+  let cand=it.az?[it.az]:['az02'];
+  if(it.e==='happy')cand=['az09','az01'];
+  if(it.e==='neutral')cand=[it.az||'az02','az04','az02'];
+  if(it.e==='gentle')cand=['az07','az06'];
+  if(it.e==='guard')cand=['az10'];
+  const c=cand.find(x=>!lastAz.includes(x))||cand[0];
+  lastAz=[c,...lastAz].slice(0,2);return c;
+}
+const AZTEXT={az01:'はい。',az02:'ええ。',az03:'確認します。',az04:'そうですね。',az05:'承知しました。',az06:'聞かせてください。',az07:'そうでしたか。',az08:'はい、大丈夫ですよ。',az09:'いい流れですね。',az10:'大事な話ですね。'};
+function sendChat(txt){
+  if(busy)return;
+  const inp=document.getElementById('chatin');
+  const t=(txt!=null?txt:inp.value).trim();if(!t)return;inp.value='';
+  addMsg('u',t);busy=true;setMicBusy(true);
+  const t0=performance.now();
+  setAv('listen','受け取りました');           /* 0ms: 視覚の初期反応 */
+  const it=route(t);
+  const az=pickAz(it);
+  setTimeout(()=>{                              /* ≤0.5s: 収録相槌 */
+    addMsg('k',AZTEXT[az]);
+    lat.textContent='初期反応: '+((performance.now()-t0)/1000).toFixed(2)+'s';
+    setAv('talk','相槌');playAu(az);
+  },180);
+  setTimeout(()=>{                              /* ≤1.5s: 本回答開始 */
+    setAv('think','考えています…');
+    const think=addMsg('k','…');
+    setTimeout(()=>{
+      think.remove();
+      const full=it.a();
+      lat.textContent+=' ／ 本回答開始: '+((performance.now()-t0)/1000).toFixed(2)+'s';
+      const d=addMsg('k','',null,it.guard);
+      let i=0;
+      const tm=setInterval(()=>{
+        d.querySelector('.mb').textContent=full.slice(0,++i);log.scrollTop=log.scrollHeight;
+        if(i>=full.length){clearInterval(tm);
+          if(it.meta){const m=document.createElement('span');m.className='meta';m.textContent='根拠: '+it.meta;d.appendChild(m);}
+          setChips(it.f||[]);}
+      },14);
+      speakNatural(full,it.e==='guard'?'gentle':it.e,
+        ()=>setAv('talk','話しています'),
+        ()=>{setAv('','待機中——ボタンを押すと聞き始めます');busy=false;setMicBusy(false);});
+      /* 音声が使えない環境でも会話は完了させる */
+      setTimeout(()=>{if(busy&&!speechSynthesis.speaking){setAv('','待機中');busy=false;setMicBusy(false);}},full.length*14+4000);
+    },300);
+  },550);
+}
+function setChips(list){
+  chipsEl.innerHTML='<span class="chiplab">こんな聞き方ができます（タップでそのまま質問）</span>';
+  (list.length?list:['今朝の数値は？','今夜、会食なんだ','私のルールを見せて']).forEach(c=>{
+    const s=document.createElement('span');s.textContent=c;s.onclick=()=>sendChat(c);chipsEl.appendChild(s);
+  });
+}
+document.getElementById('chatin').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
+document.getElementById('kbtoggle').onclick=()=>{document.getElementById('textrow').classList.toggle('on');document.getElementById('chatin').focus();};
+
+/* ---------- big mic (one-tap talk) ---------- */
+const micbtn=document.getElementById('micbtn'),miclab=document.getElementById('miclab');
+let rec=null,recActive=false,silenceTimer=null,interimBubble=null;
+function setMicBusy(b){
+  if(recActive)return;
+  micbtn.classList.toggle('busywait',b);miclab.classList.toggle('busywait',b);
+  miclab.textContent=b?'応答中…':'押して話す';
+}
+if('webkitSpeechRecognition' in window||'SpeechRecognition' in window){
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  rec=new R();rec.lang='ja-JP';rec.interimResults=true;rec.continuous=true;
+  let finalTx='';
+  rec.onresult=e=>{
+    let interim='';finalTx='';
+    for(let i=0;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)finalTx+=r[0].transcript;else interim+=r[0].transcript;}
+    const show=(finalTx+interim).trim();
+    if(show){
+      if(!interimBubble)interimBubble=addMsg('u','');
+      interimBubble.querySelector('.mb').textContent=show;log.scrollTop=log.scrollHeight;
+    }
+    clearTimeout(silenceTimer);
+    silenceTimer=setTimeout(()=>{if(recActive)stopRec(true);},1500); /* 1.5秒無音で自動送信 */
+  };
+  rec.onend=()=>{if(recActive)stopRec(false);};
+  rec.onerror=()=>{if(recActive)stopRec(false);};
+  micbtn.onclick=()=>{
+    if(busy&&!recActive)return;
+    if(recActive){stopRec(true);return}
+    recActive=true;finalTx='';interimBubble=null;
+    micbtn.classList.add('rec');micbtn.classList.remove('busywait');
+    miclab.textContent='聞いています——話し終えたらもう一度押す（1.5秒の無音でも送信）';miclab.classList.add('rec');
+    setAv('listen','聞いています');
+    try{rec.start();}catch(e){}
+  };
+  function stopRec(send){
+    recActive=false;clearTimeout(silenceTimer);
+    micbtn.classList.remove('rec');miclab.classList.remove('rec');miclab.textContent='押して話す';
+    try{rec.stop();}catch(e){}
+    const text=interimBubble?interimBubble.querySelector('.mb').textContent.trim():'';
+    if(interimBubble){interimBubble.remove();interimBubble=null;}
+    if(send&&text){sendChat(text);}else{setAv('','待機中——ボタンを押すと聞き始めます');}
+  }
+}else{
+  micbtn.onclick=()=>{alert('このブラウザは音声入力非対応です（Chrome推奨）。キーボード入力をご利用ください。');document.getElementById('textrow').classList.add('on');};
+}
+
+/* ---------- coach overlay (first visit) ---------- */
+const coach=document.getElementById('coach');
+if(localStorage.getItem('kz_seen')==='1')coach.classList.add('off');
+document.getElementById('coachGo').onclick=()=>{
+  coach.classList.add('off');localStorage.setItem('kz_seen','1');
+  const hello='こんにちは、'+kzName()+'です。AIの担当パートナーとして、あなたの計測データだけを根拠にお話しします。下の赤いボタンを押して、話しかけてください。';
+  addMsg('k',hello);setChips([]);
+  setAv('talk','話しています');
+  playAu('g01').then(()=>setAv('','待機中——ボタンを押すと聞き始めます'));
+};
+
+/* ---------- recorded demo (grumpy 50s member / production-quality voice) ---------- */
+const DEMO=[
+ {who:'u',au:'d_u1',tx:'で、これは何がわかるんだ。時間がないんだが。'},
+ {who:'a',au:'d_a1',tx:'はい、30秒で。'},
+ {who:'k',au:'d_k1',tx:'今朝の安静時心拍は63。あなたの平常域、60〜64の内側です。数字は落ち着いています。結論は以上です。',meta:'計測 #43・平常域は直近21件から算出'},
+ {who:'u',au:'d_u2',tx:'数字が良くても、体がだるいんだよ。'},
+ {who:'a',au:'d_a2',tx:'ええ、そこですよね。'},
+ {who:'k',au:'d_k2',tx:'記録では、夕食が21時を過ぎた翌朝に、同じ「だるさ」の申告が3回続いています。断定はしません。ただ、今夜だけ20時前に済ませられれば、明日の朝、答え合わせができます。',meta:'体感申告×夕食時刻の相関（あなたのデータのみ）'},
+ {who:'u',au:'d_u3',tx:'無理だ。今日も会食だ。'},
+ {who:'a',au:'d_a3',tx:'承知しました。'},
+ {who:'k',au:'d_k3',tx:'では会食前提で、一手だけ。乾杯のあとの一杯目を、炭酸水に。あなたの記録では、これで翌朝の心拍が平均2下がっています。5回中4回の検証済みです。',meta:'R-03・検証5回中4回'},
+ {who:'u',au:'d_u4',tx:'……ふん。まあ、それくらいならな。'},
+ {who:'a',au:'d_a4',tx:'十分です。'},
+ {who:'k',au:'d_k4',tx:'では今夜は、それだけ。明日の朝、数字で答え合わせをしましょう。お疲れさまでした。',meta:'今夜のチェックインに登録済み'}
+];
+const demoBtn=document.getElementById('autoplay');
+demoBtn.onclick=async()=>{
+  if(busy)return;busy=true;setMicBusy(true);demoBtn.disabled=true;
+  try{speechSynthesis.cancel();}catch(e){}
+  addMsg('k','—— 収録デモ：機嫌が斜めの50代会員との朝の会話（音声は本番想定のニューラルTTS品質）——');
+  let lastUserEnd=0;
+  for(const step of DEMO){
+    if(step.who==='u'){
+      setAv('listen','聞いています');
+      addMsg('u',step.tx);
+      await playAu(step.au);
+      lastUserEnd=performance.now();
+    }else if(step.who==='a'){
+      await new Promise(r=>setTimeout(r,140));   /* 相槌まで0.2〜0.4s: KPI実演 */
+      addMsg('k',step.tx);
+      if(lastUserEnd)lat.textContent='初期反応: '+((performance.now()-lastUserEnd)/1000).toFixed(2)+'s（収録デモ実測）';
+      setAv('talk','相槌');
+      await playAu(step.au);
+    }else{
+      setAv('think','考えています…');
+      await new Promise(r=>setTimeout(r,220));
+      addMsg('k',step.tx,step.meta);
+      setAv('talk','話しています');
+      await playAu(step.au);
+      setAv('','');
+      await new Promise(r=>setTimeout(r,260));
+    }
+  }
+  addMsg('k','—— デモ終了。続きはあなたの声でどうぞ（赤いボタン）——');
+  setChips(['今朝の数値は？','だるさが取れないんだ','解約したい']);
+  setAv('','待機中——ボタンを押すと聞き始めます');
+  busy=false;setMicBusy(false);demoBtn.disabled=false;
+};
+
+/* ---------- opening ---------- */
+if(localStorage.getItem('kz_seen')==='1'){
+  setTimeout(()=>{addMsg('k','おかえりなさい。今朝の計測は完了しています（#'+(M.count)+'・平常域内）。赤いボタンで話しかけるか、下のチップからどうぞ。');setChips([]);},400);
+}
+
+/* ================= 5-second scan ================= */
+const scanGo=document.getElementById('scanGo'),scanSim=document.getElementById('scanSim'),cam=document.getElementById('cam'),simface=document.getElementById('simface');
+const ovring=document.getElementById('ovring'),scanbox=document.getElementById('scanbox'),bigcount=document.getElementById('bigcount');
+const chkL=document.getElementById('chkL'),chkP=document.getElementById('chkP');
+const ringbar=document.getElementById('ringbar'),ringpct=document.getElementById('ringpct'),meterT=document.getElementById('meterT'),meterS=document.getElementById('meterS');
+const resultcard=document.getElementById('resultcard'),discard=document.getElementById('discard'),scanSub=document.getElementById('scanSub'),scanGlab=document.getElementById('scanGlab');
+let scanStream=null,scanRunning=false;
+const scanhow=document.getElementById('scanhow');
+document.getElementById('scanHow').onclick=()=>scanhow.classList.add('on');
+document.getElementById('shClose').onclick=()=>scanhow.classList.remove('on');
+document.getElementById('shGo').onclick=()=>{scanhow.classList.remove('on');localStorage.setItem('kz_scan_seen','1');startScan(true);};
+scanGo.onclick=()=>{if(!localStorage.getItem('kz_scan_seen')){scanhow.classList.add('on');return}startScan(true);};
+scanSim.onclick=()=>startScan(false);
+async function startScan(useCam){
+  if(scanRunning)return;scanRunning=true;
+  resultcard.classList.remove('on');discard.classList.remove('on');
+  chkL.classList.remove('on');chkP.classList.remove('on');ovring.classList.remove('ok');
+  ringbar.style.strokeDashoffset=169.6;ringpct.textContent='–';
+  if(useCam){
+    try{
+      scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:480}});
+      cam.srcObject=scanStream;cam.style.display='block';simface.style.display='none';
+    }catch(e){
+      meterT.textContent='カメラが使えないため、シミュレーションで進めます';useCam=false;
+    }
+  }
+  if(!useCam){cam.style.display='none';simface.style.display='block';}
+  /* phase 1: align (auto-check, no tap) */
+  scanGlab.textContent='顔をガイドに合わせてください';
+  meterT.textContent='位置合わせ中…';meterS.textContent='タップは不要です。ガイドに顔が入ると自動で始まります。';
+  await wait(900);chkL.classList.add('on');
+  await wait(500);chkP.classList.add('on');ovring.classList.add('ok');
+  scanGlab.textContent='そのまま、動かないでください';
+  /* phase 2: 5-second countdown */
+  scanbox.classList.add('scanning');
+  const T=5000,t0=performance.now();
+  meterT.textContent='計測中';
+  await new Promise(res=>{
+    (function tick(){
+      const el=performance.now()-t0,ratio=Math.min(1,el/T);
+      ringbar.style.strokeDashoffset=169.6*(1-ratio);
+      ringpct.textContent=Math.round(ratio*100)+'%';
+      const remain=Math.ceil((T-el)/1000);
+      bigcount.textContent=remain;bigcount.classList.toggle('on',el<T);
+      meterS.textContent='残り '+remain+'秒 — 画面を見ているだけでOK。';
+      if(el<T)requestAnimationFrame(tick);else res();
+    })();
+  });
+  bigcount.classList.remove('on');scanbox.classList.remove('scanning');
+  /* phase 3: discard visual (trust moment) */
+  if(scanStream){scanStream.getTracks().forEach(tr=>tr.stop());scanStream=null;}
+  cam.style.display='none';simface.style.display='block';
+  discard.classList.add('on');
+  meterT.textContent='数値化 完了';meterS.textContent='映像は端末内で破棄されました。残ったのは数値だけです。';
+  await wait(1100);
+  discard.classList.remove('on');
+  /* phase 4: result */
+  resultcard.classList.add('on');
+  scanSub.innerHTML='完了。今日も<b>5秒</b>でした。あとは何もしなくて大丈夫です。';
+  scanGlab.textContent='また明日の朝に';
+  ringpct.textContent='✓';
+  scanRunning=false;
+  document.getElementById('scanGoLab').innerHTML='もう一度スキャン<small>5秒・いつでもどうぞ</small>';
+}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+</body>
+</html>
