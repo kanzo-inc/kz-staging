@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION_TAG: KANZO_INDEX_v0.9.0_CLEANUP_20260713 -->
+<!-- VERSION_TAG: KANZO_INDEX_v1.0.0_PILOT-FIRST_20260716 -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -14,40 +14,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>肝臓株式会社 ステージング環境</title>
 <style>
-  :root{--bg:#0f1420;--card:#1a2233;--tx:#e8ecf4;--sub:#8a94a8;--ac:#e8657a;--line:#2a3450}
+  :root{--bg:#0f1420;--card:#1a2233;--tx:#e8ecf4;--sub:#8a94a8;--ac:#e8657a;--line:#2a3450;--gold:#f0b64d}
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--bg);color:var(--tx);font-family:"Hiragino Sans","Noto Sans JP",sans-serif;padding:40px 20px;min-height:100vh}
   .wrap{max-width:760px;margin:0 auto}
   h1{font-size:24px;font-weight:800;letter-spacing:.04em;margin-bottom:6px;color:#fff}
   h1 .env{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.08em;color:#f0b64d;border:1px solid rgba(240,182,77,.55);border-radius:20px;padding:2px 11px;margin-left:10px;vertical-align:middle}
   .note{color:var(--sub);font-size:12px;margin-bottom:28px;line-height:1.7}
-  .sec{color:var(--ac);font-size:12px;font-weight:700;letter-spacing:.12em;margin:26px 0 10px}
-  a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px;text-decoration:none;color:var(--tx);transition:border-color .15s}
-  a.card:hover{border-color:var(--ac)}
+  .sec{color:var(--ac);font-size:12px;font-weight:700;letter-spacing:.12em;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+  .sec.primary{color:var(--gold)}
+  a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px;text-decoration:none;color:var(--tx);transition:border-color .15s,transform .15s}
+  a.card:hover{border-color:var(--ac);transform:translateY(-1px)}
+  a.card.primary{border:1.5px solid rgba(240,182,77,.55);background:linear-gradient(180deg,#232c40,#1a2233)}
+  a.card.primary:hover{border-color:var(--gold)}
   .t{font-size:15px;font-weight:600}
+  a.card.primary .t{font-size:17px;font-weight:800}
   .d{color:var(--sub);font-size:12px;margin-top:3px;line-height:1.6}
   .tag{display:inline-block;font-size:10px;color:var(--ac);border:1px solid var(--ac);border-radius:20px;padding:1px 8px;margin-left:8px;vertical-align:2px}
+  .tag.gold{color:var(--gold);border-color:var(--gold)}
+  .starthint{font-size:10.5px;color:#f0b64d;margin-top:8px;font-weight:700}
   footer{color:var(--sub);font-size:11px;margin-top:36px;line-height:1.8}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>肝臓株式会社<span class="env">ステージング環境</span></h1>
-  <p class="note">内部検証専用（noindex設定済み・ダミーデータのみ）。このURLは関係者外に共有しないでください。<br>最新版から順に並んでいます。スマートフォンでもそのまま開けます。</p>
+  <p class="note">内部検証専用（noindex設定済み・ダミーデータのみ）。このURLは関係者外に共有しないでください。<br><b>まずは「実際に試す」を開いてください。</b>スマートフォンでもそのまま操作できます。</p>
 
-  <div class="sec">サービスアプリ モック（メイン検証対象）</div>
-  <a class="card" href="app-v07.html"><span class="t">v0.8.0 — 5機能統合版<span class="tag">最新</span></span><div class="d">v0.7の3機能に、朝の書き留め（v1.0）と週次⇄月次カレンダー（v0.2.3）を統合した<b>メイン検証対象</b>。①朝5秒スキャン ②実写カンゾーくん/ちゃん通話UI ③ワンタップ音声（AIDMA導線） ④朝の書き留め（1分UI・気分が乗らない朝に優しい） ⑤週次⇄月次カレンダー（1目で振り返り・NFR準拠の気遣い文言実装）。設計原則=v0.3「褒めない・断定しない・引き延ばさない」＋Proof of Transparency＋NFR（claude/24）。</div></a>
-  <!-- 旧版カード v0.1〜v0.6.1 は形骸化のため索引から削除（2026-07-13・初見者が迷わないよう最新のみ提示） -->
+  <div class="sec primary">▶ 実際に試す（実データ入力用）</div>
+  <a class="card primary" href="pilot.html"><span class="t">パイロット版 v0.9.0 — 動くアプリ（実データ入力用）<span class="tag gold">最新・7言語対応</span></span><div class="d">今日タブは挨拶ヒーロー起点。「今日を書き留める」＝体組成計9項目＋気分を1画面で。<b>📷スクショをアップ！</b>で体組成計アプリの画面（PNG/PDF/JPG）から自動入力も可能。庭は<b>時間／週／月</b>の3ビューで振り返り。説明書タブから🌐表示言語（日本語/English/Español/简体中文/Português/Deutsch/Français）を切り替え可能。データは端末内保存（ブラウザごと・外部送信なし）。</div>
+  <div class="starthint">↑ タップしてすぐに操作を始められます</div></a>
 
-  <div class="sec">パイロット（実データ入力用）</div>
-  <a class="card" href="pilot.html"><span class="t">パイロット版 v0.7 — 動くアプリ（実データ入力用）<span class="tag">最新</span></span><div class="d">今日タブは挨拶ヒーロー起点。書き留め＝体組成計6項目＋体調を1画面で。<b>1日に何度でも記録でき、各記録に年月日＋時刻を保存</b>。庭は<b>時間／週／月</b>の3ビュー（アスリート向けに当日の時系列を追える「時間」ビュー）。15秒スキャン儀式＋映像破棄の可視化・CSV/JSONエクスポート。データは端末内保存（ブラウザごと）。</div></a>
+  <div class="sec">サービス機能・操作説明</div>
+  <a class="card" href="app-v07.html"><span class="t">機能ガイド — パイロット版の使い方<span class="tag">最新</span></span><div class="d">上記「実際に試す」の各機能（朝の書き留め・スクショOCR自動入力・庭の3ビュー・説明書タブのデータ管理と言語切替 等）を、実際の画面に沿って解説する操作説明ページ。初めて開く方はここで機能の全体像を先に確認できます。</div></a>
 
   <div class="sec">その他モック</div>
   <a class="card" href="hp.html"><span class="t">会社HP モック</span><div class="d">T38 HP v0（8/8公開予定）の原型。</div></a>
   <a class="card" href="lp.html"><span class="t">サービスLP モック</span><div class="d">Fable5向け訴求の検証用。</div></a>
   <a class="card" href="ad.html"><span class="t">広告クリエイティブ モック</span><div class="d">SNS/広告出稿イメージ。</div></a>
 
-  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ） ／ 索引更新日: 2026-07-13（見出し刷新・旧版カード整理・パイロット v0.5）</footer>
+  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ） ／ 索引更新日: 2026-07-16（パイロットを最上段へ・パイロットv0.9.0へ更新・サービスアプリモックを操作説明ページへ刷新）</footer>
 </div>
 </body>
 </html>
