@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VERSION_TAG: KANZO_INDEX_v1.1.0_AUTO-VERSION_20260801 -->
+<!-- VERSION_TAG: KANZO_INDEX_v1.1.1_AUTO-VERSION_20260801 -->
 <!-- 版数は pilot.html の VERSION_TAG から自動読み取り。索引側で版数を手書きしないこと（v0.9.0表示齟齬・2026-08-01の再発防止）。 -->
 <html lang="ja">
 <head>
@@ -56,7 +56,7 @@
   <a class="card" href="lp.html"><span class="t">サービスLP モック</span><div class="d">Fable5向け訴求の検証用。</div></a>
   <a class="card" href="ad.html"><span class="t">広告クリエイティブ モック</span><div class="d">SNS/広告出稿イメージ。</div></a>
 
-  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ）<br>索引 v1.1.0（2026-08-01・パイロット版数を自動読み取り化。索引側での版数手書きを廃止）<br><span id="pvfull"></span></footer>
+  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ）<br>索引 v1.1.1（2026-08-01・パイロット版数を自動読み取り化。索引側での版数手書きを廃止）<br><span id="pvfull"></span></footer>
 </div>
 <script>
 (function(){
@@ -74,17 +74,22 @@
     pf.textContent='pilot.html の VERSION_TAG を読み取れませんでした。リンク先の実体を直接ご確認ください。';
   }
   var url='pilot.html?v='+Date.now();
+  function full(){
+    return fetch(url,{cache:'no-store'})
+      .then(function(r){ return r.text(); })
+      .then(function(t){ var m=t.match(RE); if(m){ apply(m); } else { fail(); } })
+      .catch(fail);
+  }
+  // 1st: Rangeリクエストで先頭128KBのみ取得（392KBの全取得を回避）。
+  // Rangeヘッダを拒否/無視するブラウザでも必ず全取得へフォールバックする（例外時も同様）。
   fetch(url,{headers:{'Range':'bytes=0-131071'},cache:'no-store'})
     .then(function(r){ return r.text(); })
     .then(function(t){
       var m=t.match(RE);
       if(m){ apply(m); return; }
-      return fetch(url,{cache:'no-store'}).then(function(r){ return r.text(); }).then(function(t2){
-        var m2=t2.match(RE);
-        if(m2){ apply(m2); } else { fail(); }
-      });
+      return full();
     })
-    .catch(fail);
+    .catch(full);
 })();
 </script>
 </body>
