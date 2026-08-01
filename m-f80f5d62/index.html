@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- VERSION_TAG: KANZO_INDEX_v1.0.0_PILOT-FIRST_20260716 -->
+<!-- VERSION_TAG: KANZO_INDEX_v1.1.0_AUTO-VERSION_20260801 -->
+<!-- 版数は pilot.html の VERSION_TAG から自動読み取り。索引側で版数を手書きしないこと（v0.9.0表示齟齬・2026-08-01の再発防止）。 -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -34,6 +35,8 @@
   .tag.gold{color:var(--gold);border-color:var(--gold)}
   .starthint{font-size:10.5px;color:#f0b64d;margin-top:8px;font-weight:700}
   footer{color:var(--sub);font-size:11px;margin-top:36px;line-height:1.8}
+  #pv.pending{opacity:.45}
+  #pvfull{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#6f7a90;word-break:break-all}
 </style>
 </head>
 <body>
@@ -42,7 +45,7 @@
   <p class="note">内部検証専用（noindex設定済み・ダミーデータのみ）。このURLは関係者外に共有しないでください。<br><b>まずは「実際に試す」を開いてください。</b>スマートフォンでもそのまま操作できます。</p>
 
   <div class="sec primary">▶ 実際に試す（実データ入力用）</div>
-  <a class="card primary" href="pilot.html"><span class="t">パイロット版 v0.9.0 — 動くアプリ（実データ入力用）<span class="tag gold">最新・7言語対応</span></span><div class="d">今日タブは挨拶ヒーロー起点。「今日を書き留める」＝体組成計9項目＋気分を1画面で。<b>📷スクショをアップ！</b>で体組成計アプリの画面（PNG/PDF/JPG）から自動入力も可能。庭は<b>時間／週／月</b>の3ビューで振り返り。説明書タブから🌐表示言語（日本語/English/Español/简体中文/Português/Deutsch/Français）を切り替え可能。データは端末内保存（ブラウザごと・外部送信なし）。</div>
+  <a class="card primary" href="pilot.html"><span class="t">パイロット版 <span id="pv" class="pending">読込中…</span> — 動くアプリ（実データ入力用）<span class="tag gold">最新・7言語対応</span></span><div class="d">今日タブは挨拶ヒーロー起点。「今日を書き留める」＝体組成計9項目＋気分を1画面で。<b>📷スクショをアップ！</b>で体組成計アプリの画面（PNG/PDF/JPG）から自動入力も可能。<b>rPPG PoC</b>（カメラによる非接触の脈拍推定・精度未検証の試験実装）、<b>肝臓くんバストアップ刷新</b>、<b>生活習慣スコア10段階</b>を搭載。庭は<b>時間／週／月</b>の3ビューで振り返り。説明書タブから🌐表示言語（日本語/English/Español/简体中文/Português/Deutsch/Français）を切り替え可能。データは端末内保存（ブラウザごと・外部送信なし）。</div>
   <div class="starthint">↑ タップしてすぐに操作を始められます</div></a>
 
   <div class="sec">サービス機能・操作説明</div>
@@ -53,7 +56,36 @@
   <a class="card" href="lp.html"><span class="t">サービスLP モック</span><div class="d">Fable5向け訴求の検証用。</div></a>
   <a class="card" href="ad.html"><span class="t">広告クリエイティブ モック</span><div class="d">SNS/広告出稿イメージ。</div></a>
 
-  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ） ／ 索引更新日: 2026-07-16（パイロットを最上段へ・パイロットv0.9.0へ更新・サービスアプリモックを操作説明ページへ刷新）</footer>
+  <footer>肝臓株式会社（設立準備中）／ 内部検証専用（noindex・ダミーデータのみ）<br>索引 v1.1.0（2026-08-01・パイロット版数を自動読み取り化。索引側での版数手書きを廃止）<br><span id="pvfull"></span></footer>
 </div>
+<script>
+(function(){
+  var pv=document.getElementById('pv'), pf=document.getElementById('pvfull');
+  var RE=/VERSION_TAG:\s*(KANZO_PILOT_v([0-9][0-9.]*)_[A-Za-z0-9_\-]*?_(\d{8}))/;
+  function apply(m){
+    pv.textContent='v'+m[2];
+    pv.classList.remove('pending');
+    var d=m[3];
+    pf.textContent='pilot.html 実体: '+m[1]+'（ビルド '+d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8)+'）';
+  }
+  function fail(){
+    pv.textContent='（版数取得不可）';
+    pv.classList.remove('pending');
+    pf.textContent='pilot.html の VERSION_TAG を読み取れませんでした。リンク先の実体を直接ご確認ください。';
+  }
+  var url='pilot.html?v='+Date.now();
+  fetch(url,{headers:{'Range':'bytes=0-131071'},cache:'no-store'})
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      var m=t.match(RE);
+      if(m){ apply(m); return; }
+      return fetch(url,{cache:'no-store'}).then(function(r){ return r.text(); }).then(function(t2){
+        var m2=t2.match(RE);
+        if(m2){ apply(m2); } else { fail(); }
+      });
+    })
+    .catch(fail);
+})();
+</script>
 </body>
 </html>
